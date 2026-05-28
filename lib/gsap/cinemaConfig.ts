@@ -7,30 +7,31 @@ import { gsap, ScrollTrigger } from './register';
  * Source of truth: CINEMA_SPEC.md Section 2.2.
  */
 export const PIN_DURATIONS = {
-  // btech pins, roughly halved from the original CINEMA_SPEC values to cut the
-  // long static "hold" tails that made the scroll feel stuck between sections.
-  // The three camera-pan sections (researchWing, curriculum, learningEvolution)
-  // are trimmed less so their pan doesn't outrun the scroll.
+  // btech pins, sized so each releases shortly after its content animation
+  // finishes — long static "hold" tails were the main cause of the stuck/blank/
+  // delayed scroll feel. Camera-pan sections keep their length so the pan tracks
+  // scroll ~1:1: researchWing (recently restructured), learningEvolution (~1:1);
+  // curriculum is trimmed because its pan was sluggishly slow.
   hero: '+=150%',
-  achievements: '+=130%',
-  pillars: '+=180%',
-  philosophy: '+=110%',
-  programOverview: '+=130%',
-  tracks: '+=200%',
+  achievements: '+=100%',
+  pillars: '+=150%',
+  philosophy: '+=70%',
+  programOverview: '+=90%',
+  tracks: '+=90%',
   researchWing: '+=300%',
-  projects: '+=160%',
-  specializations: '+=160%',
-  certifications: '+=100%',
-  curriculum: '+=380%',
+  projects: '+=95%',
+  specializations: '+=75%',
+  certifications: '+=50%',
+  curriculum: '+=220%',
   learningEvolution: '+=190%',
-  battlegrounds: '+=110%',
-  comparison: '+=160%',
-  hiringTournaments: '+=160%',
-  placements: '+=130%',
-  campus: '+=110%',
-  admission: '+=110%',
-  eligibility: '+=100%',
-  partners: '+=110%',
+  battlegrounds: '+=55%',
+  comparison: '+=60%',
+  hiringTournaments: '+=65%',
+  placements: '+=70%',
+  campus: '+=65%',
+  admission: '+=75%',
+  eligibility: '+=40%',
+  partners: '+=65%',
   finalCta: '+=160%',
   /* ── Home page cinematic pins ─────────────────────────────────────────
      Total pin scroll across the home: ~28 viewports. With Lenis smooth
@@ -86,12 +87,12 @@ export interface PinnedTimelineOptions {
    *  Required for camera-pan sections whose pan distance depends on
    *  dynamically-measured content height. */
   invalidateOnRefresh?: boolean;
-  /** When true (default), the section's `*-camera-el` wrapper is hidden the
-   *  instant the pin releases (and restored on scroll-back) so its composed,
-   *  absolutely-positioned content can't ghost/replay over later sections.
-   *  Doing it on the pin boundary (not as a scrubbed fade) avoids the blank
-   *  scroll gap the old fade left. Set false for resting sections that must
-   *  stay visible after their pin (e.g. the final CTA). */
+  /** Opt-in: hide the section's `*-camera-el` wrapper the instant the pin
+   *  releases (restored on scroll-back). Off by default — hiding leaves the
+   *  post-pin scroll tail blank, which reads as a "pause" between sections.
+   *  Only enable for a section whose absolutely-positioned content visibly
+   *  re-shows ("repeats") during its tail AND where a brief dark cut is
+   *  preferable to that repeat. Only matches btech `-camera-el` wrappers. */
   hideCameraOnLeave?: boolean;
 }
 
@@ -111,7 +112,8 @@ export function makePinnedTimeline({
   invalidateOnRefresh = false,
   hideCameraOnLeave = true,
 }: PinnedTimelineOptions) {
-  // Resolve the section's camera wrapper lazily so the ref survives refreshes.
+  // Resolve the section's absolutely-positioned camera wrapper lazily so the
+  // ref survives ScrollTrigger refreshes. Only btech sections use `-camera-el`.
   const getCamera = (): HTMLElement | null => {
     if (!enabled || !hideCameraOnLeave) return null;
     const el = typeof trigger === 'string' ? document.querySelector(trigger) : trigger;
@@ -129,7 +131,10 @@ export function makePinnedTimeline({
       end,
       pin: enabled,
       pinSpacing: enabled,
-      scrub: enabled ? scrub : false,
+      // Scale the scrub down (×0.4 → the usual 1 becomes 0.4) so pinned
+      // animations track the wheel tightly instead of lagging ~1s behind —
+      // snappier while still smoothed.
+      scrub: enabled ? (typeof scrub === 'number' ? scrub * 0.4 : scrub) : false,
       // anticipatePin guards against a fast-native-scroll pin flash, but Lenis
       // already smooths scroll velocity — leaving it on makes content jump-then-
       // settle as each section engages its pin, glitching the section handoff.

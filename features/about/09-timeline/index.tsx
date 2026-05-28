@@ -263,7 +263,7 @@ export default function AboutTimeline() {
       >
         <div
           aria-hidden="true"
-          className="absolute inset-0 grid-atmosphere pointer-events-none"
+          className="absolute inset-0 pointer-events-none"
           style={{ opacity: 0.3, zIndex: 0 }}
         />
 

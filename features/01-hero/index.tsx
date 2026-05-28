@@ -2,9 +2,7 @@
 /* Hero section — Act I, Section 1 of 22
  * GSAP sets initial opacity then reveals. Content visible without GSAP as fallback. */
 import { useRef } from 'react';
-import { HeroVideo } from './components/HeroVideo';
 import { HeroCTA } from './components/HeroCTA';
-import { HeroBeam } from './components/HeroBeam';
 import { TerminalCursor } from './components/TerminalCursor';
 import { Badge } from '@/components/ui/Badge';
 import { heroContent } from '@/content/hero';
@@ -33,6 +31,26 @@ export default function HeroSection() {
     >
       {/* ── Atmosphere ───────────────────────────────────────────────────── */}
 
+      {/* Subtle cyber-security background video — heavily dimmed so it reads
+          as ambient motion behind the content, not a foreground video. */}
+      <div
+        aria-hidden="true"
+        style={{ position: 'absolute', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}
+      >
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.4 }}
+        >
+          <source src="/videos/cyber-hero.mp4" type="video/mp4" />
+        </video>
+        {/* Dark overlay keeps the video subtle and the text legible */}
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,6,8,0.78)' }} />
+      </div>
+
       {/* Grid */}
       <div
         aria-hidden="true"
@@ -51,13 +69,6 @@ export default function HeroSection() {
             'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.018) 3px, rgba(255,255,255,0.018) 4px)',
           pointerEvents: 'none',
         }}
-      />
-
-      {/* Background video */}
-      <HeroVideo
-        mp4={heroContent.video.mp4}
-        webm={heroContent.video.webm}
-        poster={heroContent.video.poster}
       />
 
       {/* Central glow pool — breathes slowly, no harsh lines */}
@@ -124,9 +135,6 @@ export default function HeroSection() {
           willChange: 'opacity',
         }}
       />
-
-      {/* Local hero beam — fires forward on dissolve, handoff baton to GlobalBeam */}
-      <HeroBeam />
 
       {/* Terminal cursor — wakes during the first 5% of pinned scroll */}
       <TerminalCursor />

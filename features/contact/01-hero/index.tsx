@@ -159,7 +159,7 @@ export default function ContactHero() {
       {/* L0 grid */}
       <div
         aria-hidden="true"
-        className="contact-hero-bg-layer grid-atmosphere"
+        className="contact-hero-bg-layer"
         style={{
           position: 'absolute',
           inset: '-10%',
@@ -168,6 +168,26 @@ export default function ContactHero() {
           pointerEvents: 'none',
         }}
       />
+
+      {/* L0.5 — subtle "security scan" beam sweeping down (reuses scan-line keyframe) */}
+      {!reducedMotion && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            height: '180px',
+            zIndex: 1,
+            pointerEvents: 'none',
+            background:
+              'linear-gradient(to bottom, transparent 0%, rgba(168,240,255,0.10) 38%, rgba(168,240,255,0.28) 50%, rgba(168,240,255,0.10) 62%, transparent 100%)',
+            animation: 'scan-line 6s linear infinite',
+            willChange: 'transform',
+          }}
+        />
+      )}
 
       {/* L1 scan lines */}
       <div

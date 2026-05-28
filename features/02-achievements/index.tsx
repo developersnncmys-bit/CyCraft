@@ -7,7 +7,6 @@ import { GlitchText } from '@/components/core/GlitchText/GlitchText';
 import { Badge } from '@/components/ui/Badge';
 import { achievementsContent } from '@/content/achievements';
 import { StatsConstellation } from './components/StatsConstellation';
-import { BeamTracer } from './components/BeamTracer';
 import { useStatsReveal } from './hooks/useStatsReveal';
 
 export default function AchievementsSection() {
@@ -16,9 +15,6 @@ export default function AchievementsSection() {
 
   return (
     <SectionWrapper ref={sectionRef} id="achievements" act={1}>
-      {/* Vertical beam tracer — arrives from above during 0.00-0.10 of pinned scroll */}
-      <BeamTracer />
-
       {/* Camera wrapper — scales 1→0.95 during 0.85-1.00 (constellation hold + zoom-out) */}
       <div
         className="achv-camera-el"

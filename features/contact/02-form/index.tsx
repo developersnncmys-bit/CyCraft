@@ -183,7 +183,7 @@ export default function ContactFormSection() {
         {/* L0 grid */}
         <div
           aria-hidden="true"
-          className="contact-form-bg grid-atmosphere"
+          className="contact-form-bg"
           style={{
             position: 'absolute',
             inset: '-8%',

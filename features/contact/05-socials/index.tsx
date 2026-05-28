@@ -251,7 +251,7 @@ export default function ContactSocials() {
       >
         <div
           aria-hidden="true"
-          className="contact-soc-bg grid-atmosphere"
+          className="contact-soc-bg"
           style={{
             position: 'absolute',
             inset: '-8%',

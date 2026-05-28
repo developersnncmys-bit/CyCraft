@@ -15,25 +15,6 @@ export default function TracksSection() {
 
   return (
     <SectionWrapper ref={sectionRef} id="tracks" act={3}>
-      {/* ── Background: left red tint / right blue tint — scrubbed in during split ── */}
-      <div
-        className="tracks-bg-tint-el"
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 1,
-          background:
-            'linear-gradient(to right, rgba(255,61,90,0.04) 0%, transparent 50%, rgba(61,168,255,0.04) 100%)',
-          pointerEvents: 'none',
-          opacity: 0,
-          willChange: 'opacity',
-        }}
-      />
-
-      {/* ── Beam split animation ── */}
-      <BeamSplit />
-
       <div
         className="tracks-camera-el"
         style={{
@@ -43,6 +24,28 @@ export default function TracksSection() {
           willChange: 'transform',
         }}
       >
+        {/* ── Background: left red tint / right blue tint — scrubbed in during
+            split. Kept INSIDE camera-el so it hides with the rest of the
+            section on pin release (no ghosting into the gap below). ── */}
+        <div
+          className="tracks-bg-tint-el"
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 1,
+            background:
+              'linear-gradient(to right, rgba(255,61,90,0.04) 0%, transparent 50%, rgba(61,168,255,0.04) 100%)',
+            pointerEvents: 'none',
+            opacity: 0,
+            willChange: 'opacity',
+          }}
+        />
+
+        {/* ── Beam split animation — also inside camera-el so the red/blue
+            beams don't persist past the pin and ghost over the next section. ── */}
+        <BeamSplit />
+
         {/* ── Header ── */}
         <div
           style={{

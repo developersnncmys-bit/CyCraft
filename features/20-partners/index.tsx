@@ -14,17 +14,7 @@ import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
 
 /** Partner ids that have a real logo asset under /public/images/. */
-const HAS_LOGO = new Set(['cisco', 'mcafee', 'vodafone', 'google', 'ibm', 'hp', 'seciq']);
-
-const BRAND_COLORS: Record<string, string> = {
-  seciq:    'var(--color-beam)',
-  ibm:      '#0F62FE',
-  cisco:    '#00BCEB',
-  google:   '#4285F4',
-  hp:       '#0096D6',
-  mcafee:   '#C8102E',
-  vodafone: '#E60000',
-};
+const HAS_LOGO = new Set(['google', 'ibm', 'hp', 'cisco', 'mcafee', 'microland', 'vodafone', 'seciq']);
 
 export default function PartnersSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -173,7 +163,6 @@ export default function PartnersSection() {
           >
             {doubled.map((partner, i) => {
               const isReal = i < partnersContent.partners.length;
-              const accent = BRAND_COLORS[partner.id] ?? 'var(--color-beam)';
               const hasLogo = HAS_LOGO.has(partner.id);
 
               return (
@@ -192,22 +181,7 @@ export default function PartnersSection() {
                     padding: '1rem',
                     flexShrink: 0,
                     cursor: 'default',
-                    transition: 'border-color 0.3s, box-shadow 0.3s',
                     position: 'relative',
-                  }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget;
-                    el.style.borderColor = `${accent}55`;
-                    el.style.boxShadow = `0 0 28px ${accent}22`;
-                    const img = el.querySelector('img');
-                    if (img) img.style.filter = 'grayscale(0) brightness(1) opacity(1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget;
-                    el.style.borderColor = 'rgba(168,240,255,0.07)';
-                    el.style.boxShadow = 'none';
-                    const img = el.querySelector('img');
-                    if (img) img.style.filter = 'grayscale(1) brightness(0.95) opacity(0.6)';
                   }}
                 >
                   {hasLogo ? (
@@ -219,8 +193,6 @@ export default function PartnersSection() {
                       style={{
                         objectFit: 'contain',
                         padding: '0.75rem 1rem',
-                        filter: 'grayscale(1) brightness(0.95) opacity(0.6)',
-                        transition: 'filter 0.3s',
                       }}
                     />
                   ) : (

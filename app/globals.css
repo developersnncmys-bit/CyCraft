@@ -105,12 +105,12 @@ h1, h2, h3, h4 {
   word-break: break-word;
 }
 
-/* ── Grid atmosphere ── */
+/* ── Grid atmosphere — DISABLED site-wide ── */
+/* The background grid is intentionally off. The class is kept so its ~19
+   usages stay valid; restore by re-adding the gradients here. */
 .grid-atmosphere {
-  background-image:
-    linear-gradient(var(--color-grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-grid-line) 1px, transparent 1px);
-  background-size: 60px 60px;
+  background-image: none !important;
+  background: none !important;
 }
 
 /* ── Beam keyframes ── */

@@ -17,8 +17,8 @@ export const heroContent = {
   },
   scrollHint: '↓ SCROLL',
   video: {
-    mp4: '/videos/hero-bg.mp4',
-    webm: '/videos/hero-bg.webm',
-    poster: '/videos/hero-poster.jpg',
+    mp4: '/videos/cyber-video.mp4',
+    webm: '',
+    poster: '',
   },
 } as const;

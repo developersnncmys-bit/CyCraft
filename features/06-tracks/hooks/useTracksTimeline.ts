@@ -100,6 +100,7 @@ export function useTracksTimeline(containerRef: RefObject<HTMLElement | null>) {
         end: PIN_DURATIONS.tracks,
         scrub: 1,
         enabled: true,
+        invalidateOnRefresh: true,
       });
 
       // 0.00 – 0.10 Heading + description
@@ -133,9 +134,11 @@ export function useTracksTimeline(containerRef: RefObject<HTMLElement | null>) {
       tl.to('.tracks-bg-tint-el',
             { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.30);
 
-      // 0.45 – 0.70 Cards materialise — natural left-to-right stagger via index
+      // 0.45 – 0.70 Cards materialise — natural left-to-right stagger via index.
+      // power3.out (not back.out) so scrubbing up/down doesn't bounce the
+      // overshoot, which read as a scroll glitch.
       tl.to('.track-card-el',
-            { opacity: 1, y: 0, scale: 1, stagger: 0.06, duration: 0.18, ease: 'back.out(1.4)' }, 0.45);
+            { opacity: 1, y: 0, scale: 1, stagger: 0.06, duration: 0.18, ease: 'power3.out' }, 0.45);
 
       // 0.70 – 0.90 Hold — no tweens. Cards composed at full intensity.
 

@@ -234,7 +234,7 @@ export default function ContactInquiries() {
       >
         <div
           aria-hidden="true"
-          className="contact-inq-bg grid-atmosphere"
+          className="contact-inq-bg"
           style={{
             position: 'absolute',
             inset: '-8%',

@@ -12,6 +12,9 @@ export function HeroBeam() {
         left: 'calc(50% - 1px)',
         height: '100%',
         zIndex: 4,
+        // Fade the beam down so it's less distracting. Uses filter (not opacity)
+        // so the GSAP opacity fade-in and the CSS pulse animation stay intact.
+        filter: 'opacity(0.4)',
         willChange: 'transform, opacity',
       }}
     >

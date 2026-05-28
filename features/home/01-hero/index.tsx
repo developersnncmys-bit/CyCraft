@@ -161,6 +161,24 @@ export default function HomeHero() {
         paddingBottom: 'clamp(3rem, 6vh, 5rem)',
       }}
     >
+      {/* L-1 — background video (sits behind everything; dark overlay keeps text legible) */}
+      <div
+        aria-hidden="true"
+        style={{ position: 'absolute', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}
+      >
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        >
+          <source src="/videos/cyber-hero.mp4" type="video/mp4" />
+        </video>
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,6,8,0.72)' }} />
+      </div>
+
       {/* L0 — background grid */}
       <div
         aria-hidden="true"

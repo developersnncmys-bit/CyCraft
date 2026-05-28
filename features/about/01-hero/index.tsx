@@ -131,6 +131,23 @@ export default function AboutHero() {
       });
       gsap.to('.about-hero-fg', { yPercent: -10, opacity: 0.65, ease: 'none', scrollTrigger: parallax });
 
+      // ── Ambient background — drifting + breathing aurora (infinite loop) ─
+      gsap.fromTo(
+        '.about-hero-aurora',
+        { xPercent: -16, yPercent: 10, scale: 1.05, rotation: -8, opacity: 0.6 },
+        {
+          xPercent: 16,
+          yPercent: -12,
+          scale: 1.35,
+          rotation: 8,
+          opacity: 1,
+          duration: 9,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+        },
+      );
+
       return () => {
         observer?.disconnect();
         fallback?.kill();
@@ -156,15 +173,30 @@ export default function AboutHero() {
         paddingBottom: 'clamp(3rem, 6vh, 5rem)',
       }}
     >
-      {/* L0 — deep background grid */}
+      {/* L0 — deep background layer (grid removed) */}
       <div
         aria-hidden="true"
-        className="about-hero-bg-layer grid-atmosphere"
+        className="about-hero-bg-layer"
         style={{
           position: 'absolute',
           inset: '-10%',
           zIndex: 1,
           willChange: 'transform',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* L0.5 — subtle drifting aurora (slow ambient motion) */}
+      <div
+        aria-hidden="true"
+        className="about-hero-aurora"
+        style={{
+          position: 'absolute',
+          inset: '-40%',
+          zIndex: 1,
+          background:
+            'radial-gradient(45% 45% at 28% 38%, rgba(168,240,255,0.30), transparent 68%), radial-gradient(42% 42% at 74% 64%, rgba(77,217,255,0.26), transparent 68%), radial-gradient(40% 40% at 55% 80%, rgba(120,90,255,0.18), transparent 70%)',
+          willChange: 'transform, opacity',
           pointerEvents: 'none',
         }}
       />

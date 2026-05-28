@@ -215,7 +215,7 @@ export default function ContactMap() {
       >
         <div
           aria-hidden="true"
-          className="contact-map-bg grid-atmosphere"
+          className="contact-map-bg"
           style={{
             position: 'absolute',
             inset: '-8%',

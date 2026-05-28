@@ -4,7 +4,7 @@
  * Pinned for 300% scroll. Mirrors the B.Tech achievements pattern.
  *
  * Internal beats (progress space 0–1):
- *   0.00–0.10  Vertical beam tracer arrives + badge enters
+ *   0.00–0.10  Badge enters
  *   0.10–0.25  Heading + description reveal
  *   0.25–0.40  Stat 1 ignites (fade + counter 0→target + underline)
  *   0.40–0.55  Stat 2 ignites
@@ -22,49 +22,6 @@ import { Badge } from '@/components/ui/Badge';
 import { homeStatsContent } from '@/content/home/stats';
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
 
-function BeamTracer() {
-  return (
-    <div
-      aria-hidden="true"
-      style={{
-        position: 'absolute',
-        left: '50%',
-        top: '12%',
-        height: '40%',
-        width: '2px',
-        marginLeft: '-1px',
-        zIndex: 2,
-        overflow: 'hidden',
-        pointerEvents: 'none',
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(to bottom, transparent, rgba(168,240,255,0.08), transparent)',
-        }}
-      />
-      <div
-        className="home-stats-tracer"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'linear-gradient(to bottom, var(--color-beam), var(--color-beam-glow))',
-          boxShadow: '0 0 8px var(--color-beam-glow)',
-          transform: 'scaleY(0)',
-          transformOrigin: 'top',
-          willChange: 'transform, filter',
-        }}
-      />
-    </div>
-  );
-}
-
 export default function HomeStats() {
   const sectionRef = useRef<HTMLElement>(null);
   const isDesktop = useIsDesktop();
@@ -77,7 +34,6 @@ export default function HomeStats() {
       if (!root) return;
 
       const waypoints = root.querySelectorAll<HTMLElement>('.home-stat-waypoint');
-      const tracer = root.querySelector<HTMLElement>('.home-stats-tracer');
 
       // ── Reduced motion: instant composed state ──────────────────────────
       if (reducedMotion) {
@@ -89,7 +45,6 @@ export default function HomeStats() {
           gsap.set(wp, { opacity: 1, y: 0 });
           if (underEl) gsap.set(underEl, { scaleX: 1 });
         });
-        if (tracer) gsap.set(tracer, { scaleY: 1 });
         gsap.set(['.home-stats-badge', '.home-stats-heading', '.home-stats-desc'], { opacity: 1 });
         return;
       }
@@ -156,7 +111,6 @@ export default function HomeStats() {
       gsap.set(['.home-stats-badge', '.home-stats-desc'], { opacity: 0 });
       gsap.set('.home-stats-heading', { opacity: 0, yPercent: 30 });
       gsap.set('.home-stats-camera', { scale: 1, transformOrigin: 'center center' });
-      if (tracer) gsap.set(tracer, { scaleY: 0, transformOrigin: 'top' });
       waypoints.forEach((wp) => {
         const valueEl = wp.querySelector<HTMLElement>('.home-stat-value');
         const underEl = wp.querySelector<HTMLElement>('.home-stat-underline');
@@ -172,10 +126,7 @@ export default function HomeStats() {
         enabled: true,
       });
 
-      // 0.00–0.10 Beam tracer arrives + badge enters
-      if (tracer) {
-        tl.to(tracer, { scaleY: 1, duration: 0.10, ease: 'none' }, 0);
-      }
+      // 0.00–0.10 Badge enters
       tl.to('.home-stats-badge', { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0.02);
 
       // 0.10–0.25 Heading + description
@@ -233,19 +184,12 @@ export default function HomeStats() {
         }
       });
 
-      // 0.85–1.00 Camera zoom-out + beam foreshadow
+      // 0.85–1.00 Camera zoom-out
       tl.to(
         '.home-stats-camera',
         { scale: 0.95, duration: 0.15, ease: 'power2.inOut' },
         0.85,
       );
-      if (tracer) {
-        tl.to(
-          tracer,
-          { filter: 'brightness(1.5)', duration: 0.15, ease: 'power2.inOut' },
-          0.85,
-        );
-      }
     },
     { scope: sectionRef, dependencies: [isDesktop, reducedMotion] },
   );
@@ -262,8 +206,6 @@ export default function HomeStats() {
         overflow: 'hidden',
       }}
     >
-      <BeamTracer />
-
       <div
         className="home-stats-camera"
         style={{

@@ -14,20 +14,19 @@ import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
  *    architecture already moves 200vh, so 450vh of scroll left long static
  *    holds that read as "stuck")
  *
- * Cinema architecture: camera-el contains three 100vh blocks (heading,
- * workstation, house). The camera-el translates Y from 0 → -200vh across
- * the pin, so each block scrolls into the pinned viewport in turn. Per-block
+ * Cinema architecture: camera-el contains two 100vh blocks
+ * (heading+workstation, house). The camera-el translates Y from 0 → -100vh
+ * across the pin, so the house scrolls into the pinned viewport. Per-block
  * reveals (terminal un-tilt, house dissolve) overlay the pan.
  *
- * Beat windows (in 300vh pin):
- *   0.00–0.10  Heading reveals (camera y=0) — 30vh
- *   0.10–0.40  Camera pans 0 → -100vh (workstation enters) — 90vh
- *   0.30–0.42  Workstation fades in; terminal un-tilts
- *   0.42–0.50  Workstation hold (short — keep momentum) — 24vh
- *   0.50–0.75  Camera pans -100vh → -200vh (house enters) — 75vh
- *   0.60–0.75  House fades in; camera zooms in (scale 1 → 1.6)
- *   0.75–0.92  Walls dissolve, interior revealed
- *   0.92–1.00  Inside hold — 24vh
+ * Beat windows:
+ *   0.00–0.12  Heading reveals (camera y=0)
+ *   0.08–0.22  Workstation fades in; terminal un-tilts
+ *   0.22–0.32  Hold — let the reader take in the workstation
+ *   0.32–0.62  Camera pans 0 → -100vh (house enters)
+ *   0.55–0.68  House fades in; camera zooms in (scale 1 → 1.6)
+ *   0.68–0.85  Walls dissolve, interior revealed
+ *   0.85–1.00  Inside hold
  */
 export function useHouseDissolve(containerRef: RefObject<HTMLElement | null>) {
   const reducedMotion = useReducedMotion();
@@ -67,10 +66,11 @@ export function useHouseDissolve(containerRef: RefObject<HTMLElement | null>) {
       }
 
       // ──────────────────────────────────────────────────────────────────
-      //  DESKTOP CINEMA PATH — pin + scrub + camera-pan, 450vh
+      //  DESKTOP CINEMA PATH — pin + scrub + camera-pan (2 blocks)
       // ──────────────────────────────────────────────────────────────────
 
-      // Initial state
+      // Initial state — heading + workstation share the first block, both
+      // composed at camera y=0 so the heading titles the workstation content.
       gsap.set('.rw-camera-el', { y: 0, willChange: 'transform' });
       gsap.set('.rw-heading-el',           { opacity: 0, y: 30 });
       gsap.set('.rw-block-workstation-el', { opacity: 0 });
@@ -88,30 +88,27 @@ export function useHouseDissolve(containerRef: RefObject<HTMLElement | null>) {
         invalidateOnRefresh: true,
       });
 
-      // 0.00 – 0.10 Heading reveals
-      tl.to('.rw-heading-el', { opacity: 1, y: 0, duration: 0.10, ease: 'power3.out' }, 0)
+      // 0.00 – 0.12 Heading reveals (camera y=0)
+      tl.to('.rw-heading-el', { opacity: 1, y: 0, duration: 0.12, ease: 'power3.out' }, 0)
 
-      // 0.10 – 0.40 Camera pans 0 → -100vh (workstation enters)
-        .to('.rw-camera-el', { y: () => -window.innerHeight, duration: 0.30, ease: 'none' }, 0.10)
+      // 0.08 – 0.22 Workstation block fades in + terminal un-tilts
+        .to('.rw-block-workstation-el', { opacity: 1, duration: 0.12, ease: 'power2.out' }, 0.08)
+        .to('.workstation-frame-el',    { rotateY: 0, duration: 0.14, ease: 'power2.out' }, 0.08)
 
-      // 0.30 – 0.42 Workstation reveals + terminal un-tilts
-        .to('.rw-block-workstation-el', { opacity: 1, duration: 0.10, ease: 'power2.out' }, 0.30)
-        .to('.workstation-frame-el',    { rotateY: 0, duration: 0.12, ease: 'power2.out' }, 0.30)
+      // 0.22 – 0.32 Hold — let the reader take in the workstation
 
-      // 0.42 – 0.50 Brief workstation hold
+      // 0.32 – 0.62 Camera pans 0 → -100vh (house enters)
+        .to('.rw-camera-el', { y: () => -window.innerHeight, duration: 0.30, ease: 'none' }, 0.32)
 
-      // 0.50 – 0.75 Camera pans -100vh → -200vh (house enters)
-        .to('.rw-camera-el', { y: () => -window.innerHeight * 2, duration: 0.25, ease: 'none' }, 0.50)
+      // 0.55 – 0.68 House reveals + camera zooms in
+        .to('.rw-block-house-el', { opacity: 1, duration: 0.10, ease: 'power2.out' }, 0.55)
+        .to('.hacker-house-el',   { scale: 1.6, duration: 0.15, ease: 'power2.inOut' }, 0.55)
 
-      // 0.60 – 0.75 House reveals + camera zooms in
-        .to('.rw-block-house-el', { opacity: 1, duration: 0.10, ease: 'power2.out' }, 0.60)
-        .to('.hacker-house-el',   { scale: 1.6, duration: 0.15, ease: 'power2.inOut' }, 0.60)
+      // 0.68 – 0.85 Walls dissolve, interior revealed
+        .to('.house-wall-el',     { opacity: 0, duration: 0.10, ease: 'none' }, 0.68)
+        .to('.house-interior-el', { opacity: 1, duration: 0.10, ease: 'power1.out' }, 0.71);
 
-      // 0.75 – 0.92 Walls dissolve, interior revealed
-        .to('.house-wall-el',     { opacity: 0, duration: 0.10, ease: 'none' }, 0.75)
-        .to('.house-interior-el', { opacity: 1, duration: 0.10, ease: 'power1.out' }, 0.78);
-
-      // 0.92 – 1.00 Inside hold — house stays composed through pin release so the
+      // 0.85 – 1.00 Inside hold — house stays composed through pin release so the
       // section hands off directly to the next one (no blank-screen gap).
     },
     { scope: containerRef, dependencies: [reducedMotion, isDesktop] },

@@ -1,7 +1,7 @@
 'use client';
 /* Research Wing — Act III, Section 7 of 22
- * Cinema mode: pinned 450vh. Three 100vh blocks (heading → workstation → house)
- * pan upward through the viewport as the user scrolls. CINEMA_SPEC §2.2. */
+ * Cinema mode: pinned. Two 100vh blocks (heading+workstation → house) pan
+ * upward through the viewport as the user scrolls. CINEMA_SPEC §2.2. */
 import { useRef } from 'react';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { researchWingContent } from '@/content/research-wing';
@@ -36,8 +36,8 @@ export default function ResearchWingSection() {
           willChange: 'transform',
         }}
       >
-        {/* ── Block 1: Heading ── */}
-        <div className="rw-block-heading-el" style={blockStyle}>
+        {/* ── Block 1: Heading + Workstation ── */}
+        <div className="rw-block-workstation-el" style={{ ...blockStyle, willChange: 'opacity' }}>
           <div className="section-container" style={{ width: '100%' }}>
             <h2
               className="rw-heading-el"
@@ -48,7 +48,7 @@ export default function ResearchWingSection() {
                 letterSpacing: '-0.02em',
                 textTransform: 'uppercase',
                 color: 'var(--color-text-primary)',
-                margin: 0,
+                margin: '0 0 clamp(2rem, 5vh, 3.5rem)',
                 maxWidth: '900px',
                 lineHeight: 1.1,
                 willChange: 'transform, opacity',
@@ -56,12 +56,7 @@ export default function ResearchWingSection() {
             >
               {researchWingContent.heading}
             </h2>
-          </div>
-        </div>
 
-        {/* ── Block 2: Workstation ── */}
-        <div className="rw-block-workstation-el" style={{ ...blockStyle, willChange: 'opacity' }}>
-          <div className="section-container" style={{ width: '100%' }}>
             <div
               style={{
                 display: 'flex',
@@ -82,7 +77,7 @@ export default function ResearchWingSection() {
                     marginBottom: '0.75rem',
                   }}
                 >
-                  // {researchWingContent.workstation.heading}
+                  {`// ${researchWingContent.workstation.heading}`}
                 </h3>
                 <p
                   style={{
@@ -107,7 +102,7 @@ export default function ResearchWingSection() {
           </div>
         </div>
 
-        {/* ── Block 3: Hacker House ── */}
+        {/* ── Block 2: Hacker House ── */}
         <div className="rw-block-house-el" style={{ ...blockStyle, willChange: 'opacity' }}>
           <div className="section-container" style={{ width: '100%' }}>
             <div
@@ -135,7 +130,7 @@ export default function ResearchWingSection() {
                     marginBottom: '0.75rem',
                   }}
                 >
-                  // {researchWingContent.hackerHouse.heading}
+                  {`// ${researchWingContent.hackerHouse.heading}`}
                 </h3>
                 <p
                   style={{

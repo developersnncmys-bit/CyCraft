@@ -32,7 +32,9 @@ export function SmoothScrollProvider({
     }
 
     const lenis = new Lenis({
-      duration: 1.2,
+      // Shorter glide (was 1.2) so scroll responds to the wheel quickly instead
+      // of feeling floaty/laggy — keeps smoothing, just snappier.
+      duration: 0.6,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       touchMultiplier: 2,

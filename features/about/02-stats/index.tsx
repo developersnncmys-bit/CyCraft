@@ -3,7 +3,7 @@
  *
  * 300% pin. Mirrors home/05-stats and useStatsReveal.
  *
- *   0.00–0.10  Vertical beam tracer arrives + badge enters
+ *   0.00–0.10  Badge enters
  *   0.10–0.25  Heading + description reveal
  *   0.25–0.40  Stat 1 ignites (fade + counter 0→5000 + underline)
  *   0.40–0.55  Stat 2 ignites (95%)
@@ -21,46 +21,6 @@ import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
 import { Badge } from '@/components/ui/Badge';
 import { aboutStatsContent } from '@/content/about/stats';
 
-function BeamTracer() {
-  return (
-    <div
-      aria-hidden="true"
-      style={{
-        position: 'absolute',
-        left: '50%',
-        top: '12%',
-        height: '40%',
-        width: '2px',
-        marginLeft: '-1px',
-        zIndex: 2,
-        overflow: 'hidden',
-        pointerEvents: 'none',
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(to bottom, transparent, rgba(168,240,255,0.08), transparent)',
-        }}
-      />
-      <div
-        className="about-stats-tracer"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(to bottom, var(--color-beam), var(--color-beam-glow))',
-          boxShadow: '0 0 8px var(--color-beam-glow)',
-          transform: 'scaleY(0)',
-          transformOrigin: 'top',
-          willChange: 'transform, filter',
-        }}
-      />
-    </div>
-  );
-}
-
 export default function AboutStats() {
   const sectionRef = useRef<HTMLElement>(null);
   const isDesktop = useIsDesktop();
@@ -73,7 +33,6 @@ export default function AboutStats() {
       if (!root) return;
 
       const waypoints = root.querySelectorAll<HTMLElement>('.about-stat-waypoint');
-      const tracer = root.querySelector<HTMLElement>('.about-stats-tracer');
 
       if (reducedMotion) {
         waypoints.forEach((wp) => {
@@ -84,7 +43,6 @@ export default function AboutStats() {
           gsap.set(wp, { opacity: 1, y: 0 });
           if (underEl) gsap.set(underEl, { scaleX: 1 });
         });
-        if (tracer) gsap.set(tracer, { scaleY: 1 });
         gsap.set(
           ['.about-stats-badge', '.about-stats-heading', '.about-stats-desc'],
           { opacity: 1 },
@@ -157,7 +115,6 @@ export default function AboutStats() {
       gsap.set(['.about-stats-badge', '.about-stats-desc'], { opacity: 0 });
       gsap.set('.about-stats-heading', { opacity: 0, yPercent: 30 });
       gsap.set('.about-stats-camera', { scale: 1, transformOrigin: 'center center' });
-      if (tracer) gsap.set(tracer, { scaleY: 0, transformOrigin: 'top' });
       waypoints.forEach((wp) => {
         const valueEl = wp.querySelector<HTMLElement>('.about-stat-value');
         const underEl = wp.querySelector<HTMLElement>('.about-stat-underline');
@@ -173,9 +130,6 @@ export default function AboutStats() {
         enabled: true,
       });
 
-      if (tracer) {
-        tl.to(tracer, { scaleY: 1, duration: 0.10, ease: 'none' }, 0);
-      }
       tl.to('.about-stats-badge', { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0.02);
 
       tl.to(
@@ -233,13 +187,6 @@ export default function AboutStats() {
         { scale: 0.95, duration: 0.15, ease: 'power2.inOut' },
         0.85,
       );
-      if (tracer) {
-        tl.to(
-          tracer,
-          { filter: 'brightness(1.5)', duration: 0.15, ease: 'power2.inOut' },
-          0.85,
-        );
-      }
     },
     { scope: sectionRef, dependencies: [isDesktop, reducedMotion] },
   );
@@ -256,8 +203,6 @@ export default function AboutStats() {
         overflow: 'hidden',
       }}
     >
-      <BeamTracer />
-
       <div
         className="about-stats-camera"
         style={{
@@ -349,6 +294,10 @@ export default function AboutStats() {
                   justifyContent: 'center',
                   alignItems: 'baseline',
                   gap: '0.05rem',
+                  // tabular-nums = fixed-width digits so the counter doesn't
+                  // jitter horizontally as values change each scrub frame.
+                  fontVariantNumeric: 'tabular-nums',
+                  fontFeatureSettings: '"tnum"',
                 }}
               >
                 <span className="about-stat-value">0</span>
