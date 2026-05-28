@@ -1,0 +1,44 @@
+/* Root-level cinema beam — one element, multiple modes.
+   CINEMA_SPEC.md Section 5. Phase-specific visual transitions
+   land in later phases; Phase 1 ships scaffolding only. */
+
+.globalBeam {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  transform: translate3d(-50%, 0, 0);
+  width: 2px;
+  height: var(--gb-height, 100vh);
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--color-beam) 50%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 20px var(--color-beam),
+    0 0 40px var(--color-beam-glow);
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  backface-visibility: hidden;
+  will-change: transform, opacity, height;
+
+  /* Phase custom properties — driven by master timeline in GlobalBeam.tsx.
+     Phase 1 declares them; later phases consume them to render mode-specific
+     visuals (split rails, red/blue divergence, highway, network, etc). */
+  --gb-wake: 0;
+  --gb-height: 0vh;
+  --gb-intensity: 0;
+  --gb-split-progress: 0;
+  --gb-steady: 0;
+  --gb-red-blue-split: 0;
+  --gb-inside-mode: 0;
+  --gb-highway-mode: 0;
+  --gb-network-mode: 0;
+  --gb-collapse-to-cursor: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .globalBeam { opacity: 0 !important; }
+}

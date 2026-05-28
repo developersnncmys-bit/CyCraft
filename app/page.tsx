@@ -1,65 +1,80 @@
-import Image from "next/image";
+'use client';
+import dynamic from 'next/dynamic';
+import HomeHero from '@/features/home/01-hero';
+import { ActTransition } from '@/components/layout/ActTransition';
 
-export default function Home() {
+const placeholder = (height = '100vh') => () => <div style={{ minHeight: height }} />;
+
+const AboutPreview = dynamic(() => import('@/features/home/02-about-preview'), {
+  loading: placeholder(),
+  ssr: false,
+});
+const FeaturedPrograms = dynamic(() => import('@/features/home/03-featured-programs'), {
+  loading: placeholder(),
+  ssr: false,
+});
+const WhyChoose = dynamic(() => import('@/features/home/04-why-choose'), {
+  loading: placeholder(),
+  ssr: false,
+});
+const HomeStats = dynamic(() => import('@/features/home/05-stats'), {
+  loading: placeholder(),
+  ssr: false,
+});
+const CtfChallenge = dynamic(() => import('@/features/home/06-ctf-challenge'), {
+  loading: placeholder(),
+  ssr: false,
+});
+const HomeResearch = dynamic(() => import('@/features/home/07-research'), {
+  loading: placeholder(),
+  ssr: false,
+});
+const Testimonials = dynamic(() => import('@/features/home/08-testimonials'), {
+  loading: placeholder(),
+  ssr: false,
+});
+const HomePartners = dynamic(() => import('@/features/home/09-partners'), {
+  loading: placeholder(),
+  ssr: false,
+});
+const FinalCta = dynamic(() => import('@/features/home/10-final-cta'), {
+  loading: placeholder(),
+  ssr: false,
+});
+const HomeFooter = dynamic(() => import('@/features/home/11-footer'), {
+  loading: placeholder('40vh'),
+  ssr: false,
+});
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      {/* Act I — Welcome */}
+      <HomeHero />
+
+      {/* I → II — beam fires forward + white flash */}
+      <ActTransition targetSelector="#about-preview" type="i-to-ii" />
+
+      {/* Act II — Identity */}
+      <AboutPreview />
+      <FeaturedPrograms />
+      <WhyChoose />
+
+      {/* II → III — into the dramatic stats scene */}
+      <ActTransition targetSelector="#stats" type="i-to-ii" />
+
+      {/* Act III — Proof */}
+      <HomeStats />
+
+      {/* III → IV — into the CTF moment */}
+      <ActTransition targetSelector="#ctf" type="i-to-ii" />
+
+      <CtfChallenge />
+      <HomeResearch />
+      <Testimonials />
+      <HomePartners />
+      <FinalCta />
+      <HomeFooter />
+    </>
   );
 }

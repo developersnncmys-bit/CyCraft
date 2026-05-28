@@ -1,0 +1,15 @@
+export const COLORS = {
+  void: '#000000',
+  deepSpace: '#050608',
+  carbon: '#0d1014',
+  iron: '#1a1f26',
+  beam: '#a8f0ff',
+  beamGlow: '#4dd9ff',
+  beamCore: '#ffffff',
+  redTeam: '#ff3d5a',
+  redTeamGlow: '#ff8896',
+  blueTeam: '#3da8ff',
+  blueTeamGlow: '#88c5ff',
+  terminal: '#00ff94',
+  terminalDim: '#00b368',
+} as const;

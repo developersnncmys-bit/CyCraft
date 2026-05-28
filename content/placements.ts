@@ -1,0 +1,56 @@
+export const placementsContent = {
+  badge: 'CAREER OUTCOMES',
+  heading: 'PROVEN PLACEMENTS',
+  description:
+    "We don't just train, we launch careers. Our curriculum is built backwards from what top-tier tech companies demand.",
+  metrics: [
+    {
+      id: 'highest',
+      value: '₹38 LPA',
+      numericValue: 38,
+      label: 'Highest Package',
+      sub: 'INTERNATIONAL — Global Security Engineer Role',
+      star: true,
+    },
+    {
+      id: 'top10',
+      value: '₹22.4 LPA',
+      numericValue: 22.4,
+      label: 'Top 10% Average',
+      sub: 'Elite Cybersecurity Roles',
+      star: false,
+    },
+    {
+      id: 'average',
+      value: '₹12.5 LPA',
+      numericValue: 12.5,
+      label: 'Average Package',
+      sub: 'Across all specializations',
+      star: false,
+    },
+    {
+      id: 'median',
+      value: '₹10.0 LPA',
+      numericValue: 10,
+      label: 'Median Package',
+      sub: 'Consistent baseline',
+      star: false,
+    },
+    {
+      id: 'partners',
+      value: '150+',
+      numericValue: 150,
+      label: 'Active Hiring Partners',
+      sub: 'Deep tech focus',
+      star: false,
+    },
+    {
+      id: 'guarantee',
+      value: '100%',
+      numericValue: 100,
+      label: 'Placement Assistance',
+      sub: 'Guaranteed opportunities',
+      star: false,
+    },
+  ],
+} as const;

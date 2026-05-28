@@ -1,26 +1,284 @@
 @import "tailwindcss";
 
+/* ── Design Tokens ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base */
+  --color-void: #000000;
+  --color-deep-space: #050608;
+  --color-carbon: #0d1014;
+  --color-iron: #1a1f26;
+
+  /* Beam */
+  --color-beam: #a8f0ff;
+  --color-beam-glow: #4dd9ff;
+  --color-beam-core: #ffffff;
+
+  /* Duality */
+  --color-red-team: #ff3d5a;
+  --color-red-team-glow: #ff8896;
+  --color-blue-team: #3da8ff;
+  --color-blue-team-glow: #88c5ff;
+
+  /* Terminal */
+  --color-terminal: #00ff94;
+  --color-terminal-dim: #00b368;
+
+  /* Text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.72);
+  --color-text-tertiary: rgba(255, 255, 255, 0.48);
+  --color-text-disabled: rgba(255, 255, 255, 0.24);
+
+  /* Semantic */
+  --color-success: var(--color-terminal);
+  --color-danger: var(--color-red-team);
+  --color-info: var(--color-beam);
+
+  /* Effects */
+  --color-grid-line: rgba(168, 240, 255, 0.06);
+  --color-noise: rgba(255, 255, 255, 0.015);
+
+  /* Typography */
+  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+
+  /* Type scale */
+  --text-display-xl: clamp(2.5rem, 5vw, 5rem);
+  --text-display-lg: clamp(1.75rem, 6vw, 5.5rem);
+  --text-display-md: clamp(1.5rem, 4vw, 3.5rem);
+  --text-xl: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-base: 1rem;
+  --text-sm: 0.875rem;
+  --text-xs: 0.75rem;
+
+  /* Spacing */
+  --section-padding: clamp(1.5rem, 5vw, 6rem);
+  --section-gap: clamp(4rem, 10vh, 8rem);
 }
 
+/* ── Tailwind theme extension ── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-void: var(--color-void);
+  --color-deep-space: var(--color-deep-space);
+  --color-carbon: var(--color-carbon);
+  --color-iron: var(--color-iron);
+  --color-beam: var(--color-beam);
+  --color-beam-glow: var(--color-beam-glow);
+  --color-beam-core: var(--color-beam-core);
+  --color-red-team: var(--color-red-team);
+  --color-blue-team: var(--color-blue-team);
+  --color-terminal: var(--color-terminal);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto; /* Lenis handles smooth scroll */
+  /* Solid fallback for no-JS / pre-mount. CinemaBackground overlays at z-index:-1. */
+  background: var(--color-void);
+  color: var(--color-text-primary);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  /* Transparent so the fixed CinemaBackground (z-index:-1) is visible behind content. */
+  background: transparent;
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Heading overflow safety ── */
+h1, h2, h3, h4 {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ── Grid atmosphere ── */
+.grid-atmosphere {
+  background-image:
+    linear-gradient(var(--color-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid-line) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ── Beam keyframes ── */
+@keyframes beam-pulse {
+  0%, 100% { opacity: 0.7; transform: scaleY(1); }
+  50%       { opacity: 1;   transform: scaleY(1.02); }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes scan-line {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px var(--color-beam-glow); }
+  50%       { box-shadow: 0 0 40px var(--color-beam-glow), 0 0 80px var(--color-beam); }
+}
+
+@keyframes hero-glow-breathe {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50%       { opacity: 0.8; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+/* ── Prism rail pulse — toggled by usePillarSplit during 0.60–0.80 ── */
+@keyframes prism-rail-pulse {
+  0%, 100% { stroke-opacity: 0.7; filter: brightness(1); }
+  50%       { stroke-opacity: 1;   filter: brightness(1.4); }
+}
+.prism-rail-pulsing {
+  animation: prism-rail-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Utility classes ── */
+.font-display { font-family: var(--font-display); }
+.font-mono    { font-family: var(--font-mono); }
+.font-body    { font-family: var(--font-body); }
+
+.text-beam      { color: var(--color-beam); }
+.text-terminal  { color: var(--color-terminal); }
+.text-red-team  { color: var(--color-red-team); }
+.text-blue-team { color: var(--color-blue-team); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-tertiary  { color: var(--color-text-tertiary); }
+
+.section-container {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--section-padding);
+}
+
+/* ── Skip link ── */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background: var(--color-beam);
+  color: var(--color-void);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  border-radius: 0 0 4px 4px;
+  transition: top 0.2s;
+}
+.skip-to-content:focus { top: 0; }
+
+/* ────────────────────────────────────────────────────────────
+   MOBILE RESPONSIVE OVERRIDES
+   Uses !important to override inline React style attributes.
+   CSS !important beats inline styles in the cascade.
+   ──────────────────────────────────────────────────────────── */
+
+/* ── Placements: 1-col on phones, 2-col on phablets ── */
+@media (max-width: 479px) {
+  #placements .section-container > div {
+    grid-template-columns: 1fr !important;
+  }
+  .metric-value-el {
+    font-size: 2rem !important;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  #placements .section-container > div {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .metric-value-el {
+    font-size: 1.75rem !important;
+  }
+}
+
+/* ── Learning Evolution: single-column phase list on mobile ── */
+@media (max-width: 767px) {
+  .phase-node-el {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1rem !important;
+    transform: none !important;
+  }
+  /* Hide the empty alternating columns; show only the centre dot and content */
+  .phase-node-el > div:first-child:empty,
+  .phase-node-el > div:last-child:empty {
+    display: none !important;
+  }
+  /* Centre dot column becomes flex-start */
+  .phase-node-el > div:nth-child(2) {
+    flex-shrink: 0 !important;
+    width: 32px !important;
+  }
+  /* Content always reads left-to-right */
+  .phase-node-el > div:first-child,
+  .phase-node-el > div:last-child {
+    text-align: left !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+}
+
+/* ── Curriculum: single-column on mobile ── */
+@media (max-width: 767px) {
+  .highway-el .section-container > div[style*="grid"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2.5rem !important;
+    padding-left: 1.5rem !important;
+    border-left: 2px solid rgba(168,240,255,0.15) !important;
+  }
+}
+
+/* ── Comparison: stack label/traditional/cycraft on small phones ── */
+@media (max-width: 479px) {
+  .comparison-row-el {
+    grid-template-columns: 1fr !important;
+  }
+  .comparison-row-el > div:nth-child(2) {
+    width: 100% !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+}
+
+/* ── Hiring constellation: prevent overflow ── */
+@media (max-width: 767px) {
+  #hiring .section-container > div[style*="height"] {
+    height: auto !important;
+    min-height: unset !important;
+  }
+  .role-node-el {
+    position: static !important;
+    transform: none !important;
+    opacity: 1 !important;
+    display: inline-block !important;
+    width: auto !important;
+  }
+  .role-beam-el { display: none !important; }
+  .centre-node-el { display: none !important; }
 }
