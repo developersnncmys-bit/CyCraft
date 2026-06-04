@@ -26,6 +26,7 @@
  * animation (no pin) so phones can still browse the catalog naturally.
  */
 import { useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '@/lib/gsap/register';
 import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
@@ -215,7 +216,12 @@ function CourseCard({ course }: { course: Course }) {
   const badgeColor = offensive ? '#fff' : 'var(--color-void)';
 
   return (
-    <a
+    // Next.js <Link> instead of <a> so navigating to the detail page is a
+    // soft client-side route change. Using a plain <a href> caused a full
+    // page reload, which re-evaluated the JS bundle and reset the
+    // Preloader's `hasPlayed` module flag — the boot sequence then played
+    // again on every card click.
+    <Link
       className="courses-card"
       href={`/courses/${course.slug}`}
       style={{
@@ -396,7 +402,7 @@ function CourseCard({ course }: { course: Course }) {
           <BoltIcon />
         </div>
       </div>
-    </a>
+    </Link>
   );
 }
 

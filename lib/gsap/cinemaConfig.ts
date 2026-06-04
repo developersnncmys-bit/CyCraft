@@ -35,7 +35,12 @@ export const PIN_DURATIONS = {
   admission: '+=180%',
   eligibility: '+=120%',
   partners: '+=130%',
-  finalCta: '+=180%',
+  // Only consumed by features/21-cta-footer (the last btech section). The
+  // animations span 0 → 0.87 of the timeline, so anything over ~90% pin
+  // leaves an empty dwell tail that scrolls past as "another section."
+  // 80% keeps the compose window roomy (~70vh) while trimming the tail
+  // to ~10vh so the page ends right after the final state lands.
+  finalCta: '+=80%',
   /* ── Home page cinematic pins ─────────────────────────────────────────
      Total pin scroll across the home: ~28 viewports. With Lenis smooth
      scroll, this gives a deliberate 8–10 minute "cinematic" experience
@@ -111,6 +116,25 @@ export const PIN_DURATIONS = {
   assessmentResults:     '+=300%',
   assessmentLeaderboard: '+=350%',
   assessmentCta:         '+=200%',
+  /* ── Download page cinematic pins ───────────────────────────────────────
+     Marketing surface for the resource library (PRD §3.6). Hero is unpinned
+     autoplay. 5 pinned acts — Categories, Files (top-downloads table),
+     Tools, Access tiers, CTA. Files gets the longest hold because it walks
+     through a multi-row table cascade. */
+  downloadCertificate: '+=250%',
+  downloadCategories:  '+=300%',
+  downloadFiles:       '+=350%',
+  downloadTools:       '+=300%',
+  downloadAccess:      '+=250%',
+  downloadCta:         '+=200%',
+  /* ── Gallery page cinematic pins ────────────────────────────────────────
+     Hero is unpinned (autoplay). 4 pinned acts — Events grid, Videos,
+     Stats, CTA. Events grid carries the longest hold since 9 cards
+     cascade in over its window. */
+  galleryEvents: '+=400%',
+  galleryVideos: '+=250%',
+  galleryStats:  '+=250%',
+  galleryCta:    '+=200%',
 } as const;
 
 export type PinnedSectionKey = keyof typeof PIN_DURATIONS;

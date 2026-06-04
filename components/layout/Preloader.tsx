@@ -3,21 +3,20 @@
  * Horizontal beam streaks across the viewport, CYCRAFT title fades in
  * through the beam, then SECURING SESSION reveals letter-by-letter.
  *
- * Played-once latch (module-level): the boot sequence should fire when
- * the JS bundle is freshly loaded (i.e. real page reload / first visit),
- * not on every client-side navigation. App Router preserves the layout
- * across routes, so this module + its `hasPlayed` value survive — set it
- * to true after the first play and short-circuit on subsequent mounts.
- * A hard reload re-evaluates the module and resets the latch.
+ * Played-once latch: the boot sequence fires when the JS bundle is
+ * freshly loaded (real page reload / first visit), not on client-side
+ * navigations. A module-level flag survives across navigations (App
+ * Router keeps the module evaluated) but resets on hard reload (module
+ * is re-evaluated). That's exactly the desired behaviour.
  */
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { gsap } from '@/lib/gsap/register';
 
 const STATUS_LABEL = 'SECURING SESSION';
 
 let hasPlayed = false;
 
-export function Preloader() {
+function PreloaderImpl() {
   const wrapRef     = useRef<HTMLDivElement>(null);
   const beamRef     = useRef<HTMLDivElement>(null);
   const beamCoreRef = useRef<HTMLDivElement>(null);
@@ -32,7 +31,6 @@ export function Preloader() {
   const [done, setDone] = useState(hasPlayed);
 
   useEffect(() => {
-    // Module-level latch: only play once per real page load.
     if (hasPlayed) return;
 
     const wrap   = wrapRef.current;
@@ -300,3 +298,9 @@ export function Preloader() {
     </div>
   );
 }
+
+// memo() so any incidental re-render of the parent (e.g. a sibling client
+// component updating during navigation) does not propagate through to the
+// Preloader and re-apply its style prop. The Preloader takes no props,
+// so memo is effectively a "never re-render after first paint" guard.
+export const Preloader = memo(PreloaderImpl);

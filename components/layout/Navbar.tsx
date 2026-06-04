@@ -15,9 +15,11 @@ const NAV_LINKS = [
   { label: 'Courses', href: '/courses' },
   { label: 'About', href: '/about' },
   { label: 'Assessment', href: '/assessment' },
+  { label: 'Download', href: '/download' },
   { label: 'Research', href: '/research' },
   { label: 'Blog', href: '/blog' },
   { label: 'Verify', href: '/verify' },
+  { label: 'Gallery', href: '/gallery' },
   { label: 'Contact', href: '/contact' },
 ] as const;
 
@@ -34,6 +36,15 @@ export function Navbar() {
   // route-change scroll reset never fires — jump to the top here instead.
   const handleSamePageNav = (href: string) => {
     if (pathname === href) scrollToTop();
+  };
+
+  // Active-page detection. `/` matches exactly (otherwise it would match every
+  // route since they all start with `/`). Other routes match either exactly or
+  // as a path-segment prefix so nested pages (e.g. /courses/ethical-hacking)
+  // still highlight their parent in the navbar.
+  const isActiveLink = (href: string) => {
+    if (href === '/') return pathname === '/';
+    return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   useEffect(() => {
@@ -61,6 +72,13 @@ export function Navbar() {
       )}
       style={{
         background: scrolled ? 'rgba(5,6,8,0.96)' : 'transparent',
+        // Dark drop-shadow on the underside so the navbar reads as a layer
+        // above the page rather than sitting flush. Fades in on scroll
+        // alongside the background — at the top of the page the navbar is
+        // transparent and a shadow there would look like a stray seam.
+        boxShadow: scrolled
+          ? '0 10px 28px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35)'
+          : 'none',
       }}
     >
       <div className="section-container flex items-center justify-between h-16">
@@ -75,20 +93,39 @@ export function Navbar() {
           CyCraft
         </Link>
 
-        {/* Desktop nav */}
-        <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-8">
+        {/* Desktop nav — shows from lg (1024px+) with tightened spacing so
+            all 11 items fit on a standard 1366-wide laptop without
+            collapsing to the hamburger. */}
+        <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-3 xl:gap-4 mx-4">
           {NAV_LINKS.map((link) => {
+            const active = isActiveLink(link.href);
+            // Active links: beam colour + a 2px beam underline with subtle
+            // glow, so the current page is identifiable without relying on
+            // colour alone (some users won't catch the secondary→beam shift
+            // amidst other accents on the page).
+            const restingColor = active
+              ? 'var(--color-beam)'
+              : 'var(--color-text-secondary)';
             const commonProps = {
               className:
-                'font-mono text-xs tracking-widest uppercase transition-colors duration-200',
-              style: { color: 'var(--color-text-secondary)' },
+                'font-mono text-[11px] xl:text-xs tracking-wider uppercase transition-colors duration-200 whitespace-nowrap',
+              style: {
+                color: restingColor,
+                paddingBottom: '4px',
+                borderBottom: active
+                  ? '2px solid var(--color-beam)'
+                  : '2px solid transparent',
+                textShadow: active ? '0 0 12px var(--color-beam-glow)' : 'none',
+              } as React.CSSProperties,
+              'aria-current': active ? ('page' as const) : undefined,
               onClick: () => handleSamePageNav(link.href),
               onMouseEnter: (e: React.MouseEvent<HTMLAnchorElement>) => {
+                if (active) return;
                 (e.currentTarget as HTMLAnchorElement).style.color = 'var(--color-beam)';
               },
               onMouseLeave: (e: React.MouseEvent<HTMLAnchorElement>) => {
-                (e.currentTarget as HTMLAnchorElement).style.color =
-                  'var(--color-text-secondary)';
+                if (active) return;
+                (e.currentTarget as HTMLAnchorElement).style.color = restingColor;
               },
             } as const;
             return isInternalRoute(link.href) ? (
@@ -107,7 +144,7 @@ export function Navbar() {
         <button
           type="button"
           onClick={() => setApplyOpen(true)}
-          className="hidden lg:inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-4 py-2 border bg-transparent transition-all duration-300 cursor-pointer"
+          className="hidden lg:inline-flex items-center gap-2 font-mono text-[11px] xl:text-xs tracking-wider uppercase px-3 xl:px-4 py-2 border bg-transparent transition-all duration-300 cursor-pointer whitespace-nowrap"
           style={{
             borderColor: 'var(--color-beam)',
             color: 'var(--color-beam)',
@@ -126,15 +163,58 @@ export function Navbar() {
           Apply 2026-27
         </button>
 
-        {/* Mobile hamburger */}
+        {/* Mobile hamburger — three-line SVG that morphs to an X when open */}
         <button
-          className="lg:hidden font-mono text-xs"
+          type="button"
+          className="lg:hidden inline-flex items-center justify-center w-11 h-11 -mr-2 cursor-pointer bg-transparent border-0"
           style={{ color: 'var(--color-beam)' }}
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((v) => !v)}
         >
-          {menuOpen ? '[×]' : '[≡]'}
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="square"
+            aria-hidden="true"
+          >
+            <line
+              x1="3"
+              y1={menuOpen ? '12' : '6'}
+              x2="21"
+              y2={menuOpen ? '12' : '6'}
+              style={{
+                transform: menuOpen ? 'rotate(45deg)' : 'none',
+                transformOrigin: '12px 12px',
+                transition: 'transform 200ms ease, y1 200ms ease, y2 200ms ease',
+              }}
+            />
+            <line
+              x1="3"
+              y1="12"
+              x2="21"
+              y2="12"
+              style={{
+                opacity: menuOpen ? 0 : 1,
+                transition: 'opacity 150ms ease',
+              }}
+            />
+            <line
+              x1="3"
+              y1={menuOpen ? '12' : '18'}
+              x2="21"
+              y2={menuOpen ? '12' : '18'}
+              style={{
+                transform: menuOpen ? 'rotate(-45deg)' : 'none',
+                transformOrigin: '12px 12px',
+                transition: 'transform 200ms ease, y1 200ms ease, y2 200ms ease',
+              }}
+            />
+          </svg>
         </button>
       </div>
 
@@ -150,9 +230,21 @@ export function Navbar() {
         >
           <div className="section-container flex flex-col py-6 gap-4">
             {NAV_LINKS.map((link) => {
+              const active = isActiveLink(link.href);
+              // Mobile menu: active link gets beam colour + a left-edge
+              // accent bar so it reads even at a glance, since there's no
+              // hover state on touch and the items stack vertically.
               const mobileProps = {
                 className: 'font-mono text-sm tracking-widest uppercase',
-                style: { color: 'var(--color-text-secondary)' },
+                style: {
+                  color: active ? 'var(--color-beam)' : 'var(--color-text-secondary)',
+                  paddingLeft: '0.85rem',
+                  borderLeft: active
+                    ? '2px solid var(--color-beam)'
+                    : '2px solid transparent',
+                  textShadow: active ? '0 0 10px var(--color-beam-glow)' : 'none',
+                } as React.CSSProperties,
+                'aria-current': active ? ('page' as const) : undefined,
                 onClick: () => {
                   handleSamePageNav(link.href);
                   setMenuOpen(false);

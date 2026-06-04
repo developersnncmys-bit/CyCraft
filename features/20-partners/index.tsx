@@ -73,7 +73,12 @@ export default function PartnersSection() {
         .to('.pt-heading-el',     { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0.02)
         .to('.pt-desc-el',        { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.06)
         .to('.pt-ticker-wrap-el', { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.20)
-        .to('.pt-camera-el',      { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.90);
+        .to('.pt-camera-el',      { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.90)
+        // In-timeline fade — close the camera before the pin releases so
+        // the partners composition doesn't linger on screen as the section
+        // drifts past during its post-pin scroll tail. Same fix pattern as
+        // curriculum + learning-evolution + cta-footer.
+        .to('.pt-camera-el',      { opacity: 0, duration: 0.05, ease: 'power2.in' }, 0.95);
     },
     { scope: sectionRef, dependencies: [reducedMotion, isDesktop] },
   );

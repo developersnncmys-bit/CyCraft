@@ -13,6 +13,7 @@
  *   0.92–1.00  Camera scale 1 → 0.96
  */
 import { useRef, useState } from 'react';
+import Link from 'next/link';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '@/lib/gsap/register';
 import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
@@ -341,10 +342,12 @@ export default function HomeCtfChallenge() {
                   </p>
                 ))}
 
-                {/* In-terminal CTA — guarantees the user can reach the
-                    /courses page without scrolling past the pinned section
-                    to find the external follow-up button below. */}
-                <a
+                {/* In-terminal CTA — uses Next.js <Link> so the navigation
+                    is client-side; a plain <a href> caused a full page
+                    reload which re-evaluated the JS bundle, reset the
+                    preloader latch, and made the Preloader replay over
+                    /courses?apply=1. */}
+                <Link
                   href={`${ctfChallengeContent.followUpCta.href}?apply=1`}
                   style={{
                     marginTop: '0.65rem',
@@ -377,7 +380,7 @@ export default function HomeCtfChallenge() {
                 >
                   {ctfChallengeContent.followUpCta.label}
                   <span aria-hidden="true">›</span>
-                </a>
+                </Link>
               </div>
             )}
 

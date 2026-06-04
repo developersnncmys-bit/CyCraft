@@ -158,6 +158,16 @@ export function useHighwayFlight(containerRef: RefObject<HTMLElement | null>) {
         });
       }
 
+      // Fade the camera out over the last 5% of the timeline so it's at
+      // opacity 0 by the time the pin releases. Avoids both the
+      // "lingering bottom content" tail (when the camera stays at
+      // y: -panDistance with full opacity post-pin) AND the abrupt-snap
+      // blank space that `hideCameraOnLeave: true` produces. The fade is
+      // visible to the reader as a natural close to the section.
+      if (cameraEl) {
+        tl.to(cameraEl, { opacity: 0, duration: 0.05, ease: 'power2.in' }, 0.95);
+      }
+
       // Trigger several deferred refreshes so the pan distance picks up
       // late-arriving layout (lazy fonts, chip wrapping, dynamic imports).
       const refreshIds = [120, 400, 1000].map((ms) =>

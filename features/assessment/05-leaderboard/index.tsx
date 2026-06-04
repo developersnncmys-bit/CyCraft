@@ -135,14 +135,45 @@ export default function AssessmentLeaderboard() {
       <style>{`
         .assessment-lb-grid {
           display: grid;
-          grid-template-columns: 60px minmax(0, 2fr) minmax(0, 2fr) 80px 80px;
+          /* Widened TIER column (last) so SILVER/BRONZE badges aren't flush
+             with the table edge. Score stays compact and right-aligned. */
+          grid-template-columns: 60px minmax(0, 2fr) minmax(0, 2fr) 80px 110px;
           gap: 0;
+          column-gap: 0.75rem;
+          align-items: center;
         }
         @media (max-width: 767px) {
+          #assessment-leaderboard {
+            min-height: auto !important;
+          }
+          .assessment-lb-camera {
+            min-height: auto !important;
+            justify-content: flex-start !important;
+            padding-top: clamp(3rem, 7vh, 5rem) !important;
+            padding-bottom: clamp(3rem, 7vh, 5rem) !important;
+          }
           .assessment-lb-grid {
-            grid-template-columns: 48px minmax(0, 1fr) 60px 56px;
+            grid-template-columns: 36px minmax(0, 1fr) 42px 64px;
+            padding: 0.7rem 0.85rem !important;
+            column-gap: 0.4rem;
           }
           .assessment-lb-col-course { display: none !important; }
+          .assessment-lb-rank-text { font-size: 1rem !important; }
+          .assessment-lb-name-text {
+            font-size: 13px !important;
+            letter-spacing: -0.005em;
+          }
+          .assessment-lb-score-text { font-size: 12px !important; }
+          .assessment-lb-tier-pill {
+            padding: 0.18rem 0.38rem !important;
+            font-size: 9px !important;
+            letter-spacing: 0.12em !important;
+            gap: 0.22rem !important;
+          }
+          .assessment-lb-header {
+            font-size: 9px !important;
+            letter-spacing: 0.18em !important;
+          }
         }
       `}</style>
 
@@ -229,7 +260,7 @@ export default function AssessmentLeaderboard() {
               <span>{assessmentLeaderboardContent.columns.name}</span>
               <span className="assessment-lb-col-course">{assessmentLeaderboardContent.columns.course}</span>
               <span style={{ textAlign: 'right' }}>{assessmentLeaderboardContent.columns.score}</span>
-              <span style={{ textAlign: 'right' }}>Tier</span>
+              <span>Tier</span>
             </div>
 
             {assessmentLeaderboardContent.entries.map((entry) => {
@@ -252,6 +283,7 @@ export default function AssessmentLeaderboard() {
                   }}
                 >
                   <span
+                    className="assessment-lb-rank-text"
                     style={{
                       fontFamily: 'var(--font-display)',
                       fontSize: '1.25rem',
@@ -264,6 +296,7 @@ export default function AssessmentLeaderboard() {
                     #{entry.rank}
                   </span>
                   <span
+                    className="assessment-lb-name-text"
                     style={{
                       fontFamily: 'var(--font-display)',
                       fontSize: 'var(--text-base)',
@@ -272,6 +305,7 @@ export default function AssessmentLeaderboard() {
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
+                      minWidth: 0,
                     }}
                   >
                     {entry.name}
@@ -290,6 +324,7 @@ export default function AssessmentLeaderboard() {
                     {entry.course}
                   </span>
                   <span
+                    className="assessment-lb-score-text"
                     style={{
                       textAlign: 'right',
                       fontFamily: 'var(--font-mono)',
@@ -302,9 +337,10 @@ export default function AssessmentLeaderboard() {
                   >
                     {entry.scorePct}%
                   </span>
-                  <span style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <span style={{ display: 'flex', justifyContent: 'flex-start' }}>
                     {isPodium ? (
                       <span
+                        className="assessment-lb-tier-pill"
                         style={{
                           display: 'inline-flex',
                           alignItems: 'center',
@@ -318,6 +354,7 @@ export default function AssessmentLeaderboard() {
                           letterSpacing: '0.16em',
                           textTransform: 'uppercase',
                           boxShadow: `0 0 10px ${tone.glow}`,
+                          whiteSpace: 'nowrap',
                         }}
                       >
                         ★ {tone.label}

@@ -91,6 +91,15 @@ export default function CTAFooterSection() {
       tl.to(desc,     { opacity: 1, y: 0, duration: 0.15, ease: 'power2.out' }, 0.46);
       tl.to(btn,      { opacity: 1, scale: 1, duration: 0.15, ease: 'back.out(1.6)' }, 0.58);
       tl.to(disclaimer, { opacity: 1, duration: 0.15, ease: 'power2.out' }, 0.72);
+
+      // Fade the camera-el out over the last ~12% of the timeline so it
+      // reaches opacity 0 well before the pin releases. Same fix pattern
+      // as curriculum + learning-evolution + partners: closes the CTA
+      // composition cleanly so it doesn't reappear as the section drifts
+      // through its post-pin tail. The absolutely-positioned bottom
+      // footer (CyCraft / Privacy / Terms / copyright) sits OUTSIDE the
+      // camera-el so it stays visible as the page's resting state.
+      tl.to('.cta-camera-el', { opacity: 0, duration: 0.12, ease: 'power2.in' }, 0.88);
     },
     { scope: sectionRef, dependencies: [reducedMotion, isDesktop] },
   );
@@ -98,6 +107,21 @@ export default function CTAFooterSection() {
   return (
     <>
       <SectionWrapper ref={sectionRef} id="cta" act={6}>
+        {/* Mobile-only padding rescue. On narrow viewports the bottom
+            footer (CyCraft address + Privacy/Terms + copyright) wraps to
+            ~200px tall and sits as `position: absolute; bottom: 0` with an
+            opaque void background. The centered CTA content above uses
+            `min-height: 100vh` + flex-center, so the APPLY NOW button
+            lands in the bottom portion of the centered area and gets
+            covered. Reserving bottom space here lifts the centered block
+            above the footer. */}
+        <style>{`
+          @media (max-width: 768px) {
+            .cta-content-wrap-el {
+              padding-bottom: clamp(11rem, 28vh, 14rem) !important;
+            }
+          }
+        `}</style>
         <div
           className="cta-camera-el"
           style={{
@@ -176,6 +200,7 @@ export default function CTAFooterSection() {
           />
 
           <div
+            className="cta-content-wrap-el"
             style={{
               position: 'relative', zIndex: 3,
               minHeight: '100vh',

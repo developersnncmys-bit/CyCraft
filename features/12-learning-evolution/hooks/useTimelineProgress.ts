@@ -111,6 +111,15 @@ export function useTimelineProgress(containerRef: RefObject<HTMLElement | null>)
         }
       });
 
+      // Fade the camera out over the last 5% of the timeline so it's at
+      // opacity 0 by the time the pin releases. Avoids both the
+      // "lingering bottom phase" tail AND the abrupt blank space that
+      // `hideCameraOnLeave: true` produces. The fade reads as a natural
+      // close to the timeline before the next section enters.
+      if (cameraEl) {
+        tl.to(cameraEl, { opacity: 0, duration: 0.05, ease: 'power2.in' }, 0.95);
+      }
+
       const refreshIds = [120, 400, 1000].map((ms) =>
         window.setTimeout(() => ScrollTrigger.refresh(), ms),
       );

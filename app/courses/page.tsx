@@ -18,9 +18,9 @@
  * Static imports (not dynamic) — pinned scrub timelines require every
  * section's real height at first measurement, same reasoning as Contact.
  */
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { ScrollTrigger } from '@/lib/gsap/register';
 import CoursesHero from '@/features/courses/01-hero';
 import CoursesCatalog from '@/features/courses/02-catalog';
@@ -36,24 +36,31 @@ const ApplyModal = dynamic(() => import('@/features/22-apply-modal'), { ssr: fal
 // reader in its own component so the rest of the page can render while the
 // query params resolve.
 function ApplyModalGate() {
-  const router = useRouter();
   const searchParams = useSearchParams();
+  // The URL `?apply=1` is a one-shot SIGNAL: read it on first mount,
+  // open the modal, then strip it from the URL via window.history so the
+  // Next.js router never sees the change. From that point on, the modal
+  // is managed by local state. This avoids `router.replace` on close —
+  // which was incidentally triggering a full-tree reconciliation that
+  // re-applied the Preloader's style prop and flashed it back on screen.
+  const [open, setOpen] = useState(() => searchParams.get('apply') === '1');
 
-  // URL is the source of truth — modal is open while ?apply=1 is set.
-  // Closing strips the param via router.replace, which re-renders this
-  // component with `open === false`. Avoids the lint warning about
-  // calling setState from inside useEffect (and avoids the bug where
-  // an internal `open` state could drift from the URL).
-  const open = searchParams.get('apply') === '1';
+  useEffect(() => {
+    if (!open) return;
+    if (typeof window === 'undefined') return;
+    if (window.location.search.includes('apply=')) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('apply');
+      const qs = url.searchParams.toString();
+      window.history.replaceState(
+        null,
+        '',
+        qs ? `${url.pathname}?${qs}` : url.pathname,
+      );
+    }
+  }, [open]);
 
-  const handleClose = () => {
-    const next = new URLSearchParams(searchParams.toString());
-    next.delete('apply');
-    const qs = next.toString();
-    router.replace(qs ? `/courses?${qs}` : '/courses', { scroll: false });
-  };
-
-  return <ApplyModal isOpen={open} onClose={handleClose} />;
+  return <ApplyModal isOpen={open} onClose={() => setOpen(false)} />;
 }
 
 export default function CoursesPage() {

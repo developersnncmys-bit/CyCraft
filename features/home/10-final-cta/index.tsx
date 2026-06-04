@@ -8,6 +8,7 @@
  *   0.70–1.00  Red glow intensifies + camera scale 1 → 0.94
  */
 import { useRef } from 'react';
+import Link from 'next/link';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '@/lib/gsap/register';
 import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
@@ -15,6 +16,11 @@ import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { homeFinalCtaContent } from '@/content/home/final-cta';
 import { WordSplit } from '@/features/home/_shared/wordSplit';
+
+// All three final-CTA targets (/btech, /courses, /contact) are internal,
+// so use Next.js <Link>. The raw anchors that lived here previously were
+// causing hard reloads, which re-evaluated the JS bundle and replayed
+// the Preloader.
 
 export default function HomeFinalCta() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -217,8 +223,10 @@ export default function HomeFinalCta() {
             gap: '0.85rem',
           }}
         >
-          {/* Primary — Join CyCraft (red filled) */}
-          <a
+          {/* Primary — Join CyCraft (red filled). Next.js <Link> so the
+              click stays client-side and the Preloader latch in the
+              layout is preserved. */}
+          <Link
             href={homeFinalCtaContent.primary.href}
             style={{
               display: 'inline-flex',
@@ -249,10 +257,10 @@ export default function HomeFinalCta() {
           >
             {homeFinalCtaContent.primary.label}
             <span aria-hidden="true">›</span>
-          </a>
+          </Link>
 
           {/* Secondary — Start Learning (outline) */}
-          <a
+          <Link
             href={homeFinalCtaContent.secondary.href}
             style={{
               display: 'inline-flex',
@@ -283,10 +291,10 @@ export default function HomeFinalCta() {
           >
             {homeFinalCtaContent.secondary.label}
             <span aria-hidden="true">›</span>
-          </a>
+          </Link>
 
           {/* Tertiary — Contact Us (ghost text link) */}
-          <a
+          <Link
             href={homeFinalCtaContent.tertiary.href}
             style={{
               display: 'inline-flex',
@@ -312,7 +320,7 @@ export default function HomeFinalCta() {
           >
             {homeFinalCtaContent.tertiary.label}
             <span aria-hidden="true">›</span>
-          </a>
+          </Link>
         </div>
       </div>
       </div>

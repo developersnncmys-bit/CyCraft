@@ -16,8 +16,13 @@ export function TiltedVideo({ mp4, poster, label }: TiltedVideoProps) {
     <div
       style={{
         perspective: '1000px',
-        flex: '0 0 auto',
-        width: isDesktop ? '50%' : '100%',
+        // Match the text column's flex pattern. Both columns share the row
+        // when they fit (≈50/50), and the video grows to 100% when the
+        // parent wrap kicks in — which fixes the "empty right half" that
+        // the previous `width: 50%` left behind after wrapping.
+        flex: '1 1 min(480px, 100%)',
+        minWidth: 0,
+        width: isDesktop ? undefined : '100%',
       }}
     >
       <div
