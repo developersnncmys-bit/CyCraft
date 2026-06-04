@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { JetBrains_Mono } from 'next/font/google';
@@ -53,6 +53,18 @@ export const metadata: Metadata = {
     type: 'website',
   },
   twitter: { card: 'summary_large_image' },
+};
+
+// Without this, mobile browsers fall back to a ~980px virtual viewport and
+// render the whole site at desktop scale, then visually shrink to fit the
+// device — which manifests as oversized text, clipped hero headlines, and
+// "cards not visible" because all `vw`/clamp() units calculate against the
+// wrong width. Next.js does NOT auto-add the viewport meta for App Router
+// projects; it has to be exported explicitly.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({

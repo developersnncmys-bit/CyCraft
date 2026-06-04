@@ -12,7 +12,6 @@ import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper'
 import { ctaFooterContent } from '@/content/cta-footer';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
-import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
 
 const ApplyModal = dynamic(() => import('@/features/22-apply-modal'), { ssr: false });
 
@@ -65,12 +64,22 @@ export default function CTAFooterSection() {
       if (convergeGlow) gsap.set(convergeGlow, { opacity: 0, scale: 0 });
       gsap.set('.cta-camera-el', { scale: 1, opacity: 1 });
 
-      const tl = makePinnedTimeline({
-        trigger: container,
-        end: PIN_DURATIONS.finalCta,
-        scrub: 1,
-        enabled: true,
-        invalidateOnRefresh: true,
+      // Non-pinning scrub trigger — the section is the LAST on the page,
+      // so any pinSpacing extends the document past the visible content
+      // and leaves an extra "blank scroll" tail at the bottom. Original
+      // intent (per the file header) was "played once on enter (NOT
+      // pinned)"; this scrubs across the section's natural entry window
+      // (top bottom → top top, i.e. one viewport of scroll) so the
+      // animations land synchronously with the section reaching the top,
+      // and the page ends exactly when the CTA composition does.
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: 'top bottom',
+          end: 'top top',
+          scrub: 1,
+          invalidateOnRefresh: true,
+        },
       });
 
       // Red + Blue beams arc inward and meet at centre
@@ -91,15 +100,6 @@ export default function CTAFooterSection() {
       tl.to(desc,     { opacity: 1, y: 0, duration: 0.15, ease: 'power2.out' }, 0.46);
       tl.to(btn,      { opacity: 1, scale: 1, duration: 0.15, ease: 'back.out(1.6)' }, 0.58);
       tl.to(disclaimer, { opacity: 1, duration: 0.15, ease: 'power2.out' }, 0.72);
-
-      // Fade the camera-el out over the last ~12% of the timeline so it
-      // reaches opacity 0 well before the pin releases. Same fix pattern
-      // as curriculum + learning-evolution + partners: closes the CTA
-      // composition cleanly so it doesn't reappear as the section drifts
-      // through its post-pin tail. The absolutely-positioned bottom
-      // footer (CyCraft / Privacy / Terms / copyright) sits OUTSIDE the
-      // camera-el so it stays visible as the page's resting state.
-      tl.to('.cta-camera-el', { opacity: 0, duration: 0.12, ease: 'power2.in' }, 0.88);
     },
     { scope: sectionRef, dependencies: [reducedMotion, isDesktop] },
   );

@@ -372,3 +372,44 @@ h1, h2, h3, h4 {
   .role-beam-el { display: none !important; }
   .centre-node-el { display: none !important; }
 }
+
+/* ── Courses page: collapse pinned cinematic sections on mobile ──
+   The /courses page mirrors the btech architecture — each section forces
+   `min-height: 100vh` + `overflow: hidden` for the desktop scrub-pin layout,
+   and the catalog wraps its content in an absolutely-positioned `camera-el`
+   that pans upward as the user scrolls. Below 1024px the pin doesn't run,
+   so the 100vh + overflow:hidden clips everything past the first viewport
+   (21 cards effectively invisible). Drop the forced heights and put the
+   absolute camera back into document flow so content scrolls naturally. */
+@media (max-width: 1023.98px) {
+  #courses-catalog,
+  #courses-learning-path,
+  #courses-guidance {
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+  #courses-catalog .courses-catalog-camera-el {
+    position: relative !important;
+    inset: auto !important;
+  }
+  /* Inner flex columns inside learning-path/guidance also force 100vh + */
+  /* center alignment for the desktop pinned camera. Drop both on mobile. */
+  #courses-learning-path > div[class*="-camera"],
+  #courses-guidance > div[class*="-camera"] {
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+  /* ── Hero headline overflow fix ──
+     `clamp(2rem, 4.5vw, 4rem)` floors at 32px which still pushes
+     "PENETRATION MASTERY COURSES" past the right edge on ~390px phones.
+     Force a tighter clamp and let words wrap freely. */
+  #courses-hero .courses-hero-headline {
+    font-size: clamp(1.5rem, 8vw, 2.5rem) !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+  #courses-hero {
+    min-height: auto !important;
+    padding-bottom: 3rem !important;
+  }
+}

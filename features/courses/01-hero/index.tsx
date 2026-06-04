@@ -213,6 +213,31 @@ export default function CoursesHero() {
         paddingBottom: 'clamp(3rem, 6vh, 5rem)',
       }}
     >
+      {/* Pexels background video — muted, autoplay, looped. */}
+      <video
+        aria-hidden="true"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+          pointerEvents: 'none',
+          opacity: 0.5,
+        }}
+      >
+        <source
+          src="https://videos.pexels.com/video-files/3129957/3129957-hd_1920_1080_25fps.mp4"
+          type="video/mp4"
+        />
+      </video>
+
       <div
         aria-hidden="true"
         className="courses-hero-bg-layer"

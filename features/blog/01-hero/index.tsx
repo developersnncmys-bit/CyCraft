@@ -281,7 +281,7 @@ export default function BlogHero() {
         }}
       >
         <div style={{ maxWidth: '960px', marginInline: 'auto' }}>
-          <div className="blog-hero-badge" style={{ display: 'inline-block', marginBottom: '2rem' }}>
+          <div className="blog-hero-badge" style={{ display: 'inline-block', marginBottom: '1.25rem' }}>
             <Badge label={blogHeroContent.badge} />
           </div>
 
@@ -302,13 +302,13 @@ export default function BlogHero() {
             <WordSplit
               className="blog-hero-line-1"
               text={blogHeroContent.headlinePrefix}
-              style={{ display: 'block', color: 'var(--color-text-primary)' }}
-            />
+              style={{ display: 'inline', color: 'var(--color-text-primary)' }}
+            />{' '}
             <WordSplit
               className="blog-hero-line-2"
               text={blogHeroContent.headlineAccent}
               style={{
-                display: 'block',
+                display: 'inline',
                 color: 'var(--color-beam)',
                 textShadow: '0 0 28px var(--color-beam-glow)',
               }}
@@ -323,7 +323,7 @@ export default function BlogHero() {
               height: '2px',
               background: 'var(--color-beam)',
               boxShadow: '0 0 12px var(--color-beam-glow)',
-              margin: '2.25rem auto',
+              margin: '1.5rem auto',
               transformOrigin: 'left center',
             }}
           />
@@ -335,7 +335,7 @@ export default function BlogHero() {
               fontSize: 'var(--text-lg)',
               color: 'var(--color-text-secondary)',
               maxWidth: '680px',
-              margin: '0 auto 2.25rem',
+              margin: '0 auto 1.5rem',
               lineHeight: 1.65,
             }}
           >
@@ -359,7 +359,7 @@ export default function BlogHero() {
               border: '1px solid rgba(168,240,255,0.22)',
               background: 'rgba(13,16,20,0.55)',
               backdropFilter: 'blur(6px)',
-              margin: '0 auto 2rem',
+              margin: '0 auto 1.25rem',
               willChange: 'transform, opacity',
               textAlign: 'left',
             }}
@@ -422,7 +422,7 @@ export default function BlogHero() {
               flexWrap: 'wrap',
               justifyContent: 'center',
               gap: '0.75rem',
-              marginBottom: '2rem',
+              marginBottom: '1.25rem',
             }}
           >
             <span

@@ -19,6 +19,10 @@ export function SmoothScrollProvider({
   const reducedMotion = useReducedMotion();
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const pathname = usePathname();
+  // btech has 21 pinned sections back-to-back; the global snappy 0.6 glide
+  // reads as a hard step between each pin handoff. A longer glide here
+  // smooths those handoffs without affecting any other page.
+  const isBtech = pathname?.startsWith('/btech') ?? false;
 
   useEffect(() => {
     configureScrollTrigger();
@@ -33,8 +37,10 @@ export function SmoothScrollProvider({
 
     const lenis = new Lenis({
       // Shorter glide (was 1.2) so scroll responds to the wheel quickly instead
-      // of feeling floaty/laggy — keeps smoothing, just snappier.
-      duration: 0.6,
+      // of feeling floaty/laggy — keeps smoothing, just snappier. btech gets
+      // a longer glide so the pin-to-pin handoffs across its 21 cinematic
+      // sections feel continuous rather than stepped.
+      duration: isBtech ? 1.1 : 0.6,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       touchMultiplier: 2,
@@ -64,7 +70,7 @@ export function SmoothScrollProvider({
       lenisRef.current = null;
       setLenisInstance(null);
     };
-  }, [reducedMotion, isDesktop]);
+  }, [reducedMotion, isDesktop, isBtech]);
 
   // On client-side route changes, land the new page at the top. Next.js resets
   // scroll natively, but Lenis re-applies its own scroll on the next frame, so

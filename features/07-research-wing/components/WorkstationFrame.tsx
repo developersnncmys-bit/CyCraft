@@ -79,11 +79,11 @@ export function WorkstationFrame({ data, streamingLines }: WorkstationFrameProps
       <ul
         style={{
           listStyle: 'none',
-          padding: '0.75rem 0 0',
+          padding: '0.35rem 0 0',
           margin: 0,
           display: 'flex',
           flexWrap: 'wrap',
-          gap: '0.5rem 1rem',
+          gap: '0.15rem 0.85rem',
         }}
         aria-label={`${data.heading} features`}
       >

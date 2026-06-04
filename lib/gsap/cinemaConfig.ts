@@ -127,6 +127,13 @@ export const PIN_DURATIONS = {
   downloadTools:       '+=300%',
   downloadAccess:      '+=250%',
   downloadCta:         '+=200%',
+  /* ── Blog page cinematic pins ───────────────────────────────────────────
+     Hero is unpinned (autoplay reveal). Feed is intentionally free-scroll
+     (PRD §3.7 — needs to behave like a normal article list). Only the
+     Subscribe close is pinned, and its 7 beats (badge → heading → sub →
+     form → terminal) need ~300% to breathe — the previous '+=200%' silent
+     fallback (when this key was missing from PIN_DURATIONS) felt too brief. */
+  blogSubscribe: '+=300%',
   /* ── Gallery page cinematic pins ────────────────────────────────────────
      Hero is unpinned (autoplay). 4 pinned acts — Events grid, Videos,
      Stats, CTA. Events grid carries the longest hold since 9 cards

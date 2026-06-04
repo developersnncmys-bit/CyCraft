@@ -114,13 +114,13 @@ export default function CampusSection() {
                 className="cs-heading-el"
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
+                  fontSize: 'clamp(1.35rem, 2.4vw, 2rem)',
                   fontWeight: 700,
                   letterSpacing: '-0.02em',
                   textTransform: 'uppercase',
                   color: 'var(--color-text-primary)',
-                  margin: '1rem 0 0.5rem',
-                  lineHeight: 1.1,
+                  margin: '0.65rem 0 0.35rem',
+                  lineHeight: 1.08,
                   willChange: 'transform, opacity',
                 }}
               >
@@ -130,17 +130,17 @@ export default function CampusSection() {
                 className="cs-location-el"
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: 'var(--text-lg)',
+                  fontSize: 'var(--text-base)',
                   color: 'var(--color-beam)',
                   fontWeight: 500,
-                  margin: '0 0 1rem',
+                  margin: '0 0 0.75rem',
                   willChange: 'opacity',
                 }}
               >
                 {campusContent.location}
               </p>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginBottom: '0.9rem' }}>
                 {campusContent.accreditations.map((acc) => (
                   <span
                     key={acc}
@@ -151,7 +151,7 @@ export default function CampusSection() {
                       letterSpacing: '0.12em',
                       color: 'var(--color-text-tertiary)',
                       border: '1px solid rgba(168,240,255,0.12)',
-                      padding: '3px 8px',
+                      padding: '2px 7px',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -160,15 +160,15 @@ export default function CampusSection() {
                 ))}
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
                 {campusContent.features.map((f) => (
                   <div key={f.id} className="campus-feature-el" style={{ opacity: 0, transform: 'translateY(20px)' }}>
                     <div
                       style={{
                         fontFamily: 'var(--font-mono)',
-                        fontSize: 'var(--text-sm)',
+                        fontSize: '13px',
                         color: 'var(--color-beam)',
-                        marginBottom: '0.2rem',
+                        marginBottom: '0.1rem',
                       }}
                     >
                       {f.title}
@@ -176,10 +176,10 @@ export default function CampusSection() {
                     <p
                       style={{
                         fontFamily: 'var(--font-body)',
-                        fontSize: 'var(--text-sm)',
+                        fontSize: '13px',
                         color: 'var(--color-text-secondary)',
                         margin: 0,
-                        lineHeight: 1.55,
+                        lineHeight: 1.4,
                       }}
                     >
                       {f.description}

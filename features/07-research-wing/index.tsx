@@ -57,7 +57,7 @@ export default function ResearchWingSection() {
                 letterSpacing: '-0.02em',
                 textTransform: 'uppercase',
                 color: 'var(--color-text-primary)',
-                margin: '0 0 clamp(1rem, 3vh, 2rem)',
+                margin: 'clamp(2.5rem, 7vh, 5rem) 0 clamp(1rem, 3vh, 2rem)',
                 maxWidth: '900px',
                 lineHeight: 1.1,
                 willChange: 'transform, opacity',
@@ -83,7 +83,7 @@ export default function ResearchWingSection() {
                     color: 'var(--color-terminal)',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
-                    marginBottom: '0.75rem',
+                    marginBottom: '0.5rem',
                   }}
                 >
                   {`// ${researchWingContent.workstation.heading}`}
@@ -91,9 +91,10 @@ export default function ResearchWingSection() {
                 <p
                   style={{
                     fontFamily: 'var(--font-body)',
-                    fontSize: 'var(--text-base)',
+                    fontSize: '13px',
                     color: 'var(--color-text-secondary)',
-                    lineHeight: 1.6,
+                    lineHeight: 1.4,
+                    margin: 0,
                   }}
                 >
                   {researchWingContent.workstation.description}
@@ -147,7 +148,7 @@ export default function ResearchWingSection() {
                     color: 'var(--color-red-team)',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
-                    marginBottom: '0.75rem',
+                    marginBottom: '0.5rem',
                   }}
                 >
                   {`// ${researchWingContent.hackerHouse.heading}`}
@@ -155,9 +156,10 @@ export default function ResearchWingSection() {
                 <p
                   style={{
                     fontFamily: 'var(--font-body)',
-                    fontSize: 'var(--text-base)',
+                    fontSize: '13px',
                     color: 'var(--color-text-secondary)',
-                    lineHeight: 1.6,
+                    lineHeight: 1.4,
+                    margin: 0,
                   }}
                 >
                   {researchWingContent.hackerHouse.description}
