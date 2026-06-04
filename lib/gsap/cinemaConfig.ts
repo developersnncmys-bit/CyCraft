@@ -7,32 +7,35 @@ import { gsap, ScrollTrigger } from './register';
  * Source of truth: CINEMA_SPEC.md Section 2.2.
  */
 export const PIN_DURATIONS = {
-  // btech pins, sized so each releases shortly after its content animation
-  // finishes — long static "hold" tails were the main cause of the stuck/blank/
-  // delayed scroll feel. Camera-pan sections keep their length so the pan tracks
-  // scroll ~1:1: researchWing (recently restructured), learningEvolution (~1:1);
-  // curriculum is trimmed because its pan was sluggishly slow.
+  // btech pins. Since the architecture moved from `unpinned` (autoplay at
+  // timeScale 0.3) to fully scrub-pinned, these values now directly map to
+  // scroll distance. The old short values (40–95%) flashed through under
+  // scrub — they were sized for real-time autoplay, not scroll. Rescaled to
+  // the 150–250% band matching home/about cadence so each section holds long
+  // enough to read while the timeline scrubs against scroll. Camera-pan
+  // sections (researchWing, curriculum, learningEvolution, battlegrounds)
+  // keep their longer pins because their content walks through more beats.
   hero: '+=150%',
-  achievements: '+=100%',
-  pillars: '+=150%',
-  philosophy: '+=70%',
-  programOverview: '+=90%',
-  tracks: '+=90%',
+  achievements: '+=180%',
+  pillars: '+=180%',
+  philosophy: '+=180%',
+  programOverview: '+=180%',
+  tracks: '+=180%',
   researchWing: '+=300%',
-  projects: '+=95%',
-  specializations: '+=75%',
-  certifications: '+=50%',
+  projects: '+=200%',
+  specializations: '+=180%',
+  certifications: '+=150%',
   curriculum: '+=220%',
-  learningEvolution: '+=190%',
-  battlegrounds: '+=55%',
-  comparison: '+=60%',
-  hiringTournaments: '+=65%',
-  placements: '+=70%',
-  campus: '+=65%',
-  admission: '+=75%',
-  eligibility: '+=40%',
-  partners: '+=65%',
-  finalCta: '+=160%',
+  learningEvolution: '+=220%',
+  battlegrounds: '+=240%',
+  comparison: '+=180%',
+  hiringTournaments: '+=180%',
+  placements: '+=200%',
+  campus: '+=150%',
+  admission: '+=180%',
+  eligibility: '+=120%',
+  partners: '+=130%',
+  finalCta: '+=180%',
   /* ── Home page cinematic pins ─────────────────────────────────────────
      Total pin scroll across the home: ~28 viewports. With Lenis smooth
      scroll, this gives a deliberate 8–10 minute "cinematic" experience
@@ -71,6 +74,43 @@ export const PIN_DURATIONS = {
   contactInquiries: '+=350%',
   contactMap:       '+=400%',
   contactSocials:   '+=300%',
+  /* ── Research page cinematic pins ───────────────────────────────────────
+     Hero is unpinned (autoplay fade-in on load). Pinning starts at Focus
+     and runs through CTA — ~14 viewports across 5 pinned acts, ~8 min of
+     deliberate scroll. Focus gets the longest hold because it walks
+     through 6 research tracks. */
+  researchFocus:        '+=400%',
+  researchStats:        '+=250%',
+  researchPublications: '+=300%',
+  researchPillars:      '+=250%',
+  researchCta:          '+=200%',
+  /* ── Courses page cinematic pins ────────────────────────────────────────
+     Hero is unpinned (autoplay reveal on every load/nav). Pinning starts at
+     the Catalog and runs through Guidance — ~12.5 viewports across 3
+     pinned acts, ~8-10 min at deliberate pace. Catalog gets the longest
+     hold because it has to walk through a dramatic stats counter plus
+     21 cards arriving as a credits-style camera-pan. */
+  coursesCatalog:      '+=600%',
+  coursesLearningPath: '+=350%',
+  coursesGuidance:     '+=300%',
+  /* ── Verify page cinematic pins ─────────────────────────────────────────
+     Utility page. Hero is unpinned (autoplay reveal). 4 pinned acts —
+     Form, How It Works, QR, CTA. Form gets the longest hold since it walks
+     the user from empty input through to a fully populated result card. */
+  verifyForm:       '+=350%',
+  verifyHowItWorks: '+=250%',
+  verifyQr:         '+=200%',
+  verifyCta:        '+=200%',
+  /* ── Assessment page cinematic pins ─────────────────────────────────────
+     Marketing surface for the LMS exam engine. Hero is unpinned (autoplay).
+     5 pinned acts — Categories, Interface preview, Results, Leaderboard,
+     CTA. Interface + Leaderboard get the longest holds because each walks
+     through a multi-element composition. */
+  assessmentCategories:  '+=300%',
+  assessmentInterface:   '+=350%',
+  assessmentResults:     '+=300%',
+  assessmentLeaderboard: '+=350%',
+  assessmentCta:         '+=200%',
 } as const;
 
 export type PinnedSectionKey = keyof typeof PIN_DURATIONS;
@@ -94,12 +134,19 @@ export interface PinnedTimelineOptions {
    *  re-shows ("repeats") during its tail AND where a brief dark cut is
    *  preferable to that repeat. Only matches btech `-camera-el` wrappers. */
   hideCameraOnLeave?: boolean;
+  /** Deprecated — accepted for source-compatibility, no longer changes
+   *  behaviour. Every cinema section now pins. */
+  unpinned?: boolean;
 }
 
 /**
  * Factory for a pin-and-scrub section timeline.
- * Used by per-section cinematic hooks (added in Phase 2+).
- * Pass `enabled: false` from useIsDesktop to disable pinning on mobile.
+ * Used by per-section cinematic hooks across every page (btech included).
+ *
+ * Behaviour: pin the section at viewport top, scrub the timeline against
+ * scroll for the configured `end` distance (see `PIN_DURATIONS`). The
+ * `unpinned` option is accepted for source-compatibility but ignored —
+ * every section now pins.
  */
 export function makePinnedTimeline({
   trigger,
@@ -111,7 +158,17 @@ export function makePinnedTimeline({
   onLeave,
   invalidateOnRefresh = false,
   hideCameraOnLeave = true,
+  unpinned = false,
 }: PinnedTimelineOptions) {
+  // ── `unpinned` flag retained for backwards-compatibility ────────────────
+  // The old `unpinned: true` path (play-once at slow timeScale, no pin) was
+  // removed when btech moved to full scrub-pinned cinema. All sections — btech
+  // included — now fall through to the pinned/scrub branch below so each
+  // section locks in viewport while its timeline scrubs against scroll. The
+  // flag is accepted but ignored; existing call sites compile without edits.
+  void unpinned;
+
+  // ── Pinned mode (default — all cinema sections) ─────────────────────────
   // Resolve the section's absolutely-positioned camera wrapper lazily so the
   // ref survives ScrollTrigger refreshes. Only btech sections use `-camera-el`.
   const getCamera = (): HTMLElement | null => {

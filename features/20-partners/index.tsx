@@ -66,6 +66,7 @@ export default function PartnersSection() {
         end: PIN_DURATIONS.partners,
         scrub: 1,
         enabled: true,
+        unpinned: true,
       });
 
       tl.to('.pt-badge-el',       { opacity: 1, duration: 0.05, ease: 'power2.out' }, 0)

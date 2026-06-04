@@ -56,8 +56,10 @@ export function WorkstationFrame({ data, streamingLines }: WorkstationFrameProps
           </span>
         </div>
 
-        {/* Terminal body */}
-        <div style={{ padding: '1rem 1.25rem', minHeight: '220px' }}>
+        {/* Terminal body — minHeight tightened from 220 → 160 so the workstation
+            block fits within the section's 100vh viewport without clipping the
+            last terminal line or the feature list beneath. */}
+        <div style={{ padding: '0.75rem 1.25rem', minHeight: '160px' }}>
           <div
             style={{
               fontFamily: 'var(--font-mono)',
@@ -72,15 +74,16 @@ export function WorkstationFrame({ data, streamingLines }: WorkstationFrameProps
         </div>
       </div>
 
-      {/* Feature list beneath frame */}
+      {/* Feature list beneath frame — gap & padding tightened so all items fit
+          inside the 100vh pin without clipping. */}
       <ul
         style={{
           listStyle: 'none',
-          padding: '1.25rem 0 0',
+          padding: '0.75rem 0 0',
           margin: 0,
           display: 'flex',
           flexWrap: 'wrap',
-          gap: '0.75rem',
+          gap: '0.5rem 1rem',
         }}
         aria-label={`${data.heading} features`}
       >

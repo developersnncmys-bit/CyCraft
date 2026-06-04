@@ -85,6 +85,7 @@ export function useHouseDissolve(containerRef: RefObject<HTMLElement | null>) {
         end: PIN_DURATIONS.researchWing,
         scrub: 1,
         enabled: true,
+        unpinned: true,
         invalidateOnRefresh: true,
       });
 
@@ -95,10 +96,11 @@ export function useHouseDissolve(containerRef: RefObject<HTMLElement | null>) {
         .to('.rw-block-workstation-el', { opacity: 1, duration: 0.12, ease: 'power2.out' }, 0.08)
         .to('.workstation-frame-el',    { rotateY: 0, duration: 0.14, ease: 'power2.out' }, 0.08)
 
-      // 0.22 – 0.32 Hold — let the reader take in the workstation
-
-      // 0.32 – 0.62 Camera pans 0 → -100vh (house enters)
-        .to('.rw-camera-el', { y: () => -window.innerHeight, duration: 0.30, ease: 'none' }, 0.32)
+      // 0.32 – 0.62 Camera pans 0 → -100vh so the second block (house)
+      // scrolls into the pinned viewport. Restored after the section moved
+      // from unpinned back to fully pinned cinema — without the pan the
+      // house block sat below the viewport for the entire pin.
+        .to('.rw-camera-el', { y: '-100vh', duration: 0.30, ease: 'none' }, 0.32)
 
       // 0.55 – 0.68 House reveals + camera zooms in
         .to('.rw-block-house-el', { opacity: 1, duration: 0.10, ease: 'power2.out' }, 0.55)

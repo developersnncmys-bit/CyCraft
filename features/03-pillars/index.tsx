@@ -111,7 +111,7 @@ export default function PillarsSection() {
         </div>
       </div>
 
-      {/* Ambient glow from prism split */}
+      {/* Ambient glow from prism split — clamps so it doesn't overflow narrow viewports */}
       <div
         aria-hidden="true"
         style={{
@@ -119,8 +119,9 @@ export default function PillarsSection() {
           top: '28%',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '400px',
-          height: '300px',
+          width: 'clamp(220px, 60vw, 400px)',
+          height: 'clamp(180px, 40vw, 300px)',
+          maxWidth: '100vw',
           background: 'radial-gradient(ellipse, rgba(168,240,255,0.05) 0%, transparent 70%)',
           pointerEvents: 'none',
           zIndex: 1,

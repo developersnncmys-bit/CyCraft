@@ -16,7 +16,11 @@ export const contactInquiriesContent = {
       ],
       cta: {
         label: 'Talk to Admissions',
-        href: 'mailto:support@cycraft.in?subject=Admissions%20Inquiry',
+        // Scrolls back up to the in-page form (sits inside the same
+        // /contact route at #contact-form). Was a raw mailto: that bounced
+        // users out to their email client — the on-site form captures the
+        // inquiry into Admin per PRD §3.10.
+        href: '#contact-form',
       },
       accent: 'beam' as const,
     },
@@ -32,7 +36,7 @@ export const contactInquiriesContent = {
       ],
       cta: {
         label: 'Start a Partnership',
-        href: 'mailto:support@cycraft.in?subject=Partnership%20Inquiry',
+        href: '#contact-form',
       },
       accent: 'red' as const,
     },

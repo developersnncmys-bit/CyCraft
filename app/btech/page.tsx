@@ -25,10 +25,13 @@ import EligibilitySection from '@/features/19-eligibility';
 import PartnersSection from '@/features/20-partners';
 import CTAFooterSection from '@/features/21-cta-footer';
 import { ActTransition } from '@/components/layout/ActTransition';
+import { BTechAtmosphere } from '@/components/layout/BTechAtmosphere';
 
 export default function BTechPage() {
   return (
     <>
+      <BTechAtmosphere />
+
       {/* Act I — Dormancy */}
       <HeroSection />
       <AchievementsSection />

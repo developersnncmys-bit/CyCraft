@@ -71,7 +71,7 @@ export default function BattlegroundsSection() {
 
           {/* 3×3 grid — explicit 3 columns so all 9 tiles fit cleanly */}
           <div
-            className="section-container"
+            className="section-container labs-grid"
             role="list"
             aria-label="Hands-on lab environments"
             style={{

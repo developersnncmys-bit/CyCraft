@@ -73,6 +73,7 @@ export default function ProgramOverviewSection() {
 
             {/* ── Detail cards ── aligned to terminal width (680px) for visual cohesion */}
             <div
+              className="po-details-grid"
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',

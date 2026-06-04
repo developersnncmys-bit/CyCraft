@@ -38,6 +38,7 @@ export default function CertificationsSection() {
         end: PIN_DURATIONS.certifications,
         scrub: 1,
         enabled: true,
+        unpinned: true,
       });
 
       tl.to('.cert-heading-el',     { opacity: 1, y: 0, duration: 0.15, ease: 'power3.out' }, 0)

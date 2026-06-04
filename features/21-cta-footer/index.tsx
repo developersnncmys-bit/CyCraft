@@ -12,6 +12,7 @@ import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper'
 import { ctaFooterContent } from '@/content/cta-footer';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
+import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
 
 const ApplyModal = dynamic(() => import('@/features/22-apply-modal'), { ssr: false });
 
@@ -51,10 +52,9 @@ export default function CTAFooterSection() {
         return;
       }
 
-      // ── Desktop ── THE CONVERGENCE, played once on enter. Deliberately NOT
-      // pinned: as the page's final section, a scrub-pin leaves a post-pin
-      // natural 100vh that replays the composed CTA (it showed up "twice").
-      // Playing on enter lets the section settle as one clean final screen.
+      // ── Desktop ── THE CONVERGENCE, scrub-pinned. Camera-el hides on
+      // pin-leave (factory default), so the composed CTA doesn't redraw a
+      // duplicate in the post-pin tail — only the footer remains visible.
       gsap.set(headline, { opacity: 0, y: 30 });
       gsap.set(desc, { opacity: 0, y: 20 });
       gsap.set(btn, { opacity: 0, scale: 0.85 });
@@ -64,28 +64,32 @@ export default function CTAFooterSection() {
       if (convergeGlow) gsap.set(convergeGlow, { opacity: 0, scale: 0 });
       gsap.set('.cta-camera-el', { scale: 1, opacity: 1 });
 
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: container, start: 'top 70%', toggleActions: 'play none none none' },
+      const tl = makePinnedTimeline({
+        trigger: container,
+        end: PIN_DURATIONS.finalCta,
+        scrub: 1,
+        enabled: true,
+        invalidateOnRefresh: true,
       });
 
       // Red + Blue beams arc inward and meet at centre
-      if (redBeam)  tl.to(redBeam,  { opacity: 0.9, scaleY: 1, duration: 0.6, ease: 'power2.out' }, 0);
-      if (blueBeam) tl.to(blueBeam, { opacity: 0.9, scaleY: 1, duration: 0.6, ease: 'power2.out' }, 0);
+      if (redBeam)  tl.to(redBeam,  { opacity: 0.9, scaleY: 1, duration: 0.20, ease: 'power2.out' }, 0);
+      if (blueBeam) tl.to(blueBeam, { opacity: 0.9, scaleY: 1, duration: 0.20, ease: 'power2.out' }, 0);
 
       // Convergence glow flares at the meeting point
       if (convergeGlow) {
-        tl.to(convergeGlow, { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(2)' }, 0.5);
+        tl.to(convergeGlow, { opacity: 1, scale: 1, duration: 0.12, ease: 'back.out(2)' }, 0.22);
       }
 
       // Beams dim slightly as they "feed" into the glow
-      if (redBeam)  tl.to(redBeam,  { opacity: 0.4, duration: 0.5, ease: 'power2.inOut' }, 0.7);
-      if (blueBeam) tl.to(blueBeam, { opacity: 0.4, duration: 0.5, ease: 'power2.inOut' }, 0.7);
+      if (redBeam)  tl.to(redBeam,  { opacity: 0.4, duration: 0.15, ease: 'power2.inOut' }, 0.30);
+      if (blueBeam) tl.to(blueBeam, { opacity: 0.4, duration: 0.15, ease: 'power2.inOut' }, 0.30);
 
       // Headline materialises from the glow, then desc, button, disclaimer
-      tl.to(headline, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, 0.7);
-      tl.to(desc,     { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 0.95);
-      tl.to(btn,      { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.6)' }, 1.1);
-      tl.to(disclaimer, { opacity: 1, duration: 0.4, ease: 'power2.out' }, 1.4);
+      tl.to(headline, { opacity: 1, y: 0, duration: 0.20, ease: 'power3.out' }, 0.32);
+      tl.to(desc,     { opacity: 1, y: 0, duration: 0.15, ease: 'power2.out' }, 0.46);
+      tl.to(btn,      { opacity: 1, scale: 1, duration: 0.15, ease: 'back.out(1.6)' }, 0.58);
+      tl.to(disclaimer, { opacity: 1, duration: 0.15, ease: 'power2.out' }, 0.72);
     },
     { scope: sectionRef, dependencies: [reducedMotion, isDesktop] },
   );
@@ -150,7 +154,8 @@ export default function CTAFooterSection() {
             }}
           />
 
-          {/* Convergence glow — pools where the beams meet */}
+          {/* Convergence glow — pools where the beams meet. Clamps so it
+              doesn't overflow narrow viewports. */}
           <div
             className="cta-converge-glow-el"
             aria-hidden="true"
@@ -159,8 +164,9 @@ export default function CTAFooterSection() {
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%) scale(0)',
-              width: '600px',
-              height: '300px',
+              width: 'clamp(280px, 70vw, 600px)',
+              height: 'clamp(180px, 40vw, 300px)',
+              maxWidth: '100vw',
               background: 'radial-gradient(ellipse, rgba(168,240,255,0.10) 0%, transparent 70%)',
               pointerEvents: 'none',
               zIndex: 2,

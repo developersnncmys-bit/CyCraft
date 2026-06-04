@@ -76,15 +76,22 @@ export function useTimelineProgress(containerRef: RefObject<HTMLElement | null>)
         end: PIN_DURATIONS.learningEvolution,
         scrub: 1,
         enabled: true,
+        unpinned: true,
         invalidateOnRefresh: true,
       });
 
-      // 0.00 – 0.08 Heading + description
+      // Heading + description
       tl.to('.le-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0)
-        .to('.le-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.04)
+        .to('.le-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.04);
 
-      // 0.08 – 0.90 Camera pan + beam growth
-        .to('.le-camera-el', { y: () => -panDistance(), duration: 0.82, ease: 'none' }, 0.08);
+      // 0.08 – 0.95 Camera pans so the phase nodes scroll through the pinned
+      // viewport. Restored after the section moved from unpinned back to
+      // fully pinned cinema — without the pan, nodes below the first
+      // viewport sat off-screen for the whole pin.
+      if (cameraEl) {
+        tl.to(cameraEl, { y: () => -panDistance(), duration: 0.82, ease: 'none' }, 0.08);
+      }
+
       if (beam) {
         tl.to(beam, { scaleY: 1, duration: 0.82, ease: 'none' }, 0.08);
       }

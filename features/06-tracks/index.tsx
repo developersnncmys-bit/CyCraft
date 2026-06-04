@@ -98,7 +98,7 @@ export default function TracksSection() {
           }}
         >
           <div
-            className="section-container"
+            className="section-container tracks-cards-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',

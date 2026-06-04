@@ -45,9 +45,13 @@ export default function EligibilitySection() {
         end: PIN_DURATIONS.eligibility,
         scrub: 1,
         enabled: true,
+        unpinned: true,
       });
 
-      tl.to(cols, { opacity: 1, y: 0, stagger: 0.10, duration: 0.18, ease: 'power3.out' }, 0.05)
+      // Columns staggered further (0.10 → 0.18) and started later (0.05 → 0.10)
+      // so each eligibility column has ~22vh of scroll-time before the next
+      // appears, using more of the pin instead of flashing all 4 in within 0.40.
+      tl.to(cols, { opacity: 1, y: 0, stagger: 0.18, duration: 0.14, ease: 'power3.out' }, 0.10)
         .to('.el-camera-el', { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.90);
     },
     { scope: sectionRef, dependencies: [reducedMotion, isDesktop, isTablet] },

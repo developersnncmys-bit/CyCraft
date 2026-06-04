@@ -103,16 +103,23 @@ export function useHighwayFlight(containerRef: RefObject<HTMLElement | null>) {
         end: PIN_DURATIONS.curriculum,
         scrub: 1,
         enabled: true,
+        unpinned: true,
         invalidateOnRefresh: true,
       });
 
       // 0.00 – 0.08 Header reveals (camera at y=0)
       tl.to('.curriculum-badge-el',   { opacity: 1, duration: 0.04, ease: 'power2.out' }, 0)
         .to('.curriculum-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0.01)
-        .to('.curriculum-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.04)
+        .to('.curriculum-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.04);
 
-      // 0.08 – 0.95 Camera pans through the highway
-        .to('.curriculum-camera-el', { y: () => -panDistance(), duration: 0.87, ease: 'none' }, 0.08);
+      // 0.08 – 0.95 Camera pans linearly so the highway scrolls through the
+      // pinned viewport. Required now that the section is fully pinned
+      // (previously this was unpinned and the highway flowed in document
+      // order — leaving the pan out left the bottom semesters off-screen
+      // for the whole pin).
+      if (cameraEl) {
+        tl.to(cameraEl, { y: () => -panDistance(), duration: 0.87, ease: 'none' }, 0.08);
+      }
 
       // Beam line grows in lockstep with the pan
       if (beamLine) {

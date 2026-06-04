@@ -17,11 +17,10 @@ export default function LearningEvolutionSection() {
       <div
         className="le-camera-el"
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          willChange: 'transform, opacity',
+          // Unpinned: camera-el flows naturally so the phase nodes stack and
+          // the user scrolls through them. No camera-pan now.
+          position: 'relative',
+          willChange: 'opacity',
         }}
       >
         <div

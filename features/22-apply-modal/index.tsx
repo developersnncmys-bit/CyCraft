@@ -54,6 +54,7 @@ export default function ApplyModal({ isOpen, onClose }: ApplyModalProps) {
         style={{
           maxWidth: '640px',
           width: '92vw',
+          maxHeight: '92vh',
           background: 'var(--color-carbon)',
           border: '1px solid rgba(168,240,255,0.14)',
           padding: 0,
@@ -62,7 +63,7 @@ export default function ApplyModal({ isOpen, onClose }: ApplyModalProps) {
           inset: 0,
           margin: 'auto',
           boxShadow: '0 0 80px rgba(0,0,0,0.8), 0 0 40px rgba(168,240,255,0.04)',
-          overflow: 'hidden',
+          overflow: 'auto',
         }}
       >
         {/* Top beam accent */}

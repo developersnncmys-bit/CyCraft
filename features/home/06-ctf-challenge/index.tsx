@@ -12,7 +12,7 @@
  *   0.85–0.95  Follow-up CTA
  *   0.92–1.00  Camera scale 1 → 0.96
  */
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '@/lib/gsap/register';
 import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
@@ -27,6 +27,9 @@ export default function HomeCtfChallenge() {
   const sectionRef = useRef<HTMLElement>(null);
   const isDesktop = useIsDesktop();
   const reducedMotion = useReducedMotion();
+  // Click START CHALLENGE → swap the welcome+button block for the
+  // ctf_challenge.sh sequence. Stays open until route change/unmount.
+  const [started, setStarted] = useState(false);
 
   useGSAP(
     () => {
@@ -237,7 +240,7 @@ export default function HomeCtfChallenge() {
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
             </svg>
 
-            {ctfChallengeContent.welcomeLines.map((line, i) => (
+            {!started && ctfChallengeContent.welcomeLines.map((line, i) => (
               <p
                 key={line}
                 className="ctf-terminal-line"
@@ -253,53 +256,93 @@ export default function HomeCtfChallenge() {
               </p>
             ))}
 
-            <div className="ctf-start-btn" style={{ marginTop: '0.5rem', willChange: 'transform, opacity' }}>
-              <a
-                href={ctfChallengeContent.startCta.href}
+            {!started && (
+              <div
+                className="ctf-start-btn"
+                style={{ marginTop: '0.5rem', willChange: 'transform, opacity' }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setStarted(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.55rem',
+                    background: 'var(--color-red-team)',
+                    color: '#fff',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 'var(--text-sm)',
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    fontWeight: 600,
+                    padding: '0.7rem 1.6rem',
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: '0 0 24px rgba(255,61,90,0.4)',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget;
+                    el.style.transform = 'translateY(-2px)';
+                    el.style.boxShadow = '0 0 36px rgba(255,61,90,0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget;
+                    el.style.transform = 'translateY(0)';
+                    el.style.boxShadow = '0 0 24px rgba(255,61,90,0.4)';
+                  }}
+                >
+                  <svg
+                    aria-hidden="true"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="11" width="18" height="11" rx="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                  {ctfChallengeContent.startCta.label}
+                </button>
+              </div>
+            )}
+
+            {started && (
+              <div
+                role="log"
+                aria-live="polite"
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.55rem',
-                  background: 'var(--color-red-team)',
-                  color: '#fff',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 'var(--text-sm)',
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  fontWeight: 600,
-                  padding: '0.7rem 1.6rem',
-                  textDecoration: 'none',
-                  boxShadow: '0 0 24px rgba(255,61,90,0.4)',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  const el = e.currentTarget;
-                  el.style.transform = 'translateY(-2px)';
-                  el.style.boxShadow = '0 0 36px rgba(255,61,90,0.6)';
-                }}
-                onMouseLeave={(e) => {
-                  const el = e.currentTarget;
-                  el.style.transform = 'translateY(0)';
-                  el.style.boxShadow = '0 0 24px rgba(255,61,90,0.4)';
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.4rem',
+                  animation: 'fade-in-up 0.3s ease-out',
                 }}
               >
-                <svg
-                  aria-hidden="true"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="3" y="11" width="18" height="11" rx="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-                {ctfChallengeContent.startCta.label}
-              </a>
-            </div>
+                {ctfChallengeContent.challengeLines.map((line, i) => (
+                  <p
+                    key={`${i}-${line}`}
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 'var(--text-sm)',
+                      color: 'var(--color-terminal)',
+                      margin: 0,
+                      letterSpacing: '0.04em',
+                      lineHeight: 1.6,
+                      minHeight: line === '' ? '0.5em' : undefined,
+                      wordBreak: 'break-all',
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
+                    {line || ' '}
+                  </p>
+                ))}
+              </div>
+            )}
+
           </div>
         </div>
 

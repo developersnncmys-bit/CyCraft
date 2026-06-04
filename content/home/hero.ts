@@ -12,9 +12,9 @@ export const homeHeroContent = {
   certification: 'We are ISO 9001:2015 Certified',
   /** Per PRD §3.1 — three CTAs in the hero. */
   ctas: {
-    primary: { label: 'EXPLORE COURSES', href: '#courses' },
-    secondary: { label: 'JOIN PROGRAMS', href: '#programs' },
-    tertiary: { label: 'RESEARCH LABS', href: '#research' },
+    primary: { label: 'EXPLORE COURSES', href: '/courses' },
+    secondary: { label: 'JOIN PROGRAMS', href: '/btech' },
+    tertiary: { label: 'RESEARCH LABS', href: '/research' },
   },
   terminalLines: [
     '> system_boot: complete',

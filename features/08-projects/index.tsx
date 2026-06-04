@@ -39,7 +39,7 @@ export default function ProjectsSection() {
             }}
           >
             {/* ── Left: text ── */}
-            <div style={{ flex: '1 1 360px', minWidth: 0 }}>
+            <div className="projects-col" style={{ flex: '1 1 360px', minWidth: 0 }}>
               <h2
                 className="projects-heading-el"
                 style={{
@@ -126,7 +126,7 @@ export default function ProjectsSection() {
             </div>
 
             {/* ── Right: 3D code window stack ── */}
-            <div className="projects-stack-wrap-el" style={{ flex: '1 1 400px', minWidth: 0, willChange: 'opacity' }}>
+            <div className="projects-col projects-stack-wrap-el" style={{ flex: '1 1 400px', minWidth: 0, willChange: 'opacity' }}>
               <ProjectStack projects={projectsContent.projects} />
             </div>
           </div>

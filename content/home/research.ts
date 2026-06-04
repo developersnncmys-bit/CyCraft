@@ -41,5 +41,5 @@ export const homeResearchContent = {
       date: '2026-01-25',
     },
   ] satisfies readonly ResearchHighlight[],
-  cta: { label: 'VIEW ALL RESEARCH', href: '#research' },
+  cta: { label: 'VIEW ALL RESEARCH', href: '/research' },
 } as const;

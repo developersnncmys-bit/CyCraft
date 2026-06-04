@@ -82,6 +82,7 @@ export function useTerminalBoot(
         end: PIN_DURATIONS.programOverview,
         scrub: 1,
         enabled: true,
+        unpinned: true,
         onUpdate: (self) => {
           // Latch terminal start at progress 0.20 — does not re-disable on scroll-back
           if (self.progress >= 0.20) setTerminalStarted(true);

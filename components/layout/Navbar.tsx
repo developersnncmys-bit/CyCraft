@@ -2,14 +2,22 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils/cn';
 import { scrollToTop } from '@/lib/scroll';
 
+const ApplyModal = dynamic(() => import('@/features/22-apply-modal'), { ssr: false });
+
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'BTech', href: '/btech' },
+  { label: 'Courses', href: '/courses' },
   { label: 'About', href: '/about' },
+  { label: 'Assessment', href: '/assessment' },
+  { label: 'Research', href: '/research' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Verify', href: '/verify' },
   { label: 'Contact', href: '/contact' },
 ] as const;
 
@@ -18,6 +26,7 @@ const isInternalRoute = (href: string) => href.startsWith('/') && !href.startsWi
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [applyOpen, setApplyOpen] = useState(false);
   const rafRef = useRef<number>(0);
   const pathname = usePathname();
 
@@ -42,6 +51,7 @@ export function Navbar() {
   }, []);
 
   return (
+    <>
     <header
       className={cn(
         'fixed top-0 left-0 right-0 z-[999] transition-all duration-300',
@@ -94,28 +104,27 @@ export function Navbar() {
         </nav>
 
         {/* Apply CTA */}
-        <a
-          href="https://cycraft.in/contact"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden lg:inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-4 py-2 border transition-all duration-300"
+        <button
+          type="button"
+          onClick={() => setApplyOpen(true)}
+          className="hidden lg:inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-4 py-2 border bg-transparent transition-all duration-300 cursor-pointer"
           style={{
             borderColor: 'var(--color-beam)',
             color: 'var(--color-beam)',
           }}
           onMouseEnter={(e) => {
-            const el = e.currentTarget as HTMLAnchorElement;
+            const el = e.currentTarget;
             el.style.background = 'var(--color-beam)';
             el.style.color = 'var(--color-void)';
           }}
           onMouseLeave={(e) => {
-            const el = e.currentTarget as HTMLAnchorElement;
+            const el = e.currentTarget;
             el.style.background = 'transparent';
             el.style.color = 'var(--color-beam)';
           }}
         >
           Apply 2026-27
-        </a>
+        </button>
 
         {/* Mobile hamburger */}
         <button
@@ -159,17 +168,22 @@ export function Navbar() {
                 </a>
               );
             })}
-            <a
-              href="https://cycraft.in/contact"
-              className="font-mono text-sm tracking-widest uppercase mt-2"
+            <button
+              type="button"
+              className="font-mono text-sm tracking-widest uppercase mt-2 text-left bg-transparent border-0 p-0 cursor-pointer"
               style={{ color: 'var(--color-beam)' }}
-              onClick={() => setMenuOpen(false)}
+              onClick={() => {
+                setMenuOpen(false);
+                setApplyOpen(true);
+              }}
             >
               Apply 2026-27 ›
-            </a>
+            </button>
           </div>
         </nav>
       )}
     </header>
+    <ApplyModal isOpen={applyOpen} onClose={() => setApplyOpen(false)} />
+    </>
   );
 }

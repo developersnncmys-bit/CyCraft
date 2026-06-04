@@ -41,7 +41,7 @@ export default function PhilosophySection() {
           }}
         >
           {/* ── Left column ── */}
-          <div style={{ flex: '1 1 min(480px, 100%)', minWidth: 0 }}>
+          <div className="philosophy-col" style={{ flex: '1 1 min(480px, 100%)', minWidth: 0 }}>
             <h2
               className="philosophy-heading-el"
               style={{

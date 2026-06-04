@@ -32,7 +32,7 @@ export const featuredProgramsContent = {
         'CISSP, OSCP, CEH, CompTIA Security+, and CyCraft-issued track certificates — every track vetted by working industry practitioners.',
       duration: '8 – 24 WEEKS',
       team: 'blue',
-      cta: { label: 'VIEW COURSES', href: '#courses' },
+      cta: { label: 'VIEW COURSES', href: '/courses' },
     },
     {
       id: 'internship',
@@ -42,7 +42,7 @@ export const featuredProgramsContent = {
         'Live offensive- and defensive-security engagements with our 35+ partner companies. Paid. Proof of work guaranteed in writing.',
       duration: '3 – 12 MONTHS',
       team: 'red',
-      cta: { label: 'LEARN MORE', href: '#internships' },
+      cta: { label: 'LEARN MORE', href: '/contact' },
     },
   ] satisfies readonly FeaturedProgram[],
 } as const;

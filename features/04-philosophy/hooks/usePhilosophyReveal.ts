@@ -105,6 +105,7 @@ export function usePhilosophyReveal(containerRef: RefObject<HTMLElement | null>)
         end: PIN_DURATIONS.philosophy,
         scrub: 1,
         enabled: true,
+        unpinned: true,
       });
 
       // 0.00 – 0.10 Heading

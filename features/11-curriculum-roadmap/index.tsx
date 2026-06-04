@@ -12,9 +12,14 @@ import { useHighwayFlight } from './hooks/useHighwayFlight';
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
 
 const blockStyle: React.CSSProperties = {
-  minHeight: '100vh',
-  display: 'flex',
-  alignItems: 'center',
+  // Sized to content (NO minHeight, NO flex-center). Earlier this block had
+  // `minHeight: 100vh` + `display: flex; alignItems: center`, which centred
+  // the header (badge + heading + description) inside a full viewport and
+  // pushed the highway down by half a screen — the empty gap between the
+  // CURRICULUM ROADMAP heading and the Year 1 / Semester 1 row was that
+  // bottom half of the centred-100vh header block. The camera-pan math is
+  // recomputed via `invalidateOnRefresh` so the pan distance adapts to the
+  // new (shorter) total camera-el height — reveals still fire correctly.
   paddingInline: 'var(--section-padding)',
   paddingTop: 'clamp(5rem, 9vh, 6rem)',
   paddingBottom: 'clamp(2rem, 4vh, 3rem)',
@@ -32,11 +37,10 @@ export default function CurriculumRoadmapSection() {
       <div
         className="curriculum-camera-el"
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          willChange: 'transform, opacity',
+          // Unpinned: camera-el flows naturally so the header + highway content
+          // stack and the user scrolls through them. No camera-pan now.
+          position: 'relative',
+          willChange: 'opacity',
         }}
       >
         {/* ── Block 1: Header ── (100vh viewport) */}

@@ -62,6 +62,7 @@ export default function HiringTournamentsSection() {
         end: PIN_DURATIONS.hiringTournaments,
         scrub: 1,
         enabled: true,
+        unpinned: true,
       });
 
       tl.to('.ht-badge-el',   { opacity: 1, duration: 0.05, ease: 'power2.out' }, 0)
@@ -69,10 +70,13 @@ export default function HiringTournamentsSection() {
         .to('.ht-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.06)
         // Centre node ignites
         .to(centre,           { scale: 1, duration: 0.10, ease: 'back.out(1.7)' }, 0.15)
-        // 8 beams fire outward in radial stagger
-        .to(beams,            { scaleX: 1, stagger: 0.02, duration: 0.10, ease: 'power2.out' }, 0.25)
-        // 8 role nodes materialise at beam endpoints
-        .to(nodes,            { opacity: 1, scale: 1, stagger: 0.02, duration: 0.10, ease: 'back.out(1.4)' }, 0.40)
+        // 8 beams fire outward in radial stagger (widened 0.02 → 0.04 so
+        // each beam is visible firing instead of all 8 flashing together).
+        .to(beams,            { scaleX: 1, stagger: 0.04, duration: 0.10, ease: 'power2.out' }, 0.22)
+        // 8 role nodes materialise at beam endpoints. Stagger 0.02 → 0.06
+        // so each role label has ~11vh of scroll to be read before the next
+        // appears (was ~3.6vh — all 8 roles flashed in within 25vh).
+        .to(nodes,            { opacity: 1, scale: 1, stagger: 0.06, duration: 0.08, ease: 'back.out(1.4)' }, 0.32)
         // Pin exit
         .to('.ht-camera-el',  { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.90);
     },

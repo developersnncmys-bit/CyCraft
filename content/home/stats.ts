@@ -11,9 +11,9 @@ export const homeStatsContent = {
   description:
     'Every number is a real outcome — a student placed, a CVE filed, a project shipped.',
   stats: [
-    { id: 'students', value: 2400, suffix: '+', label: 'Students Trained' },
-    { id: 'certs', value: 1800, suffix: '+', label: 'Certifications Issued' },
-    { id: 'research', value: 35, suffix: '+', label: 'Research Papers' },
-    { id: 'projects', value: 120, suffix: '+', label: 'Security Projects' },
+    { id: 'students', value: 5000, suffix: '+', label: 'Students Trained' },
+    { id: 'placement', value: 95, suffix: '%', label: 'Placement Rate' },
+    { id: 'partners', value: 50, suffix: '+', label: 'Industry Partners' },
+    { id: 'years', value: 10, suffix: '+', label: 'Years of Excellence' },
   ] satisfies readonly HomeStat[],
 } as const;

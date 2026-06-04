@@ -43,22 +43,25 @@ export default function ComparisonSection() {
       gsap.set('.cmp-heading-el', { opacity: 0, y: 24 });
       gsap.set('.cmp-desc-el',    { opacity: 0, y: 16 });
       gsap.set('.cmp-headers-el', { opacity: 0 });
-      gsap.set(rows,              { opacity: 0, y: 20 });
-      gsap.set('.cmp-camera-el',  { scale: 1, opacity: 1 });
+      gsap.set(rows,              { opacity: 0, y: 30 });
+      gsap.set('.cmp-camera-el',  { opacity: 1 });
 
+      // Row stagger is in timeline units. The factory applies timeScale(0.3),
+      // so timeline-stagger 0.20 ≈ 0.67s of real time between rows — that's
+      // what gives the visible one-by-one cascade.
       const tl = makePinnedTimeline({
         trigger: container,
         end: PIN_DURATIONS.comparison,
         scrub: 1,
         enabled: true,
+        unpinned: true,
       });
 
-      tl.to('.cmp-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0)
-        .to('.cmp-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.04)
-        .to('.cmp-headers-el', { opacity: 1, duration: 0.06, ease: 'power2.out' }, 0.10)
+      tl.to('.cmp-heading-el', { opacity: 1, y: 0, duration: 0.10, ease: 'power3.out' }, 0)
+        .to('.cmp-desc-el',    { opacity: 1, y: 0, duration: 0.08, ease: 'power2.out' }, 0.05)
+        .to('.cmp-headers-el', { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0.12)
         .to(rows,
-            { opacity: 1, y: 0, stagger: 0.04, duration: 0.10, ease: 'power2.out' }, 0.18)
-        .to('.cmp-camera-el',  { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.90);
+            { opacity: 1, y: 0, stagger: 0.20, duration: 0.18, ease: 'power2.out' }, 0.22);
     },
     { scope: sectionRef, dependencies: [reducedMotion, isDesktop] },
   );
@@ -68,10 +71,10 @@ export default function ComparisonSection() {
       <div
         className="cmp-camera-el"
         style={{
-          position: 'absolute',
-          inset: 0,
-          transformOrigin: 'center center',
-          willChange: 'transform, opacity',
+          // Unpinned: camera-el flows naturally so heading + rows stack and
+          // the user scrolls through them.
+          position: 'relative',
+          willChange: 'opacity',
         }}
       >
         <div

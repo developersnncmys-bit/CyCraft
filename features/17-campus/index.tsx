@@ -59,6 +59,7 @@ export default function CampusSection() {
         end: PIN_DURATIONS.campus,
         scrub: 1,
         enabled: true,
+        unpinned: true,
       });
 
       tl.to('.cs-badge-el',    { opacity: 1, duration: 0.05, ease: 'power2.out' }, 0)
@@ -200,7 +201,7 @@ export default function CampusSection() {
             >
               <video
                 className="campus-video-el"
-                autoPlay={isTablet}
+                autoPlay
                 muted
                 loop
                 playsInline

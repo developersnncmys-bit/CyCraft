@@ -71,15 +71,18 @@ export default function HeroSection() {
         }}
       />
 
-      {/* Central glow pool — breathes slowly, no harsh lines */}
+      {/* Central glow pool — breathes slowly, no harsh lines. Size clamps so it
+          doesn't blow past narrow viewports while still filling desktop. */}
       <div
         aria-hidden="true"
         style={{
           position: 'absolute',
           top: '42%',
           left: '50%',
-          width: '900px',
-          height: '600px',
+          transform: 'translate(-50%, -50%)',
+          width: 'clamp(320px, 80vw, 900px)',
+          height: 'clamp(220px, 55vw, 600px)',
+          maxWidth: '100vw',
           borderRadius: '50%',
           background:
             'radial-gradient(ellipse, rgba(168,240,255,0.07) 0%, rgba(168,240,255,0.025) 40%, transparent 70%)',

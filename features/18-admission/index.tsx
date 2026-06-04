@@ -51,6 +51,7 @@ export default function AdmissionSection() {
         end: PIN_DURATIONS.admission,
         scrub: 1,
         enabled: true,
+        unpinned: true,
       });
 
       tl.to('.ad-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0)

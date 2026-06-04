@@ -198,6 +198,42 @@ h1, h2, h3, h4 {
    CSS !important beats inline styles in the cascade.
    ──────────────────────────────────────────────────────────── */
 
+/* ── Btech sections collapse to content height on mobile ──
+   Each btech SectionWrapper forces `min-height: 100vh` for the desktop
+   scrub-pin layout, and the content lives inside a `position: absolute`
+   `*-camera-el` so the absolute wrapper itself contributes 0 to layout.
+   On mobile we don't pin, so the forced 100vh leaves a visible black tail
+   under every section (and a giant gap before the next one). Drop both
+   forced heights and let the camera-el participate in natural flow so the
+   section sizes to its actual content, then add a uniform bottom breathing
+   pad so the last piece of content has room before the next section enters.
+   Scoped via `:has([data-page="btech"])` so home/about/contact sections
+   (same SectionWrapper component, different content density) are
+   unaffected. Hero keeps its 100vh intentionally — it's a landing hero,
+   not a SectionWrapper. */
+@media (max-width: 767px) {
+  main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) {
+    min-height: auto !important;
+    padding-bottom: 3rem !important;
+  }
+  main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) > div {
+    min-height: auto !important;
+  }
+  main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) [class*="-camera-el"] {
+    position: relative !important;
+    inset: auto !important;
+  }
+  /* Some sections (cta-footer, research-wing) wrap their content in an
+     inner flex column with inline `min-height: 100vh` + `justify-content:
+     center` so the desktop pinned section can centre its composition. On
+     mobile that forced 100vh leaves the content floating in the middle of
+     an oversized box (huge gap before/after). Drop it. */
+  main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) [style*="min-height: 100vh"] {
+    min-height: 0 !important;
+    justify-content: flex-start !important;
+  }
+}
+
 /* ── Placements: 1-col on phones, 2-col on phablets ── */
 @media (max-width: 479px) {
   #placements .section-container > div {
@@ -263,6 +299,60 @@ h1, h2, h3, h4 {
     width: 100% !important;
     border-left: none !important;
     border-right: none !important;
+  }
+}
+
+/* ── Program Overview: 4 detail cards collapse text on phones — 2 cols / 1 col ── */
+@media (max-width: 479px) {
+  .po-details-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .po-details-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ── Battlegrounds: 3×3 grid is unreadable on phones — stack to 1 col, then 2 ── */
+@media (max-width: 479px) {
+  .labs-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .labs-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ── Philosophy / Research Wing / Projects: flex columns with 280–480px
+   min-basis crush on phones. Force each column to take the full row so the
+   parent's `flexWrap: wrap` stacks them cleanly. ── */
+@media (max-width: 767px) {
+  .philosophy-col,
+  .rw-col,
+  .projects-col {
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+  }
+  .rw-shield {
+    flex: 0 0 auto !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── Tracks: 4 cards stack down at smaller widths so each card stays readable ── */
+@media (max-width: 479px) {
+  .tracks-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+}
+@media (min-width: 480px) and (max-width: 1023px) {
+  .tracks-cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1.25rem !important;
   }
 }
 

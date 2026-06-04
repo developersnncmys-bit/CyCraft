@@ -97,6 +97,7 @@ export default function PlacementsSection() {
         end: PIN_DURATIONS.placements,
         scrub: 1,
         enabled: true,
+        unpinned: true,
       });
 
       tl.to('.pl-badge-el',   { opacity: 1, duration: 0.05, ease: 'power2.out' }, 0)

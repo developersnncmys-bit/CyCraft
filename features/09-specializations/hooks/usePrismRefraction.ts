@@ -64,6 +64,7 @@ export function usePrismRefraction(containerRef: RefObject<HTMLElement | null>) 
         end: PIN_DURATIONS.specializations,
         scrub: 1,
         enabled: true,
+        unpinned: true,
       });
 
       // 0.00 – 0.10 Header
@@ -79,10 +80,13 @@ export function usePrismRefraction(containerRef: RefObject<HTMLElement | null>) 
         .to('[class^="spec-beam-"]',
             { opacity: 0.4, stagger: 0.025, duration: 0.10, ease: 'power2.out' }, 0.25)
 
-      // 0.40 – 0.65 Cards materialise at endpoints (hex stagger)
+      // 0.32 – 0.82 Cards materialise at endpoints (hex stagger). Per-card
+      // stagger widened 0.03 → 0.07 so each of the 6 specialization cards has
+      // real scroll-time before the next appears (was ~5vh between cards —
+      // way too fast for cards with titles + icons).
         .to('.spec-card-el',
-            { opacity: 1, scale: 1, stagger: { each: 0.03, from: 'start' },
-              duration: 0.18, ease: 'back.out(1.3)' }, 0.40)
+            { opacity: 1, scale: 1, stagger: { each: 0.07, from: 'start' },
+              duration: 0.14, ease: 'back.out(1.3)' }, 0.32)
 
       // 0.65 – 0.85 Hold; prism gently counter-rotates
         .to('.prism-hex-el',
