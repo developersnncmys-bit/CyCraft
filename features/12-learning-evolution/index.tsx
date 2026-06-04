@@ -17,10 +17,13 @@ export default function LearningEvolutionSection() {
       <div
         className="le-camera-el"
         style={{
-          // Unpinned: camera-el flows naturally so the phase nodes stack and
-          // the user scrolls through them. No camera-pan now.
-          position: 'relative',
-          willChange: 'opacity',
+          // Pinned cinema: absolute + inset 0 fills the section's 100vh
+          // canvas. Camera-pan walks the phase nodes through the pinned
+          // viewport. Mobile override in globals.css restores
+          // `position: relative` so phases flow naturally on phones.
+          position: 'absolute',
+          inset: 0,
+          willChange: 'transform, opacity',
         }}
       >
         <div

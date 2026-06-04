@@ -52,9 +52,10 @@ export default function CTAFooterSection() {
         return;
       }
 
-      // ── Desktop ── THE CONVERGENCE, scrub-pinned. Camera-el hides on
-      // pin-leave (factory default), so the composed CTA doesn't redraw a
-      // duplicate in the post-pin tail — only the footer remains visible.
+      // ── Desktop ── THE CONVERGENCE, scrub-pinned. The composed CTA scrolls
+      // out of the viewport naturally after pin release — the footer (which
+      // sits absolute-bottom of the section, outside the camera) is the last
+      // thing visible at the end of the page.
       gsap.set(headline, { opacity: 0, y: 30 });
       gsap.set(desc, { opacity: 0, y: 20 });
       gsap.set(btn, { opacity: 0, scale: 0.85 });

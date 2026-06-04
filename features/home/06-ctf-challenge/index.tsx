@@ -318,7 +318,7 @@ export default function HomeCtfChallenge() {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '0.4rem',
+                  gap: '0.15rem',
                   animation: 'fade-in-up 0.3s ease-out',
                 }}
               >
@@ -327,12 +327,12 @@ export default function HomeCtfChallenge() {
                     key={`${i}-${line}`}
                     style={{
                       fontFamily: 'var(--font-mono)',
-                      fontSize: 'var(--text-sm)',
+                      fontSize: '12px',
                       color: 'var(--color-terminal)',
                       margin: 0,
                       letterSpacing: '0.04em',
-                      lineHeight: 1.6,
-                      minHeight: line === '' ? '0.5em' : undefined,
+                      lineHeight: 1.45,
+                      minHeight: line === '' ? '0.2em' : undefined,
                       wordBreak: 'break-all',
                       whiteSpace: 'pre-wrap',
                     }}
@@ -340,35 +340,78 @@ export default function HomeCtfChallenge() {
                     {line || ' '}
                   </p>
                 ))}
+
+                {/* In-terminal CTA — guarantees the user can reach the
+                    /courses page without scrolling past the pinned section
+                    to find the external follow-up button below. */}
+                <a
+                  href={`${ctfChallengeContent.followUpCta.href}?apply=1`}
+                  style={{
+                    marginTop: '0.65rem',
+                    alignSelf: 'center',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    background: 'var(--color-red-team)',
+                    color: '#fff',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '12px',
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    fontWeight: 600,
+                    padding: '0.55rem 1.25rem',
+                    textDecoration: 'none',
+                    boxShadow: '0 0 24px rgba(255,61,90,0.4)',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget;
+                    el.style.transform = 'translateY(-2px)';
+                    el.style.boxShadow = '0 0 36px rgba(255,61,90,0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget;
+                    el.style.transform = 'translateY(0)';
+                    el.style.boxShadow = '0 0 24px rgba(255,61,90,0.4)';
+                  }}
+                >
+                  {ctfChallengeContent.followUpCta.label}
+                  <span aria-hidden="true">›</span>
+                </a>
               </div>
             )}
 
           </div>
         </div>
 
-        {/* Follow-up */}
-        <div
-          className="section-container"
-          style={{ textAlign: 'center', marginTop: 'clamp(1rem, 2.5vh, 2rem)' }}
-        >
-          <p
-            className="ctf-followup"
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: 'var(--text-sm)',
-              color: 'var(--color-text-secondary)',
-              maxWidth: '560px',
-              margin: '0 auto 1rem',
-            }}
+        {/* External follow-up — only shown BEFORE the challenge starts,
+            since after starting the same CTA lives inside the terminal.
+            This keeps the pinned section's total content height within
+            100vh so nothing crops at the bottom of the viewport. */}
+        {!started && (
+          <div
+            className="section-container"
+            style={{ textAlign: 'center', marginTop: 'clamp(1rem, 2.5vh, 2rem)' }}
           >
-            {ctfChallengeContent.followUp}
-          </p>
-          <div className="ctf-followup" style={{ display: 'inline-block' }}>
-            <Button as="a" href={ctfChallengeContent.followUpCta.href} variant="outline">
-              {ctfChallengeContent.followUpCta.label}
-            </Button>
+            <p
+              className="ctf-followup"
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 'var(--text-sm)',
+                color: 'var(--color-text-secondary)',
+                maxWidth: '560px',
+                margin: '0 auto 1rem',
+              }}
+            >
+              {ctfChallengeContent.followUp}
+            </p>
+            <div className="ctf-followup" style={{ display: 'inline-block' }}>
+              <Button as="a" href={ctfChallengeContent.followUpCta.href} variant="outline">
+                {ctfChallengeContent.followUpCta.label}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

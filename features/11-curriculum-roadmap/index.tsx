@@ -37,10 +37,14 @@ export default function CurriculumRoadmapSection() {
       <div
         className="curriculum-camera-el"
         style={{
-          // Unpinned: camera-el flows naturally so the header + highway content
-          // stack and the user scrolls through them. No camera-pan now.
-          position: 'relative',
-          willChange: 'opacity',
+          // Pinned cinema: absolute + inset 0 fills the section's 100vh
+          // canvas. Camera-pan translates this wrapper to walk the 8
+          // semesters through the pinned viewport. Mobile override in
+          // globals.css restores `position: relative` so the highway flows
+          // naturally on phones.
+          position: 'absolute',
+          inset: 0,
+          willChange: 'transform, opacity',
         }}
       >
         {/* ── Block 1: Header ── (100vh viewport) */}

@@ -34,8 +34,8 @@ export default function ApplyModal({ isOpen, onClose }: ApplyModalProps) {
     <>
       <style>{`
         dialog[data-apply]::backdrop {
-          background: rgba(0,0,0,0.85);
-          backdrop-filter: blur(6px);
+          background: rgba(0,0,0,0.55);
+          backdrop-filter: blur(3px);
         }
         dialog[data-apply] {
           animation: modal-in 0.25s ease both;

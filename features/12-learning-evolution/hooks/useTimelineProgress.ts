@@ -84,22 +84,26 @@ export function useTimelineProgress(containerRef: RefObject<HTMLElement | null>)
       tl.to('.le-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0)
         .to('.le-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.04);
 
-      // 0.08 – 0.95 Camera pans so the phase nodes scroll through the pinned
-      // viewport. Restored after the section moved from unpinned back to
-      // fully pinned cinema — without the pan, nodes below the first
-      // viewport sat off-screen for the whole pin.
+      // 0.08 – 0.75 Camera pans so the phase nodes scroll through the
+      // pinned viewport. Ends at 0.75 (was 0.90) so the final phase sits
+      // stationary for the last 25% of the pin (~80vh of scroll) instead
+      // of still drifting upward while the reader is trying to absorb it.
       if (cameraEl) {
-        tl.to(cameraEl, { y: () => -panDistance(), duration: 0.82, ease: 'none' }, 0.08);
+        tl.to(cameraEl, { y: () => -panDistance(), duration: 0.67, ease: 'none' }, 0.08);
       }
 
       if (beam) {
-        tl.to(beam, { scaleY: 1, duration: 0.82, ease: 'none' }, 0.08);
+        tl.to(beam, { scaleY: 1, duration: 0.67, ease: 'none' }, 0.08);
       }
 
-      // Per-phase reveals distributed across the pan
+      // Per-phase reveals distributed across the first 70% of the pan
+      // (was 82%) so the final phase has ~30% of the timeline = ~96vh of
+      // dwell scroll for the reader before the section unpins. Final phase
+      // was previously revealing with ~40vh of pin left, which read as
+      // "jumping to the next section before I could finish reading."
       const total = nodes.length || 1;
       nodes.forEach((node, i) => {
-        const revealAt = 0.12 + (0.70 * (i / Math.max(total - 1, 1)));
+        const revealAt = 0.12 + (0.55 * (i / Math.max(total - 1, 1)));
         const dot = node.querySelector('.phase-dot-el');
         tl.to(node, { opacity: 1, duration: 0.06, ease: 'power3.out' }, revealAt);
         if (dot) {

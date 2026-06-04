@@ -27,7 +27,7 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
       });
       if (!res.ok) throw new Error();
       setStatus('success');
-      setTimeout(() => { window.location.href = 'https://cycraft.in/contact'; }, 2500);
+      setTimeout(() => { onClose(); }, 2500);
     } catch {
       setStatus('error');
       setErrorMsg('Connection failed. Please try again.');
@@ -76,7 +76,7 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
         </div>
 
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', maxWidth: '280px' }}>
-          Application received. Redirecting you shortly…
+          Application received. We&apos;ll be in touch soon.
         </p>
       </div>
     );
@@ -107,59 +107,58 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
             />
           </FormField>
 
-          <FormField label="Email" error={errors.email} required>
+          <FormField label="Email Address" error={errors.email} required>
             <input
               {...register('email')}
               type="email"
               autoComplete="email"
-              placeholder="you@email.com"
+              placeholder="john@example.com"
               className="apply-input"
               style={inputStyle}
             />
           </FormField>
         </div>
 
-        {/* Row 2 — Phone + Background */}
+        {/* Row 2 — Phone + Experience Level */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          <FormField label="Phone" error={errors.phone} required>
+          <FormField label="Phone Number" error={errors.phone} required>
             <input
               {...register('phone')}
               type="tel"
               autoComplete="tel"
-              placeholder="+91 98765 43210"
+              placeholder="+1 (555) 000-0000"
               className="apply-input"
               style={inputStyle}
             />
           </FormField>
 
-          <FormField label="Academic Background" error={errors.academicBackground} required>
+          <FormField label="Experience Level" error={errors.experienceLevel} required>
             <select
-              {...register('academicBackground')}
+              {...register('experienceLevel')}
+              defaultValue="Beginner"
               className="apply-input"
               style={{ ...inputStyle, cursor: 'pointer' }}
             >
-              <option value="" disabled>Select…</option>
-              <option value="Currently in 12th">Currently in 12th</option>
-              <option value="12th Passed">12th Passed</option>
-              <option value="Diploma Holder">Diploma Holder</option>
-              <option value="Other">Other</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
             </select>
           </FormField>
         </div>
 
-        {/* Row 3 — Motivation */}
+        {/* Row 3 — Educational Background */}
         <FormField
-          label="Motivation"
-          error={errors.motivation}
-          hint={`${charCount}/280 characters`}
+          label="Educational Background (Optional)"
+          error={errors.educationalBackground}
+          hint={`${charCount}/500 characters`}
         >
           <textarea
-            {...register('motivation', {
+            {...register('educationalBackground', {
               onChange: (e) => setCharCount(e.target.value.length),
             })}
             rows={3}
-            maxLength={280}
-            placeholder="What draws you to Cybersecurity? (optional)"
+            maxLength={500}
+            placeholder="Tell us about your background…"
             className="apply-input"
             style={{ ...inputStyle, resize: 'none', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}
           />
@@ -241,7 +240,7 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
               (e.currentTarget as HTMLButtonElement).style.boxShadow = isValid ? '0 0 20px rgba(168,240,255,0.25)' : 'none';
             }}
           >
-            {status === 'loading' ? 'Sending…' : 'Initiate Application →'}
+            {status === 'loading' ? 'Sending…' : 'Enroll Now'}
           </button>
         </div>
       </form>

@@ -1,11 +1,21 @@
 'use client';
 /* Preloader — "First Light" boot sequence
  * Horizontal beam streaks across the viewport, CYCRAFT title fades in
- * through the beam, then SECURING SESSION reveals letter-by-letter. */
-import { useEffect, useRef } from 'react';
+ * through the beam, then SECURING SESSION reveals letter-by-letter.
+ *
+ * Played-once latch (module-level): the boot sequence should fire when
+ * the JS bundle is freshly loaded (i.e. real page reload / first visit),
+ * not on every client-side navigation. App Router preserves the layout
+ * across routes, so this module + its `hasPlayed` value survive — set it
+ * to true after the first play and short-circuit on subsequent mounts.
+ * A hard reload re-evaluates the module and resets the latch.
+ */
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from '@/lib/gsap/register';
 
 const STATUS_LABEL = 'SECURING SESSION';
+
+let hasPlayed = false;
 
 export function Preloader() {
   const wrapRef     = useRef<HTMLDivElement>(null);
@@ -14,8 +24,17 @@ export function Preloader() {
   const sparkRef    = useRef<HTMLDivElement>(null);
   const titleRef    = useRef<HTMLDivElement>(null);
   const statusRef   = useRef<HTMLDivElement>(null);
+  // `done` drives the wrapper's display via React. We can't poke
+  // `wrap.style.display = 'none'` imperatively and trust it to stick —
+  // any reconciliation of the layout would re-apply the style prop
+  // and bring the wrapper back. Using state means React owns the
+  // hidden bit and the prop matches it on every reconciliation.
+  const [done, setDone] = useState(hasPlayed);
 
   useEffect(() => {
+    // Module-level latch: only play once per real page load.
+    if (hasPlayed) return;
+
     const wrap   = wrapRef.current;
     const beam   = beamRef.current;
     const core   = beamCoreRef.current;
@@ -89,7 +108,12 @@ export function Preloader() {
           opacity: 0,
           duration: 0.5,
           ease: 'power2.in',
-          onComplete() { wrap.style.display = 'none'; },
+          onComplete() {
+            // Latch first so any racing re-mount immediately short-circuits,
+            // then flip the React-owned `done` flag to hide the wrapper.
+            hasPlayed = true;
+            setDone(true);
+          },
         },
         '>-0.1'
       );
@@ -107,7 +131,9 @@ export function Preloader() {
         inset: 0,
         zIndex: 9999,
         background: 'var(--color-void)',
-        display: 'flex',
+        // React-owned hide so reconciliation can't bring the preloader
+        // back after the first play.
+        display: done ? 'none' : 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',

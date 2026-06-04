@@ -112,18 +112,18 @@ export function useHighwayFlight(containerRef: RefObject<HTMLElement | null>) {
         .to('.curriculum-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0.01)
         .to('.curriculum-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.04);
 
-      // 0.08 – 0.95 Camera pans linearly so the highway scrolls through the
-      // pinned viewport. Required now that the section is fully pinned
-      // (previously this was unpinned and the highway flowed in document
-      // order — leaving the pan out left the bottom semesters off-screen
-      // for the whole pin).
+      // 0.08 – 0.70 Camera pans linearly so the highway scrolls through the
+      // pinned viewport. Ends at 0.70 (was 0.95) so the bottom row (S7/S8)
+      // sits stationary for the last 30% of the pin (~96vh of scroll)
+      // instead of still drifting upward while the reader is trying to
+      // absorb the final semester.
       if (cameraEl) {
-        tl.to(cameraEl, { y: () => -panDistance(), duration: 0.87, ease: 'none' }, 0.08);
+        tl.to(cameraEl, { y: () => -panDistance(), duration: 0.62, ease: 'none' }, 0.08);
       }
 
       // Beam line grows in lockstep with the pan
       if (beamLine) {
-        tl.to(beamLine, { scaleY: 1, duration: 0.87, ease: 'none' }, 0.08);
+        tl.to(beamLine, { scaleY: 1, duration: 0.62, ease: 'none' }, 0.08);
       }
 
       // Per-row reveals — both checkpoints in a row ignite together.
@@ -131,9 +131,11 @@ export function useHighwayFlight(containerRef: RefObject<HTMLElement | null>) {
       // DOM order from querySelectorAll: [L1, L3, L5, L7, R2, R4, R6, R8]
       // Visual row pairs (top→bottom): [L1,R2], [L3,R4], [L5,R6], [L7,R8]
       //
-      // Reveals distributed across the camera-pan window (0.20 → 0.85), so
-      // each row ignites just as it scrolls into the pinned viewport.
-      const ROW_REVEALS = [0.20, 0.40, 0.60, 0.80];
+      // Reveals distributed across the front 65% of the timeline (was
+      // 20–80%) so the last row (S7/S8) appears with ~35% of the pin
+      // remaining for reading. The camera-pan also ends at 0.70 so once
+      // S7/S8 reveal at 0.65 the content is stationary almost immediately.
+      const ROW_REVEALS = [0.16, 0.32, 0.48, 0.65];
       const half = Math.floor(checkpoints.length / 2);
       for (let row = 0; row < half; row++) {
         const revealAt = ROW_REVEALS[row] ?? 0.85;

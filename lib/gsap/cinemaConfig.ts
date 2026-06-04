@@ -25,8 +25,8 @@ export const PIN_DURATIONS = {
   projects: '+=200%',
   specializations: '+=180%',
   certifications: '+=150%',
-  curriculum: '+=220%',
-  learningEvolution: '+=220%',
+  curriculum: '+=320%',
+  learningEvolution: '+=320%',
   battlegrounds: '+=240%',
   comparison: '+=180%',
   hiringTournaments: '+=180%',
@@ -157,7 +157,12 @@ export function makePinnedTimeline({
   onEnter,
   onLeave,
   invalidateOnRefresh = false,
-  hideCameraOnLeave = true,
+  // Off by default — matches the JSDoc contract. Flipping this to `true`
+  // hides the camera-el opacity-0 the instant the pin releases, which
+  // leaves the section's post-pin scroll tail visually empty and reads
+  // as a 2-scroll "pause" before the next section enters. Opt-in only
+  // for sections whose absolute content visibly repeats during the tail.
+  hideCameraOnLeave = false,
   unpinned = false,
 }: PinnedTimelineOptions) {
   // ── `unpinned` flag retained for backwards-compatibility ────────────────

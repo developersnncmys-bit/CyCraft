@@ -12,8 +12,9 @@
  *   0.70–0.90  Beam glow pool intensifies
  *   0.90–1.00  Camera pulls back
  */
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '@/lib/gsap/register';
 import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
@@ -21,10 +22,13 @@ import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { verifyCtaContent } from '@/content/verify/cta';
 
+const ApplyModal = dynamic(() => import('@/features/22-apply-modal'), { ssr: false });
+
 export default function VerifyCta() {
   const sectionRef = useRef<HTMLElement>(null);
   const isDesktop = useIsDesktop();
   const reducedMotion = useReducedMotion();
+  const [applyOpen, setApplyOpen] = useState(false);
 
   useGSAP(
     () => {
@@ -290,8 +294,9 @@ export default function VerifyCta() {
               <span aria-hidden="true">›</span>
             </Link>
 
-            <Link
-              href={verifyCtaContent.secondaryCta.href}
+            <button
+              type="button"
+              onClick={() => setApplyOpen(true)}
               className="verify-cta-secondary"
               style={{
                 display: 'inline-flex',
@@ -308,25 +313,28 @@ export default function VerifyCta() {
                 letterSpacing: '0.22em',
                 textTransform: 'uppercase',
                 textDecoration: 'none',
+                cursor: 'pointer',
                 transition: 'background 0.25s, border-color 0.25s',
                 willChange: 'transform, opacity',
               }}
               onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement;
+                const el = e.currentTarget;
                 el.style.background = 'rgba(168,240,255,0.08)';
                 el.style.borderColor = 'var(--color-beam)';
               }}
               onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement;
+                const el = e.currentTarget;
                 el.style.background = 'transparent';
                 el.style.borderColor = 'rgba(168,240,255,0.4)';
               }}
             >
               {verifyCtaContent.secondaryCta.label}
-            </Link>
+            </button>
           </div>
         </div>
       </div>
+
+      <ApplyModal isOpen={applyOpen} onClose={() => setApplyOpen(false)} />
     </section>
   );
 }

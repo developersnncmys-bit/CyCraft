@@ -31,12 +31,18 @@ export default function ResearchWingSection() {
       <div
         className="rw-camera-el"
         style={{
-          // Unpinned: camera-el flows in document so its two 100vh blocks
-          // (heading+workstation, hacker house) stack naturally and the user
-          // scrolls through them. Previously absolute+translate to "pan" — that
-          // only worked under scrub.
-          position: 'relative',
-          willChange: 'opacity',
+          // Pinned cinema: camera-el is absolute + inset 0 so it fills the
+          // section's 100vh canvas without pushing the section's layout
+          // height to its 200vh content total. The pan animation translates
+          // this wrapper between blocks; pinSpacing reserves the scroll
+          // distance for the pin. After pin release, hideCameraOnLeave
+          // fades the wrapper, and the section stays at its 100vh so
+          // there's no empty tail before the next section. The mobile
+          // override in globals.css promotes this back to relative so the
+          // two blocks flow naturally on phones.
+          position: 'absolute',
+          inset: 0,
+          willChange: 'transform, opacity',
         }}
       >
         {/* ── Block 1: Heading + Workstation ── */}
