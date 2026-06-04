@@ -342,6 +342,40 @@ export default function HomeFooter() {
             {homeFooterContent.copyright}
           </div>
 
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '11px',
+              color: 'var(--color-text-disabled)',
+              letterSpacing: '0.08em',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+            }}
+          >
+            <span>{homeFooterContent.credit.prefix}</span>
+            <a
+              href={homeFooterContent.credit.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: 'var(--color-beam)',
+                textDecoration: 'none',
+                transition: 'color 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = 'var(--color-beam-core)';
+                (e.currentTarget as HTMLAnchorElement).style.textDecoration = 'underline';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = 'var(--color-beam)';
+                (e.currentTarget as HTMLAnchorElement).style.textDecoration = 'none';
+              }}
+            >
+              {homeFooterContent.credit.label}
+            </a>
+          </div>
+
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'center' }}>
             {homeFooterContent.legal.map((l) => {
               const legalStyle = {

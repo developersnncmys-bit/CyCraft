@@ -41,6 +41,11 @@ export const homeFooterContent = {
     { label: 'Privacy Policy', href: '/privacy' },
     { label: 'Terms & Conditions', href: '/terms' },
   ],
+  credit: {
+    prefix: 'Developed by',
+    label: 'Nakshatra Namaha Creations',
+    href: 'https://www.nakshatranamahacreations.com/',
+  },
   get copyright() {
     return `© ${new Date().getFullYear()} CyCraft. All rights reserved.`;
   },
