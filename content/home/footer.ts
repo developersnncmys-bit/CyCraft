@@ -31,7 +31,6 @@ export const homeFooterContent = {
     email: 'support@cycraft.in',
     phone: '+91 7259787316',
     address: '12, Peenya 2nd Stage, Bangalore 560058',
-    gst: 'GST: 29DNAPM8368B1ZS',
   },
   socials: [
     { label: 'LinkedIn', href: 'https://linkedin.com/company/cycraft' },

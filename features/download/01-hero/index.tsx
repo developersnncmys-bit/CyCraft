@@ -288,7 +288,7 @@ export default function DownloadHero() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.6rem',
-              marginBottom: '2.25rem',
+              marginBottom: '1.25rem',
             }}
           >
             <span
@@ -347,7 +347,7 @@ export default function DownloadHero() {
               height: '2px',
               background: 'var(--color-beam)',
               boxShadow: '0 0 12px var(--color-beam-glow)',
-              margin: '2.5rem auto',
+              margin: '1.5rem auto',
               transformOrigin: 'left center',
             }}
           />
@@ -358,9 +358,9 @@ export default function DownloadHero() {
               fontFamily: 'var(--font-body)',
               fontSize: 'var(--text-lg)',
               color: 'var(--color-text-secondary)',
-              maxWidth: '680px',
-              margin: '0 auto 2.25rem',
-              lineHeight: 1.6,
+              maxWidth: '640px',
+              margin: '0 auto 1.5rem',
+              lineHeight: 1.5,
             }}
           >
             <WordSplit text={downloadHeroContent.tagline} />
@@ -371,8 +371,8 @@ export default function DownloadHero() {
               display: 'flex',
               flexWrap: 'wrap',
               justifyContent: 'center',
-              gap: '0.75rem',
-              marginBottom: '2rem',
+              gap: '0.6rem',
+              marginBottom: '1.25rem',
             }}
           >
             {downloadHeroContent.pills.map((pill) => (
@@ -404,9 +404,9 @@ export default function DownloadHero() {
             style={{
               display: 'inline-flex',
               flexWrap: 'wrap',
-              gap: '1rem',
+              gap: '0.85rem',
               justifyContent: 'center',
-              marginBottom: '2.5rem',
+              marginBottom: '1.5rem',
             }}
           >
             <a
@@ -485,9 +485,12 @@ export default function DownloadHero() {
           <div
             aria-hidden="true"
             style={{
-              display: 'inline-flex',
+              display: 'flex',
               flexDirection: 'column',
               gap: '0.25rem',
+              width: 'fit-content',
+              maxWidth: '100%',
+              marginInline: 'auto',
               border: '1px solid rgba(168,240,255,0.12)',
               background: 'rgba(13,16,20,0.6)',
               backdropFilter: 'blur(6px)',

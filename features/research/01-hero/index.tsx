@@ -406,9 +406,12 @@ export default function ResearchHero() {
           <div
             aria-hidden="true"
             style={{
-              display: 'inline-flex',
+              display: 'flex',
               flexDirection: 'column',
               gap: '0.25rem',
+              width: 'fit-content',
+              maxWidth: '100%',
+              marginInline: 'auto',
               border: '1px solid rgba(168,240,255,0.12)',
               background: 'rgba(13,16,20,0.6)',
               backdropFilter: 'blur(6px)',

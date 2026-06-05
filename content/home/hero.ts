@@ -9,7 +9,6 @@ export const homeHeroContent = {
   headlineSwapAccent: 'This is craft.',
   description:
     'Industry-leading cybersecurity education with hands-on labs, real-world projects, internships, and guaranteed placement assistance.',
-  certification: 'We are ISO 9001:2015 Certified',
   /** Per PRD §3.1 — three CTAs in the hero. */
   ctas: {
     primary: { label: 'EXPLORE COURSES', href: '/courses' },

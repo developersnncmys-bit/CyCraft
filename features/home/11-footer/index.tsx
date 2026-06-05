@@ -32,15 +32,6 @@ function IconPin() {
     </svg>
   );
 }
-function IconBadge() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M9 12l2 2 4-4" />
-      <path d="M20 7v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2Z" />
-    </svg>
-  );
-}
-
 export default function HomeFooter() {
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -53,8 +44,13 @@ export default function HomeFooter() {
 
       const trigger: ScrollTrigger.Vars = {
         trigger: root,
-        start: 'top 85%',
-        toggleActions: 'play none none reset',
+        start: 'top 95%',
+        // Play once and stay composed. The `reset` action on leaveBack
+        // was snapping every footer element back to opacity:0 whenever
+        // a layout shift above the footer caused the trigger to compute
+        // a stale "leaveBack" — leaving the footer area as blank space
+        // even though the markup was rendered.
+        toggleActions: 'play none none none',
       };
 
       // Brand mark — slow reveal
@@ -297,21 +293,6 @@ export default function HomeFooter() {
                   }}
                 >
                   {homeFooterContent.contact.address}
-                </span>
-              </li>
-              <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
-                <span style={{ color: 'var(--color-red-team)', marginTop: '2px' }}>
-                  <IconBadge />
-                </span>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '11px',
-                    color: 'var(--color-text-tertiary)',
-                    letterSpacing: '0.08em',
-                  }}
-                >
-                  {homeFooterContent.contact.gst}
                 </span>
               </li>
             </ul>

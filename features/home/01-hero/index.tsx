@@ -44,7 +44,6 @@ export default function HomeHero() {
         '.hero-line-2 [data-word]',
         '.hero-divider',
         '.hero-desc [data-word]',
-        '.hero-cert [data-word]',
         '.hero-cta',
         '.hero-terminal-line',
       ];
@@ -64,7 +63,6 @@ export default function HomeHero() {
       });
       gsap.set('.hero-divider', { scaleX: 0, transformOrigin: 'left center' });
       gsap.set('.hero-desc [data-word]', { opacity: 0, y: 8, filter: 'blur(4px)' });
-      gsap.set('.hero-cert [data-word]', { opacity: 0, y: 6 });
 
       // ── Entry timeline (autoplays, word-by-word) ────────────────────────
       const playEntry = () => {
@@ -85,11 +83,6 @@ export default function HomeHero() {
             '.hero-desc [data-word]',
             { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, stagger: 0.022 },
             '-=0.2',
-          )
-          .to(
-            '.hero-cert [data-word]',
-            { opacity: 1, y: 0, duration: 0.4, stagger: 0.028 },
-            '-=0.3',
           )
           .to('.hero-cta', { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 }, '-=0.15')
           .to('.hero-terminal-line', { opacity: 1, x: 0, duration: 0.35, stagger: 0.12 }, '-=0.2');
@@ -314,40 +307,6 @@ export default function HomeHero() {
           </p>
 
           <div
-            className="hero-cert"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.6rem',
-              padding: '0.55rem 1.1rem',
-              border: '1px solid rgba(168,240,255,0.25)',
-              background: 'rgba(168,240,255,0.04)',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '11px',
-              letterSpacing: '0.18em',
-              color: 'var(--color-beam)',
-              textTransform: 'uppercase',
-              marginBottom: '2.5rem',
-            }}
-          >
-            <svg
-              aria-hidden="true"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 2 4 5v7c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V5l-8-3Z" />
-              <path d="M9 12l2 2 4-4" />
-            </svg>
-            <WordSplit text={homeHeroContent.certification} />
-          </div>
-
-          <div
             style={{
               display: 'flex',
               flexWrap: 'wrap',
@@ -377,15 +336,19 @@ export default function HomeHero() {
             className="hero-terminal-box"
             aria-hidden="true"
             style={{
-              display: 'inline-flex',
+              display: 'flex',
               flexDirection: 'column',
-              gap: '0.25rem',
+              gap: '0.35rem',
+              width: 'fit-content',
+              maxWidth: '100%',
+              marginInline: 'auto',
               border: '1px solid rgba(168,240,255,0.12)',
               background: 'rgba(13,16,20,0.6)',
               backdropFilter: 'blur(6px)',
-              padding: '0.75rem 1.25rem',
+              padding: '1rem 1.25rem',
               fontFamily: 'var(--font-mono)',
               fontSize: '11px',
+              lineHeight: 1.55,
               color: 'var(--color-terminal)',
               letterSpacing: '0.04em',
               textAlign: 'left',

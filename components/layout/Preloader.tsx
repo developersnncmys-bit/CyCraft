@@ -137,6 +137,27 @@ function PreloaderImpl() {
         overflow: 'hidden',
       }}
     >
+      <style>{`
+        /* Mobile preloader — tighten letter-spacing on narrow viewports
+           so 'SECURING SESSION' doesn't overflow with its 0.55em tracking.
+           At 390px (iPhone 12 Pro) the original tracking pushed the
+           caption past the screen edges and broke the centered layout. */
+        @media (max-width: 480px) {
+          .preloader-title {
+            letter-spacing: 0.1em !important;
+            font-size: clamp(1.5rem, 7vw, 2.25rem) !important;
+          }
+          .preloader-status {
+            letter-spacing: 0.3em !important;
+            font-size: 0.62rem !important;
+            padding-left: 0.3em !important;
+          }
+          .preloader-stack {
+            padding: 0 1rem !important;
+            margin-top: 2rem !important;
+          }
+        }
+      `}</style>
       {/* Vignette — pulls focus toward the beam */}
       <div
         aria-hidden="true"
@@ -225,6 +246,7 @@ function PreloaderImpl() {
 
       {/* Center content stack */}
       <div
+        className="preloader-stack"
         style={{
           position: 'relative',
           zIndex: 2,
@@ -234,11 +256,14 @@ function PreloaderImpl() {
           gap: '1.1rem',
           padding: '0 2rem',
           marginTop: '3rem', /* sit clearly below the beam line */
+          maxWidth: '100%',
+          minWidth: 0,
         }}
       >
         {/* CYCRAFT — display title */}
         <div
           ref={titleRef}
+          className="preloader-title"
           style={{
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(1.75rem, 4vw, 3.25rem)',
@@ -248,6 +273,7 @@ function PreloaderImpl() {
             display: 'flex',
             color: '#a6b4bc',
             textShadow: '0 0 18px rgba(168,200,210,0.12)',
+            minWidth: 0,
           }}
         >
           {'CYCRAFT'.split('').map((ch, i) => (
@@ -268,6 +294,7 @@ function PreloaderImpl() {
         {/* SECURING SESSION — caption */}
         <div
           ref={statusRef}
+          className="preloader-status"
           style={{
             fontFamily: 'var(--font-mono)',
             fontSize: '0.7rem',
@@ -277,6 +304,8 @@ function PreloaderImpl() {
             opacity: 0.85,
             display: 'flex',
             paddingLeft: '0.55em', /* compensate for trailing letter-spacing */
+            minWidth: 0,
+            whiteSpace: 'nowrap',
           }}
         >
           {STATUS_LABEL.split('').map((ch, i) => (

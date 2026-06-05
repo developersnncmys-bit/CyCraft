@@ -375,41 +375,71 @@ h1, h2, h3, h4 {
 
 /* ── Courses page: collapse pinned cinematic sections on mobile ──
    The /courses page mirrors the btech architecture — each section forces
-   `min-height: 100vh` + `overflow: hidden` for the desktop scrub-pin layout,
-   and the catalog wraps its content in an absolutely-positioned `camera-el`
-   that pans upward as the user scrolls. Below 1024px the pin doesn't run,
-   so the 100vh + overflow:hidden clips everything past the first viewport
-   (21 cards effectively invisible). Drop the forced heights and put the
-   absolute camera back into document flow so content scrolls naturally. */
+   `min-height: 100vh` for the desktop scrub-pin layout, and the catalog
+   wraps its content in an absolutely-positioned `camera-el` that pans
+   upward as the user scrolls. Below 1024px the pin doesn't run, so the
+   forced 100vh clips everything past the first viewport (21 cards
+   effectively invisible). Drop the forced heights and put the absolute
+   camera back into document flow so content scrolls naturally.
+   IMPORTANT: do NOT override `overflow: hidden` here — the parallax
+   layers sit at `inset: -5%/-8%/-10%` and escape sideways with
+   overflow:visible, pushing document width past the viewport and
+   knocking the fixed navbar's hamburger off the right edge. */
 @media (max-width: 1023.98px) {
   #courses-catalog,
   #courses-learning-path,
   #courses-guidance {
     min-height: auto !important;
-    overflow: visible !important;
   }
   #courses-catalog .courses-catalog-camera-el {
     position: relative !important;
     inset: auto !important;
   }
-  /* Inner flex columns inside learning-path/guidance also force 100vh + */
-  /* center alignment for the desktop pinned camera. Drop both on mobile. */
+  /* Inner flex columns inside learning-path/guidance also force 100vh
+     for the desktop pinned camera. Drop only the height — keep
+     overflow:hidden so parallax layers stay clipped. */
   #courses-learning-path > div[class*="-camera"],
   #courses-guidance > div[class*="-camera"] {
     min-height: auto !important;
-    overflow: visible !important;
   }
   /* ── Hero headline overflow fix ──
      `clamp(2rem, 4.5vw, 4rem)` floors at 32px which still pushes
      "PENETRATION MASTERY COURSES" past the right edge on ~390px phones.
      Force a tighter clamp and let words wrap freely. */
   #courses-hero .courses-hero-headline {
-    font-size: clamp(1.5rem, 8vw, 2.5rem) !important;
+    font-size: clamp(1.5rem, 7vw, 2.25rem) !important;
     overflow-wrap: anywhere !important;
     word-break: break-word !important;
+  }
+  /* The per-word `inline-block` spans inside WordSplit are atomic boxes,
+     so the h1's `overflow-wrap: break-word` doesn't reach into them.
+     Apply break rules directly to the spans so long unbreakable words
+     like "PENETRATION" can split when narrower than the container. */
+  #courses-hero .courses-hero-headline [data-word] {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    max-width: 100% !important;
   }
   #courses-hero {
     min-height: auto !important;
     padding-bottom: 3rem !important;
+  }
+  /* Catalog headline morphs on mobile use a different element than the
+     hero — pin them to viewport width too. */
+  #courses-catalog .courses-catalog-headline,
+  #courses-catalog .courses-catalog-heading-morph {
+    font-size: clamp(1.5rem, 6.5vw, 2.25rem) !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+  /* On mobile only the first morph is visible (others opacity:0). Put it
+     back into normal flow so the parent grows to fit a wrapped phrase,
+     instead of staying clamped to its desktop min-height. */
+  #courses-catalog .courses-catalog-headline {
+    min-height: auto !important;
+  }
+  #courses-catalog .courses-catalog-heading-morph:first-child {
+    position: static !important;
+    inset: auto !important;
   }
 }

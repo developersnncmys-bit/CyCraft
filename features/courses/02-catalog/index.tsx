@@ -544,11 +544,18 @@ export default function CoursesCatalog() {
       }
 
       // Mobile fallback: a single scroll-trigger entry, no pin.
+      // `toggleActions: 'play none none none'` (no reset on leaveBack) so
+      // once the entry plays it stays composed — avoids the "scroll past
+      // and back to make texts appear" bug where a stale trigger position
+      // (measured before mobile CSS settled) reset everything to opacity:0
+      // and never replayed on the user's down-scroll.
+      // `start: 'top 95%'` fires as soon as the section starts entering
+      // the viewport — more forgiving than `top 80%` if measurements drift.
       if (!isDesktop) {
         const trigger = {
           trigger: root,
-          start: 'top 80%',
-          toggleActions: 'play none none reset',
+          start: 'top 95%',
+          toggleActions: 'play none none none',
         };
         gsap.fromTo(
           '.courses-catalog-badge',
@@ -626,13 +633,18 @@ export default function CoursesCatalog() {
               ease: 'power3.out',
               scrollTrigger: {
                 trigger: gridRef.current,
-                start: 'top 85%',
-                toggleActions: 'play none none reset',
+                start: 'top 95%',
+                toggleActions: 'play none none none',
               },
             },
           );
         }
-        return;
+
+        // After the mobile setup finishes laying out, refresh once so the
+        // trigger start/end positions catch any layout shifts from the
+        // mobile CSS overrides (camera goes static, section grows tall).
+        const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 200);
+        return () => window.clearTimeout(refreshId);
       }
 
       // ── Desktop cinematic — pinned camera-pan with sub-scenes ─────────
@@ -869,6 +881,25 @@ export default function CoursesCatalog() {
         }
         .courses-card:hover .courses-card-img {
           transform: scale(1.06);
+        }
+
+        /* ── Mobile (< 1024px) — pin is disabled in JS, so we also need
+           to let the section size to its real content. On desktop the
+           camera is absolute-positioned and pans up via GSAP; on mobile
+           that pattern leaves the cards beyond 100vh clipped by the
+           section's overflow:hidden. Switch the camera back to normal
+           flow and let the section grow.
+           Keep overflow:hidden on the section — the parallax layers use
+           inset:-5%/-8% and would otherwise push horizontal scroll past
+           the viewport (which knocks the fixed navbar's hamburger off
+           the right edge of the screen). */
+        @media (max-width: 1023px) {
+          #courses-catalog {
+            min-height: auto !important;
+          }
+          .courses-catalog-camera-el {
+            position: static !important;
+          }
         }
       `}</style>
 

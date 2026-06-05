@@ -215,6 +215,38 @@ export default function AssessmentResults() {
         overflow: 'hidden',
       }}
     >
+      <style>{`
+        .assessment-section-row {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+        .assessment-section-label {
+          flex-shrink: 0;
+          width: 200px;
+        }
+        .assessment-section-bar-track {
+          flex: 1;
+        }
+        @media (max-width: 640px) {
+          .assessment-section-row {
+            flex-wrap: wrap;
+            gap: 0.4rem 0.75rem;
+          }
+          .assessment-section-label {
+            flex: 1 1 auto;
+            width: auto;
+            order: 1;
+          }
+          .assessment-section-value {
+            order: 2;
+          }
+          .assessment-section-bar-track {
+            flex: 1 1 100%;
+            order: 3;
+          }
+        }
+      `}</style>
       <div
         className="assessment-res-camera"
         style={{
@@ -415,16 +447,11 @@ export default function AssessmentResults() {
               {assessmentResultsContent.sections.map((s) => (
                 <div
                   key={s.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                  }}
+                  className="assessment-section-row"
                 >
                   <div
+                    className="assessment-section-label"
                     style={{
-                      flexShrink: 0,
-                      width: '200px',
                       fontFamily: 'var(--font-body)',
                       fontSize: 'var(--text-sm)',
                       color: 'var(--color-text-secondary)',
@@ -434,8 +461,8 @@ export default function AssessmentResults() {
                   </div>
                   <div
                     aria-hidden="true"
+                    className="assessment-section-bar-track"
                     style={{
-                      flex: 1,
                       position: 'relative',
                       height: '8px',
                       background: 'rgba(168,240,255,0.08)',

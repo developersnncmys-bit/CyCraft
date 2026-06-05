@@ -315,11 +315,17 @@ export default function CoursesHero() {
           position: 'relative',
           zIndex: 6,
           width: '100%',
+          /* Flex items default to min-width: auto, which lets a long
+           * unbreakable word like "PENETRATION" expand the item past
+           * 100% of the section — causes horizontal clipping on mobile.
+           * Pin the flex item to its preferred width and let the h1's
+           * own `overflow-wrap: break-word` handle long words. */
+          minWidth: 0,
           textAlign: 'center',
           willChange: 'transform, opacity',
         }}
       >
-        <div style={{ maxWidth: '1100px', marginInline: 'auto' }}>
+        <div style={{ maxWidth: '1100px', marginInline: 'auto', minWidth: 0 }}>
           <div
             className="courses-hero-badge"
             style={{
@@ -442,9 +448,12 @@ export default function CoursesHero() {
           <div
             aria-hidden="true"
             style={{
-              display: 'inline-flex',
+              display: 'flex',
               flexDirection: 'column',
               gap: '0.25rem',
+              width: 'fit-content',
+              maxWidth: '100%',
+              marginInline: 'auto',
               border: '1px solid rgba(168,240,255,0.12)',
               background: 'rgba(13,16,20,0.6)',
               backdropFilter: 'blur(6px)',

@@ -52,8 +52,11 @@ export default function CoursesGuidance() {
       if (!isDesktop) {
         const trigger = {
           trigger: root,
-          start: 'top 80%',
-          toggleActions: 'play none none reset',
+          start: 'top 95%',
+          // Play once and stay composed. `reset` on leaveBack was causing
+          // the entry to snap back to opacity:0 if the section re-mounted
+          // or the trigger fired with stale measurements.
+          toggleActions: 'play none none none',
         };
         gsap.fromTo(
           '.courses-gd-badge',
@@ -165,6 +168,20 @@ export default function CoursesGuidance() {
         overflow: 'hidden',
       }}
     >
+      <style>{`
+        /* Mobile (< 1024px) — pin is disabled in JS. Let the section
+           size to its real content instead of stretching to 100vh.
+           Keep overflow:hidden — the parallax layers escape sideways
+           otherwise and trigger horizontal page overflow. */
+        @media (max-width: 1023px) {
+          #courses-guidance {
+            min-height: auto !important;
+          }
+          .courses-gd-camera {
+            min-height: auto !important;
+          }
+        }
+      `}</style>
       <div
         className="courses-gd-camera"
         style={{
@@ -331,9 +348,12 @@ export default function CoursesGuidance() {
             aria-hidden="true"
             style={{
               marginTop: '2.5rem',
-              display: 'inline-flex',
+              display: 'flex',
               flexDirection: 'column',
               gap: '0.25rem',
+              width: 'fit-content',
+              maxWidth: '100%',
+              marginInline: 'auto',
               border: '1px solid rgba(168,240,255,0.12)',
               background: 'rgba(13,16,20,0.6)',
               backdropFilter: 'blur(6px)',

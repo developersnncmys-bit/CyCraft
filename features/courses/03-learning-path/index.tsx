@@ -98,8 +98,11 @@ export default function CoursesLearningPath() {
       if (!isDesktop) {
         const trigger = {
           trigger: root,
-          start: 'top 80%',
-          toggleActions: 'play none none reset',
+          start: 'top 95%',
+          // Play once and stay composed. `reset` on leaveBack was causing
+          // the entry to snap back to opacity:0 if the section re-mounted
+          // or the trigger fired with stale measurements.
+          toggleActions: 'play none none none',
         };
         gsap.fromTo(
           '.courses-lp-badge',
@@ -231,6 +234,19 @@ export default function CoursesLearningPath() {
         }
         @media (max-width: 900px) {
           .courses-lp-grid { grid-template-columns: 1fr; }
+        }
+        /* Mobile (< 1024px) — pin is disabled in JS. Let the section
+           size to its real content instead of stretching to 100vh.
+           Keep overflow:hidden — the parallax layers escape sideways
+           otherwise and trigger horizontal page overflow. */
+        @media (max-width: 1023px) {
+          #courses-learning-path {
+            min-height: auto !important;
+          }
+          .courses-lp-camera {
+            min-height: auto !important;
+            align-items: flex-start !important;
+          }
         }
       `}</style>
 
