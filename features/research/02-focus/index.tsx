@@ -18,6 +18,7 @@
  *   0.85–1.00  Camera dollies in 4%
  */
 import { useRef } from 'react';
+import Link from 'next/link';
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '@/lib/gsap/register';
 import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
@@ -28,71 +29,87 @@ import {
   researchFocusContent,
   type ResearchFocus as Focus,
 } from '@/content/research/focus';
+import { researchDetailsContent } from '@/content/research/details';
+
+const isInternalRoute = (href: string) => href.startsWith('/') && !href.startsWith('//');
 
 function FocusCard({ focus }: { focus: Focus }) {
-  return (
-    <a
-      className="research-focus-card"
-      href={focus.href}
-      style={{
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        background: 'rgba(13,16,20,0.4)',
-        border: '1px solid rgba(168,240,255,0.1)',
-        textDecoration: 'none',
-        color: 'inherit',
-        willChange: 'transform, opacity',
-        transition: 'border-color 0.3s, box-shadow 0.3s',
-      }}
-      onMouseEnter={(e) => {
-        const el = e.currentTarget;
-        el.style.borderColor = 'rgba(168,240,255,0.35)';
-        el.style.boxShadow = '0 12px 32px rgba(0,0,0,0.5), 0 0 24px rgba(168,240,255,0.08)';
-      }}
-      onMouseLeave={(e) => {
-        const el = e.currentTarget;
-        el.style.borderColor = 'rgba(168,240,255,0.1)';
-        el.style.boxShadow = 'none';
-      }}
-    >
+  const cardProps = {
+    className: 'research-focus-card',
+    style: {
+      position: 'relative' as const,
+      display: 'flex' as const,
+      flexDirection: 'column' as const,
+      background: 'rgba(13,16,20,0.4)',
+      border: '1px solid rgba(168,240,255,0.1)',
+      textDecoration: 'none' as const,
+      color: 'inherit',
+      willChange: 'transform, opacity',
+      transition: 'border-color 0.3s, box-shadow 0.3s',
+    },
+    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
+      const el = e.currentTarget as HTMLElement;
+      el.style.borderColor = 'rgba(168,240,255,0.35)';
+      el.style.boxShadow = '0 12px 32px rgba(0,0,0,0.5), 0 0 24px rgba(168,240,255,0.08)';
+    },
+    onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
+      const el = e.currentTarget as HTMLElement;
+      el.style.borderColor = 'rgba(168,240,255,0.1)';
+      el.style.boxShadow = 'none';
+    },
+  };
+
+  /* Pull the hero image from the corresponding detail entry so the focus
+   * card on the listing page and the detail page hero are always the same
+   * image. If a card ever lacks a detail entry the cyan-fallback gradient
+   * stays as a graceful degradation. */
+  const detail = researchDetailsContent[focus.id];
+  const heroImage = detail?.heroImage;
+  const heroImageAlt = detail?.heroImageAlt ?? `${focus.category} research track`;
+
+  const cardBody = (
+    <>
       <div
-        aria-hidden="true"
         style={{
           position: 'relative',
           height: '180px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           overflow: 'hidden',
           borderBottom: '1px solid rgba(168,240,255,0.08)',
+          background:
+            'linear-gradient(135deg, rgba(168,240,255,0.08) 0%, rgba(13,16,20,0.6) 60%, rgba(255,61,90,0.06) 100%)',
         }}
       >
+        {heroImage && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            className="research-focus-card-image"
+            src={heroImage}
+            alt={heroImageAlt}
+            loading="lazy"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              display: 'block',
+              transformOrigin: 'center center',
+              willChange: 'transform',
+            }}
+          />
+        )}
+        {/* Darkening overlay so the chip + year badge stay readable */}
         <div
-          className="research-focus-card-image"
+          aria-hidden="true"
           style={{
             position: 'absolute',
             inset: 0,
             background:
-              'linear-gradient(135deg, rgba(168,240,255,0.08) 0%, rgba(13,16,20,0.4) 60%, rgba(255,61,90,0.06) 100%)',
-            transformOrigin: 'center center',
-            willChange: 'transform',
+              'linear-gradient(180deg, rgba(5,6,8,0.35) 0%, rgba(5,6,8,0.55) 100%)',
+            pointerEvents: 'none',
+            zIndex: 1,
           }}
         />
-        <span
-          style={{
-            position: 'relative',
-            zIndex: 1,
-            fontFamily: 'var(--font-display)',
-            fontSize: '4rem',
-            fontWeight: 800,
-            letterSpacing: '-0.04em',
-            color: 'rgba(168,240,255,0.12)',
-            textTransform: 'uppercase',
-          }}
-        >
-          {focus.category.split(/\s+/)[0].slice(0, 3)}
-        </span>
         <span
           style={{
             position: 'absolute',
@@ -104,7 +121,9 @@ function FocusCard({ focus }: { focus: Focus }) {
             letterSpacing: '0.18em',
             color: 'var(--color-beam)',
             border: '1px solid rgba(168,240,255,0.3)',
-            background: 'rgba(13,16,20,0.6)',
+            background: 'rgba(13,16,20,0.65)',
+            backdropFilter: 'blur(6px)',
+            WebkitBackdropFilter: 'blur(6px)',
             textTransform: 'uppercase',
             zIndex: 2,
           }}
@@ -184,6 +203,16 @@ function FocusCard({ focus }: { focus: Focus }) {
           <span aria-hidden="true">→</span>
         </div>
       </div>
+    </>
+  );
+
+  return isInternalRoute(focus.href) ? (
+    <Link href={focus.href} {...cardProps}>
+      {cardBody}
+    </Link>
+  ) : (
+    <a href={focus.href} {...cardProps}>
+      {cardBody}
     </a>
   );
 }

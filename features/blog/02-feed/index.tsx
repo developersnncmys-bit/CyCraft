@@ -10,6 +10,7 @@
  * then a card-stagger as the grid enters the viewport.
  */
 import { useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '@/lib/gsap/register';
@@ -126,7 +127,8 @@ function PostCard({ post, featured = false }: { post: BlogPost; featured?: boole
         el.style.boxShadow = 'none';
       }}
     >
-      {/* Cover panel — placeholder until imagery is supplied */}
+      {/* Cover panel — Pexels image if present, otherwise the category-
+          tinted gradient placeholder we used before imagery landed. */}
       <div
         aria-hidden="true"
         style={{
@@ -134,33 +136,57 @@ function PostCard({ post, featured = false }: { post: BlogPost; featured?: boole
           flex: featured ? '0 0 45%' : 'unset',
           height: featured ? 'auto' : '200px',
           minHeight: featured ? '320px' : '200px',
-          background: `linear-gradient(135deg, ${
-            accent === 'var(--color-red-team)'
-              ? 'rgba(255,61,90,0.22), rgba(255,61,90,0.05)'
-              : accent === 'var(--color-blue-team)'
-              ? 'rgba(61,168,255,0.22), rgba(61,168,255,0.05)'
-              : accent === 'var(--color-terminal)'
-              ? 'rgba(0,255,148,0.22), rgba(0,255,148,0.05)'
-              : 'rgba(168,240,255,0.22), rgba(168,240,255,0.05)'
-          })`,
+          background: post.cover
+            ? 'var(--color-carbon)'
+            : `linear-gradient(135deg, ${
+                accent === 'var(--color-red-team)'
+                  ? 'rgba(255,61,90,0.22), rgba(255,61,90,0.05)'
+                  : accent === 'var(--color-blue-team)'
+                  ? 'rgba(61,168,255,0.22), rgba(61,168,255,0.05)'
+                  : accent === 'var(--color-terminal)'
+                  ? 'rgba(0,255,148,0.22), rgba(0,255,148,0.05)'
+                  : 'rgba(168,240,255,0.22), rgba(168,240,255,0.05)'
+              })`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',
         }}
       >
+        {post.cover ? (
+          <Image
+            src={post.cover.src}
+            alt={post.cover.alt}
+            fill
+            sizes={featured ? '(max-width: 768px) 100vw, 50vw' : '(max-width: 1024px) 50vw, 33vw'}
+            style={{ objectFit: 'cover' }}
+          />
+        ) : (
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: featured ? '0.95rem' : '0.85rem',
+              color: accent,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              opacity: 0.6,
+            }}
+          >
+            {post.category}
+          </span>
+        )}
+        {/* Darkening overlay so the category chip + title still pop */}
         <span
+          aria-hidden="true"
           style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: featured ? '0.95rem' : '0.85rem',
-            color: accent,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            opacity: 0.6,
+            position: 'absolute',
+            inset: 0,
+            background: post.cover
+              ? 'linear-gradient(180deg, rgba(5,6,8,0.15) 0%, rgba(5,6,8,0.55) 100%)'
+              : 'transparent',
           }}
-        >
-          {post.category}
-        </span>
+        />
+        {/* Scan-line texture overlay (kept for cyber feel) */}
         <span
           aria-hidden="true"
           style={{
@@ -184,6 +210,7 @@ function PostCard({ post, featured = false }: { post: BlogPost; featured?: boole
               fontWeight: 700,
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
+              zIndex: 1,
             }}
           >
             Featured

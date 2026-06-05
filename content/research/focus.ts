@@ -28,7 +28,7 @@ export const researchFocusContent = {
       title: 'Advanced Threat Detection Using Machine Learning',
       description:
         'Developing next-generation threat detection systems using deep learning algorithms to identify zero-day exploits and advanced persistent threats.',
-      href: '#publications',
+      href: '/research/ai-threat-detection',
     },
     {
       id: 'iot-security-framework',
@@ -37,7 +37,7 @@ export const researchFocusContent = {
       title: 'IoT Device Security Framework',
       description:
         'Creating comprehensive security frameworks for Internet of Things devices, focusing on authentication, encryption, and secure communications.',
-      href: '#publications',
+      href: '/research/iot-security-framework',
     },
     {
       id: 'blockchain-cybersecurity',
@@ -46,7 +46,7 @@ export const researchFocusContent = {
       title: 'Blockchain for Cybersecurity Applications',
       description:
         'Exploring the use of distributed ledger technology to enhance data integrity, secure identity management, and prevent tampering.',
-      href: '#publications',
+      href: '/research/blockchain-cybersecurity',
     },
     {
       id: 'cloud-security-automation',
@@ -55,7 +55,7 @@ export const researchFocusContent = {
       title: 'Cloud Security Automation',
       description:
         'Automating security controls and compliance monitoring in multi-cloud environments using infrastructure as code and policy as code.',
-      href: '#publications',
+      href: '/research/cloud-security-automation',
     },
     {
       id: 'quantum-safe-cryptography',
@@ -64,7 +64,7 @@ export const researchFocusContent = {
       title: 'Quantum-Safe Cryptography',
       description:
         'Researching post-quantum cryptographic algorithms to prepare for the era of quantum computing and ensure long-term data security.',
-      href: '#publications',
+      href: '/research/quantum-safe-cryptography',
     },
     {
       id: 'social-engineering-defense',
@@ -73,7 +73,7 @@ export const researchFocusContent = {
       title: 'Social Engineering Defense Mechanisms',
       description:
         'Studying psychological aspects of social engineering attacks and developing training programs to build human firewall capabilities.',
-      href: '#publications',
+      href: '/research/social-engineering-defense',
     },
   ] satisfies readonly ResearchFocus[],
 } as const;

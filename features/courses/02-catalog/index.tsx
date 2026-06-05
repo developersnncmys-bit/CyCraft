@@ -205,15 +205,15 @@ function CourseCard({ course }: { course: Course }) {
   // Defensive/learning cards stay on the beam tone; offensive cards (Advanced
   // / Expert) take the red-team treatment for hover + border so the duality
   // reads at-a-glance, matching how btech tracks splits red vs cyan.
-  const baseBorder = offensive ? 'rgba(255,61,90,0.20)' : 'rgba(168,240,255,0.16)';
+  const baseBorder = offensive ? 'rgba(255,61,90,0.22)' : 'rgba(168,240,255,0.18)';
   const hoverBorder = offensive ? 'var(--color-red-team)' : 'var(--color-beam)';
   const hoverGlow = offensive
-    ? '0 18px 40px rgba(0,0,0,0.45), 0 0 32px rgba(255,61,90,0.24)'
-    : '0 18px 40px rgba(0,0,0,0.45), 0 0 32px rgba(77,217,255,0.22)';
+    ? '0 22px 50px rgba(0,0,0,0.55), 0 0 38px rgba(255,61,90,0.28)'
+    : '0 22px 50px rgba(0,0,0,0.55), 0 0 38px rgba(77,217,255,0.26)';
   const ctaColor = offensive ? 'var(--color-red-team)' : 'var(--color-beam)';
-  const dotColor = offensive ? 'var(--color-red-team)' : 'var(--color-beam)';
   const badgeBg = offensive ? 'var(--color-red-team)' : 'var(--color-beam)';
   const badgeColor = offensive ? '#fff' : 'var(--color-void)';
+  const focusTag = course.categories[0] ?? 'PROGRAM';
 
   return (
     // Next.js <Link> instead of <a> so navigating to the detail page is a
@@ -228,16 +228,19 @@ function CourseCard({ course }: { course: Course }) {
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
-        background: 'var(--color-carbon)',
+        height: '100%',
+        background:
+          'linear-gradient(180deg, rgba(20,24,30,0.85) 0%, var(--color-carbon) 60%)',
         border: `1px solid ${baseBorder}`,
         textDecoration: 'none',
         color: 'inherit',
-        transition: 'transform 0.3s, border-color 0.3s, box-shadow 0.3s',
+        transition: 'transform 0.35s cubic-bezier(.2,.7,.2,1), border-color 0.3s, box-shadow 0.3s',
         willChange: 'transform, opacity',
+        overflow: 'hidden',
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget;
-        el.style.transform = 'translateY(-6px)';
+        el.style.transform = 'translateY(-8px)';
         el.style.borderColor = hoverBorder;
         el.style.boxShadow = hoverGlow;
       }}
@@ -248,90 +251,174 @@ function CourseCard({ course }: { course: Course }) {
         el.style.boxShadow = 'none';
       }}
     >
-      {/* Mascot panel — placeholder gradient until client supplies imagery */}
+      {/* ── IMAGE PANEL ─────────────────────────────────────────
+          Pexels image overlay on top of a gradient fallback. If
+          the image 404s (onError), it hides itself revealing the
+          gradient + 3-letter glyph underneath, so the card never
+          breaks. */}
       <div
         aria-hidden="true"
         style={{
           position: 'relative',
-          height: '180px',
+          height: '210px',
           background:
-            'linear-gradient(180deg, #f4f4f6 0%, #d3d4d8 70%, #b9bbc2 100%)',
+            'linear-gradient(180deg, #2a2e36 0%, #181b21 70%, #0e1014 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',
         }}
       >
+        {/* Fallback 3-letter glyph (visible only if image fails) */}
         <span
           style={{
             fontFamily: 'var(--font-display)',
-            fontSize: '3.2rem',
+            fontSize: '3.6rem',
             fontWeight: 800,
             letterSpacing: '-0.04em',
-            color: 'rgba(0,0,0,0.18)',
+            color: 'rgba(255,255,255,0.08)',
             textTransform: 'uppercase',
           }}
         >
           {course.title.split(/\s+/)[0].slice(0, 3)}
         </span>
+
+        {course.image && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={course.image}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = 'none';
+            }}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              zIndex: 1,
+              transition: 'transform 0.6s cubic-bezier(.2,.7,.2,1)',
+            }}
+            className="courses-card-img"
+          />
+        )}
+
+        {/* Cinematic gradient — dark at top for badge legibility,
+            very dark at bottom blending into the card body. */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 2,
+            background:
+              'linear-gradient(180deg, rgba(8,10,14,0.55) 0%, rgba(8,10,14,0) 30%, rgba(8,10,14,0.55) 70%, var(--color-carbon) 100%)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Subtle horizontal scanlines over image — terminal feel */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 2,
+            backgroundImage:
+              'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.025) 3px, rgba(255,255,255,0.025) 4px)',
+            pointerEvents: 'none',
+            mixBlendMode: 'overlay',
+          }}
+        />
+
+        {/* Top-left: focus-area tag in terminal style */}
         <span
           style={{
             position: 'absolute',
-            top: '0.85rem',
-            right: '0.85rem',
-            padding: '0.35rem 0.85rem',
+            top: '0.9rem',
+            left: '0.9rem',
+            zIndex: 3,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            padding: '0.3rem 0.6rem',
+            background: 'rgba(8,10,14,0.65)',
+            backdropFilter: 'blur(6px)',
+            border: `1px solid ${offensive ? 'rgba(255,61,90,0.35)' : 'rgba(168,240,255,0.3)'}`,
+            color: ctaColor,
+            fontFamily: 'var(--font-mono)',
+            fontSize: '10px',
+            fontWeight: 600,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+          }}
+        >
+          <span aria-hidden="true" style={{ opacity: 0.6 }}>{'//'}</span>
+          {focusTag}
+        </span>
+
+        {/* Top-right: notched-corner level badge */}
+        <span
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            zIndex: 3,
+            padding: '0.45rem 0.95rem 0.45rem 1.4rem',
             background: badgeBg,
             color: badgeColor,
             fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            letterSpacing: '0.08em',
-            fontWeight: 600,
-            borderRadius: '999px',
+            fontSize: '10px',
+            fontWeight: 700,
+            letterSpacing: '0.18em',
             textTransform: 'uppercase',
+            clipPath: 'polygon(14px 0, 100% 0, 100% 100%, 0 100%)',
           }}
         >
           {course.level}
         </span>
-        <span
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            bottom: '0.85rem',
-            left: '0.85rem',
-            display: 'inline-flex',
-            gap: '0.3rem',
-          }}
-        >
-          {Array.from({ length: Math.min(4, course.categories.length + 1) }).map(
-            (_, i) => (
-              <span
-                key={i}
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  background: dotColor,
-                  opacity: 0.85,
-                }}
-              />
-            ),
-          )}
-        </span>
+
       </div>
 
-      <div style={{ padding: '1.25rem 1.35rem 1.4rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1 }}>
+      {/* ── BODY ──────────────────────────────────────────────── */}
+      <div
+        style={{
+          padding: '1.35rem 1.4rem 1.4rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.75rem',
+          flex: 1,
+        }}
+      >
+        {/* Slug tag — program code feel */}
+        <span
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '10px',
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'var(--color-text-tertiary)',
+          }}
+        >
+          {`PROG_${course.slug.split('-')[0].toUpperCase().slice(0, 8)}`}
+        </span>
+
         <h3
           style={{
             fontFamily: 'var(--font-display)',
-            fontSize: '1.35rem',
+            fontSize: '1.3rem',
             fontWeight: 700,
             color: 'var(--color-text-primary)',
             margin: 0,
             lineHeight: 1.2,
+            letterSpacing: '-0.01em',
           }}
         >
           {course.title}
         </h3>
+
         <p
           style={{
             fontFamily: 'var(--font-body)',
@@ -344,44 +431,37 @@ function CourseCard({ course }: { course: Course }) {
           {course.description}
         </p>
 
+        {/* Meta row — duration · level · price, terminal style */}
         <div
           style={{
+            marginTop: '0.5rem',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '0.5rem',
-            paddingTop: '0.75rem',
-            borderTop: '1px solid rgba(255,255,255,0.06)',
+            flexWrap: 'wrap',
+            gap: '0.5rem 0.7rem',
             fontFamily: 'var(--font-mono)',
-            fontSize: '12px',
+            fontSize: '11px',
+            letterSpacing: '0.1em',
             color: 'var(--color-text-tertiary)',
+            textTransform: 'uppercase',
           }}
         >
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-            <ClockIcon /> {course.durationWeeks} Weeks
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+            <ClockIcon /> {course.durationWeeks}W
           </span>
-          <span aria-hidden="true">/</span>
-          <span style={{ color: 'var(--color-text-primary)', fontWeight: 600 }}>
+          <span aria-hidden="true" style={{ opacity: 0.35 }}>|</span>
+          <span
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: accent }}
+          >
+            <ChartIcon /> {course.level}
+          </span>
+          <span aria-hidden="true" style={{ opacity: 0.35 }}>|</span>
+          <span style={{ color: 'var(--color-text-primary)', fontWeight: 700 }}>
             {formatInr(course.priceInr)}
           </span>
         </div>
 
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '12px',
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            color: accent,
-          }}
-        >
-          <ChartIcon />
-          Level: {course.level}
-        </div>
-
+        {/* CTA row — beam/red accent, arrow translates on card hover */}
         <div
           style={{
             display: 'flex',
@@ -389,17 +469,19 @@ function CourseCard({ course }: { course: Course }) {
             justifyContent: 'space-between',
             marginTop: 'auto',
             paddingTop: '1rem',
-            borderTop: '1px solid rgba(255,255,255,0.06)',
+            borderTop: `1px solid ${offensive ? 'rgba(255,61,90,0.18)' : 'rgba(168,240,255,0.15)'}`,
             fontFamily: 'var(--font-mono)',
             fontSize: '12px',
-            fontWeight: 600,
+            fontWeight: 700,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
             color: ctaColor,
           }}
         >
-          Enroll Now
-          <BoltIcon />
+          <span>Access Briefing</span>
+          <span className="courses-card-arrow" aria-hidden="true">
+            <BoltIcon />
+          </span>
         </div>
       </div>
     </Link>
@@ -775,6 +857,19 @@ export default function CoursesCatalog() {
           display: block;
           will-change: transform, opacity, filter;
         }
+        /* Card hover micro-animations: image gently zooms, CTA arrow
+           translates right. Pure CSS so we don't add JS listeners per card. */
+        .courses-card-arrow {
+          display: inline-flex;
+          align-items: center;
+          transition: transform 0.3s cubic-bezier(.2,.7,.2,1);
+        }
+        .courses-card:hover .courses-card-arrow {
+          transform: translateX(5px);
+        }
+        .courses-card:hover .courses-card-img {
+          transform: scale(1.06);
+        }
       `}</style>
 
       {/* ── Parallax depth layers — drift through the pin window ── */}
@@ -1001,7 +1096,7 @@ export default function CoursesCatalog() {
                 return (
                   <div
                     key={course.slug}
-                    style={{ display: visible ? 'block' : 'none' }}
+                    style={{ display: visible ? 'block' : 'none', height: '100%' }}
                   >
                     <CourseCard course={course} />
                   </div>

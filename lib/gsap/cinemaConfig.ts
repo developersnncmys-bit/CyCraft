@@ -111,6 +111,14 @@ export const PIN_DURATIONS = {
      5 pinned acts — Categories, Interface preview, Results, Leaderboard,
      CTA. Interface + Leaderboard get the longest holds because each walks
      through a multi-element composition. */
+  /* ── Blog detail page cinematic pins ───────────────────────────────────
+     Hero is unpinned (autoplay reveal on load — masthead + cover image).
+     Body pins for ~3 viewports so the camera can pan through the full
+     article content while per-block text reveals scrub in. Related sits
+     after the body and pins briefly so the recommendation cards stagger
+     in as a closing beat. */
+  blogDetailBody:    '+=300%',
+  blogDetailRelated: '+=150%',
   assessmentCategories:  '+=300%',
   assessmentInterface:   '+=350%',
   assessmentResults:     '+=300%',

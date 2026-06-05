@@ -15,6 +15,13 @@ export interface BlogPost {
   readMinutes: number;
   author: string;
   featured?: boolean;
+  /** Cover image rendered on the feed card, related-posts card, and as
+   *  the full-bleed hero backdrop on the detail page. Path is relative
+   *  to /public/. */
+  cover?: {
+    src: string;
+    alt: string;
+  };
 }
 
 export const blogFeedContent = {
@@ -47,6 +54,10 @@ export const blogFeedContent = {
       readMinutes: 8,
       author: 'EthicalByte',
       featured: true,
+      cover: {
+        src: '/images/blog/kyrgyzstan-justice-ministry-netsupport-rat-fake-pdfs/cover.jpg',
+        alt: 'Dark cybersecurity dashboard with circular interface and code displays',
+      },
     },
     {
       slug: 'roningloader-fake-chrome-teams-gh0st-rat',
@@ -58,6 +69,10 @@ export const blogFeedContent = {
       publishedAt: '2025-11-21',
       readMinutes: 9,
       author: 'EthicalByte',
+      cover: {
+        src: '/images/blog/roningloader-fake-chrome-teams-gh0st-rat/cover.jpg',
+        alt: 'Hooded figure at a dark workstation with terminal monitors and a backlit keyboard',
+      },
     },
     {
       slug: 'landfall-spyware-samsung-galaxy-zero-day',
@@ -69,6 +84,10 @@ export const blogFeedContent = {
       publishedAt: '2025-11-21',
       readMinutes: 7,
       author: 'EthicalByte',
+      cover: {
+        src: '/images/blog/landfall-spyware-samsung-galaxy-zero-day/cover.jpg',
+        alt: "Person's face lit by projected green matrix-style code in a darkened room",
+      },
     },
     {
       slug: 'cloudflare-routing-failure-worldwide-outage',
@@ -80,6 +99,10 @@ export const blogFeedContent = {
       publishedAt: '2025-11-20',
       readMinutes: 5,
       author: 'EthicalByte',
+      cover: {
+        src: '/images/blog/cloudflare-routing-failure-worldwide-outage/cover.jpg',
+        alt: 'Data centre server room hallway with racks lit by blue and green LEDs',
+      },
     },
     {
       slug: 'landfall-spyware-trusted-devices-system-wide-threat',
@@ -91,6 +114,10 @@ export const blogFeedContent = {
       publishedAt: '2025-11-19',
       readMinutes: 6,
       author: 'EthicalByte',
+      cover: {
+        src: '/images/blog/landfall-spyware-trusted-devices-system-wide-threat/cover.jpg',
+        alt: 'Hooded coder at a monitor filled with code in green text',
+      },
     },
     {
       slug: 'ai-browser-indirect-prompt-injection',
@@ -102,6 +129,10 @@ export const blogFeedContent = {
       publishedAt: '2025-11-05',
       readMinutes: 4,
       author: 'EthicalByte',
+      cover: {
+        src: '/images/blog/ai-browser-indirect-prompt-injection/cover.jpg',
+        alt: 'Hands typing on a laptop showing a retro neon-green dashboard interface',
+      },
     },
   ] as ReadonlyArray<BlogPost>,
 } as const;

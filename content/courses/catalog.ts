@@ -18,6 +18,10 @@ export interface Course {
   priceInr: number;
   level: CourseLevel;
   categories: CourseCategory[];
+  /** Pexels CDN image URL displayed on the card's mascot panel. If the
+   *  image fails to load (404), the card falls back to the existing
+   *  gradient + 3-letter glyph placeholder. */
+  image?: string;
 }
 
 export const coursesCatalogContent = {
@@ -56,6 +60,7 @@ export const coursesCatalogContent = {
       priceInr: 20000,
       level: 'Intermediate',
       categories: ['Offensive'],
+      image: 'https://images.pexels.com/photos/5380664/pexels-photo-5380664.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'cyberbyte-pro',
@@ -65,6 +70,7 @@ export const coursesCatalogContent = {
       priceInr: 20000,
       level: 'Intermediate',
       categories: ['Offensive'],
+      image: 'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'pentester-pro-essential',
@@ -74,6 +80,7 @@ export const coursesCatalogContent = {
       priceInr: 25000,
       level: 'Intermediate',
       categories: ['Offensive'],
+      image: 'https://images.pexels.com/photos/5380589/pexels-photo-5380589.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'python-for-hackers',
@@ -83,6 +90,7 @@ export const coursesCatalogContent = {
       priceInr: 20000,
       level: 'Intermediate',
       categories: ['Offensive', 'Development'],
+      image: 'https://images.pexels.com/photos/270404/pexels-photo-270404.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'ai-ml-intelligence-redefined',
@@ -92,6 +100,7 @@ export const coursesCatalogContent = {
       priceInr: 20000,
       level: 'Intermediate',
       categories: ['Data'],
+      image: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'cloud-systems-next-horizon',
@@ -101,6 +110,7 @@ export const coursesCatalogContent = {
       priceInr: 20000,
       level: 'Intermediate',
       categories: ['Cloud'],
+      image: 'https://images.pexels.com/photos/325229/pexels-photo-325229.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'data-science-from-data-to-decision',
@@ -110,6 +120,7 @@ export const coursesCatalogContent = {
       priceInr: 20000,
       level: 'Intermediate',
       categories: ['Data'],
+      image: 'https://images.pexels.com/photos/669610/pexels-photo-669610.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'devops-flow-automate-deliver',
@@ -119,6 +130,7 @@ export const coursesCatalogContent = {
       priceInr: 20000,
       level: 'Intermediate',
       categories: ['Systems', 'Cloud'],
+      image: 'https://images.pexels.com/photos/1181271/pexels-photo-1181271.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'android-development-essential',
@@ -128,6 +140,7 @@ export const coursesCatalogContent = {
       priceInr: 30000,
       level: 'Beginner',
       categories: ['Development'],
+      image: 'https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'ios-development-crafted-in-swift',
@@ -137,6 +150,7 @@ export const coursesCatalogContent = {
       priceInr: 30000,
       level: 'Intermediate',
       categories: ['Development'],
+      image: 'https://images.pexels.com/photos/1092671/pexels-photo-1092671.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'linux-essential',
@@ -146,6 +160,7 @@ export const coursesCatalogContent = {
       priceInr: 20000,
       level: 'Beginner',
       categories: ['Systems'],
+      image: 'https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'robotics-intelligence-in-motion',
@@ -155,6 +170,7 @@ export const coursesCatalogContent = {
       priceInr: 20000,
       level: 'Intermediate',
       categories: ['Systems'],
+      image: 'https://images.pexels.com/photos/8438923/pexels-photo-8438923.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'iot-connected-world',
@@ -164,6 +180,7 @@ export const coursesCatalogContent = {
       priceInr: 20000,
       level: 'Intermediate',
       categories: ['Systems'],
+      image: 'https://images.pexels.com/photos/2085831/pexels-photo-2085831.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'web-exploitation-art-of-breach',
@@ -173,6 +190,7 @@ export const coursesCatalogContent = {
       priceInr: 30000,
       level: 'Advanced',
       categories: ['Offensive', 'Web'],
+      image: 'https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'wireless-security-master-airwaves',
@@ -182,6 +200,7 @@ export const coursesCatalogContent = {
       priceInr: 30000,
       level: 'Advanced',
       categories: ['Offensive', 'Defensive'],
+      image: 'https://images.pexels.com/photos/2881229/pexels-photo-2881229.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'infrastructure-pentesting',
@@ -191,6 +210,7 @@ export const coursesCatalogContent = {
       priceInr: 30000,
       level: 'Advanced',
       categories: ['Offensive', 'Systems'],
+      image: 'https://images.pexels.com/photos/159304/network-cable-ethernet-computer-159304.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'network-pentesting',
@@ -200,6 +220,7 @@ export const coursesCatalogContent = {
       priceInr: 30000,
       level: 'Intermediate',
       categories: ['Offensive'],
+      image: 'https://images.pexels.com/photos/1933900/pexels-photo-1933900.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'red-team-expert',
@@ -209,6 +230,7 @@ export const coursesCatalogContent = {
       priceInr: 30000,
       level: 'Expert',
       categories: ['Offensive'],
+      image: 'https://images.pexels.com/photos/207580/pexels-photo-207580.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'blue-team-defenders-edge',
@@ -218,6 +240,7 @@ export const coursesCatalogContent = {
       priceInr: 30000,
       level: 'Expert',
       categories: ['Defensive'],
+      image: 'https://images.pexels.com/photos/2882552/pexels-photo-2882552.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'digital-forensics',
@@ -227,6 +250,7 @@ export const coursesCatalogContent = {
       priceInr: 30000,
       level: 'Advanced',
       categories: ['Defensive', 'Malware'],
+      image: 'https://images.pexels.com/photos/270373/pexels-photo-270373.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
     {
       slug: 'api-security',
@@ -236,6 +260,7 @@ export const coursesCatalogContent = {
       priceInr: 30000,
       level: 'Intermediate',
       categories: ['Offensive', 'Web'],
+      image: 'https://images.pexels.com/photos/4709285/pexels-photo-4709285.jpeg?auto=compress&cs=tinysrgb&w=800',
     },
   ] as ReadonlyArray<Course>,
 } as const;

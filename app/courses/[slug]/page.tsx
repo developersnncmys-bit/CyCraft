@@ -13,18 +13,17 @@
  *      column shows a friendly "being finalised" notice.
  *
  * Sections (top → bottom):
- *   I.  Hero        — back link, title, long description, meta pills
- *   II. Mascot      — gradient visual centrepiece (per-slug accent)
- *   III. Syllabus + sticky Enquire Now form
- *   IV. Prerequisites + Learning Outcomes (only when at least one list
- *       has content)
+ *   I.  Hero        — full-bleed course.image backdrop + back link, chip,
+ *                     title, long description, meta pills
+ *   II. Syllabus + sticky Enquire Now form
+ *   III. Prerequisites + Learning Outcomes (only when at least one list
+ *        has content)
  *   Footer — shared HomeFooter
  */
 import { useParams, notFound } from 'next/navigation';
 import { coursesCatalogContent } from '@/content/courses/catalog';
 import { getCourseDetail } from '@/content/courses/details';
 import CourseHero from '@/features/course-detail/01-hero';
-import CourseMascot from '@/features/course-detail/02-mascot';
 import CourseSyllabusForm from '@/features/course-detail/03-syllabus-form';
 import CoursePrereqOutcomes from '@/features/course-detail/04-prereq-outcomes';
 import HomeFooter from '@/features/home/11-footer';
@@ -45,7 +44,6 @@ export default function CourseDetailPage() {
   return (
     <>
       <CourseHero course={course} longDescription={details?.longDescription} />
-      <CourseMascot course={course} />
       <CourseSyllabusForm course={course} syllabus={details?.syllabus ?? null} />
       <CoursePrereqOutcomes
         prerequisites={details?.prerequisites ?? []}
