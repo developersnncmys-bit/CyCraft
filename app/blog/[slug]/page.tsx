@@ -1,8 +1,13 @@
-'use client';
 /**
  * Blog Post Detail page — dynamic route at /blog/<slug>.
  *
- * Single shared template that resolves content from two sources:
+ * Server component so `generateStaticParams` can pre-render every known
+ * post at build time (required by `output: 'export'`). Resolves the
+ * Promise-typed `params` (see node_modules/next/dist/docs for the App
+ * Router async-params convention) and passes plain props down to the
+ * client section components.
+ *
+ * Content sources:
  *   1. content/blog/feed.ts — base record (title, excerpt, category,
  *      author, date, read time). Required: a 404 is shown if the slug
  *      isn't in the feed.
@@ -10,15 +15,8 @@
  *      Optional: when no detail entry is registered yet, the page still
  *      renders the hero + metadata using feed data alone and the body
  *      shows a "publishing soon" placeholder.
- *
- * Sections (top → bottom):
- *   I.   Hero    — back link, category chip, title, deck, author/date/read
- *   II.  Body    — content-block renderer (paragraph, heading, list,
- *                  quote, callout, code, divider) + tags + sources
- *   III. Related — three other posts (same category first, then recent)
- *   Footer — shared HomeFooter
  */
-import { useParams, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { blogFeedContent } from '@/content/blog/feed';
 import { getBlogPostDetail } from '@/content/blog/posts';
 import BlogDetailHero from '@/features/blog-detail/01-hero';
@@ -27,17 +25,20 @@ import BlogDetailInteractions from '@/features/blog-detail/04-interactions';
 import BlogDetailRelated from '@/features/blog-detail/03-related';
 import HomeFooter from '@/features/home/11-footer';
 
-export default function BlogDetailPage() {
-  const params = useParams<{ slug: string }>();
-  const slug = params?.slug;
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
 
-  if (!slug) notFound();
+export async function generateStaticParams() {
+  return blogFeedContent.posts.map((p) => ({ slug: p.slug }));
+}
+
+export default async function BlogDetailPage({ params }: PageProps) {
+  const { slug } = await params;
 
   const post = blogFeedContent.posts.find((p) => p.slug === slug);
   if (!post) notFound();
 
-  // Detail entry is OPTIONAL — posts without one still render the hero
-  // + body placeholder using feed data.
   const detail = getBlogPostDetail(slug);
 
   return (
