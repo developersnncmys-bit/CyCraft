@@ -46,9 +46,9 @@ export default function CampusSection() {
       }
 
       // ── Desktop cinema ────────────────────────────────────────────────
-      gsap.set('.cs-badge-el',    { opacity: 0 });
-      gsap.set('.cs-heading-el',  { opacity: 0, y: 24 });
-      gsap.set('.cs-location-el', { opacity: 0 });
+      // Badge + heading + location stay at default opacity:1 (Approach B).
+      // Video scale, accreditation badges, and feature blurbs KEEP their
+      // reveals — they are the section's cinema beats.
       gsap.set(badges,            { opacity: 0, y: 10 });
       gsap.set(features,          { opacity: 0, y: 20 });
       if (video) gsap.set(video,  { scale: 1.12 });
@@ -62,9 +62,7 @@ export default function CampusSection() {
         unpinned: true,
       });
 
-      tl.to('.cs-badge-el',    { opacity: 1, duration: 0.05, ease: 'power2.out' }, 0)
-        .to('.cs-heading-el',  { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0.02)
-        .to('.cs-location-el', { opacity: 1, duration: 0.06, ease: 'power2.out' }, 0.06);
+      // Badge + heading + location reveals removed (Approach B).
       if (video) {
         // Camera pulls back over the bulk of the pin
         tl.to(video, { scale: 1, duration: 0.50, ease: 'power2.out' }, 0.10);

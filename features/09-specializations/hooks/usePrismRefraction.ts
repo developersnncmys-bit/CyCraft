@@ -50,10 +50,9 @@ export function usePrismRefraction(containerRef: RefObject<HTMLElement | null>) 
       //  DESKTOP CINEMA PATH — pin + scrub, 300vh
       // ──────────────────────────────────────────────────────────────────
 
-      // Initial state
-      gsap.set('.spec-heading-el', { opacity: 0, y: 30 });
-      gsap.set('.spec-badge-el',   { opacity: 0 });
-      gsap.set('.spec-desc-el',    { opacity: 0, y: 20 });
+      // Initial state. Heading + badge + description stay at default
+      // opacity:1 (Approach B). Prism, refracted beams, and 6 cards KEEP
+      // their reveals — they are the cinema beats.
       gsap.set('.prism-hex-el',    { opacity: 0, rotate: 0, scale: 0.5 });
       gsap.set('[class^="spec-beam-"]', { opacity: 0 });
       gsap.set('.spec-card-el',    { opacity: 0, scale: 0.8 });
@@ -67,13 +66,10 @@ export function usePrismRefraction(containerRef: RefObject<HTMLElement | null>) 
         unpinned: true,
       });
 
-      // 0.00 – 0.10 Header
-      tl.to('.spec-heading-el', { opacity: 1, y: 0, duration: 0.10, ease: 'power3.out' }, 0)
-        .to('.spec-badge-el',   { opacity: 1, duration: 0.06, ease: 'power2.out' }, 0.02)
-        .to('.spec-desc-el',    { opacity: 1, y: 0, duration: 0.08, ease: 'power2.out' }, 0.06)
+      // Header reveals removed (Approach B — start at opacity:1).
 
       // 0.10 – 0.25 Prism spins into existence
-        .to('.prism-hex-el',
+      tl.to('.prism-hex-el',
             { opacity: 1, scale: 1, rotate: 60, duration: 0.15, ease: 'back.out(1.5)' }, 0.10)
 
       // 0.25 – 0.45 Refracted beams shoot out

@@ -89,9 +89,11 @@ export function usePillarSplit(containerRef: RefObject<HTMLElement | null>) {
       //  DESKTOP CINEMA PATH — pin + scrub
       // ──────────────────────────────────────────────────────────────────
 
-      // Initial states
+      // Initial states. Badge + desc stay at default opacity:1 (Approach B
+       // — no fade-in on pin engage). Heading chars retain the SplitType
+       // yPercent reveal because that character rise IS the prelude cinema
+       // beat for the prism-split showpiece.
       if (split) gsap.set(split.chars, { opacity: 0, yPercent: 100 });
-      gsap.set(['.pillars-badge-el', '.pillars-desc-el'], { opacity: 0 });
       gsap.set('.pillars-descend-beam', { opacity: 0, scaleY: 0 });
       gsap.set('.beam-prism-gem', { opacity: 0, scale: 0, rotation: 45 });
       gsap.set([...rails, ...railGlows], { strokeDashoffset: 1 });
@@ -112,8 +114,7 @@ export function usePillarSplit(containerRef: RefObject<HTMLElement | null>) {
         tl.to(split.chars,
               { opacity: 1, yPercent: 0, stagger: 0.004, duration: 0.10, ease: 'power3.out' }, 0);
       }
-      tl.to('.pillars-badge-el', { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0.02)
-        .to('.pillars-desc-el', { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0.06);
+      // Badge + desc reveals removed (Approach B — they start at opacity:1).
 
       // 0.10 – 0.20 Descend beam scrubs in; prism gem flashes
       tl.to('.pillars-descend-beam',

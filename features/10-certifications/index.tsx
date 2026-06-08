@@ -28,8 +28,8 @@ export default function CertificationsSection() {
         return;
       }
 
-      gsap.set('.cert-heading-el',     { opacity: 0, y: 24 });
-      gsap.set('.cert-desc-el',        { opacity: 0, y: 16 });
+      // Heading + description start at default opacity:1 (Approach B).
+      // Ticker wrap KEEPS its opacity reveal — it's the section's cinema beat.
       gsap.set('.cert-ticker-wrap-el', { opacity: 0 });
       gsap.set('.cert-camera-el',      { scale: 1 });
 
@@ -41,9 +41,8 @@ export default function CertificationsSection() {
         unpinned: true,
       });
 
-      tl.to('.cert-heading-el',     { opacity: 1, y: 0, duration: 0.15, ease: 'power3.out' }, 0)
-        .to('.cert-desc-el',        { opacity: 1, y: 0, duration: 0.15, ease: 'power2.out' }, 0.08)
-        .to('.cert-ticker-wrap-el', { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.25)
+      // Heading + description reveals removed (Approach B — start opacity:1).
+      tl.to('.cert-ticker-wrap-el', { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.25)
         // Hold 0.50 – 0.85
         .to('.cert-camera-el',      { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.85);
     },

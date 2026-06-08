@@ -80,9 +80,8 @@ export default function PlacementsSection() {
       }
 
       // ── Desktop cinema ────────────────────────────────────────────────
-      gsap.set('.pl-heading-el', { opacity: 0, y: 24 });
-      gsap.set('.pl-badge-el',   { opacity: 0 });
-      gsap.set('.pl-desc-el',    { opacity: 0, y: 16 });
+      // Heading + badge + description stay at default opacity:1 (Approach B).
+      // The 6 metric cards KEEP their reveal + counters — cinema beat.
       gsap.set(cards,            { opacity: 0, y: 30 });
       gsap.set('.pl-camera-el',  { scale: 1, opacity: 1 });
 
@@ -100,10 +99,8 @@ export default function PlacementsSection() {
         unpinned: true,
       });
 
-      tl.to('.pl-badge-el',   { opacity: 1, duration: 0.05, ease: 'power2.out' }, 0)
-        .to('.pl-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0.02)
-        .to('.pl-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.06)
-        .to(cards,
+      // Badge + heading + description reveals removed (Approach B).
+      tl.to(cards,
             { opacity: 1, y: 0, stagger: 0.04, duration: 0.10, ease: 'power3.out' }, 0.15);
 
       // Counters per metric, scroll-bound onUpdate

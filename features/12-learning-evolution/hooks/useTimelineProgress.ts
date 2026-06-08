@@ -55,9 +55,9 @@ export function useTimelineProgress(containerRef: RefObject<HTMLElement | null>)
       }
 
       // ── Desktop cinema ────────────────────────────────────────────────
+      // Heading + description stay at default opacity:1 (Approach B).
+      // Camera Y pan, phase nodes, dots, and beam KEEP their reveals.
       gsap.set('.le-camera-el',  { y: 0, opacity: 1 });
-      gsap.set('.le-heading-el', { opacity: 0, y: 24 });
-      gsap.set('.le-desc-el',    { opacity: 0, y: 16 });
       gsap.set(nodes, { opacity: 0, x: 0 });
       nodes.forEach((node) => {
         const dot = node.querySelector('.phase-dot-el');
@@ -80,9 +80,7 @@ export function useTimelineProgress(containerRef: RefObject<HTMLElement | null>)
         invalidateOnRefresh: true,
       });
 
-      // Heading + description
-      tl.to('.le-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0)
-        .to('.le-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.04);
+      // Heading + description reveals removed (Approach B — start opacity:1).
 
       // 0.08 – 0.75 Camera pans so the phase nodes scroll through the
       // pinned viewport. Ends at 0.75 (was 0.90) so the final phase sits

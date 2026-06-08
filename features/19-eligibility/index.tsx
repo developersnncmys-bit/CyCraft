@@ -48,10 +48,13 @@ export default function EligibilitySection() {
         unpinned: true,
       });
 
-      // Columns staggered further (0.10 → 0.18) and started later (0.05 → 0.10)
-      // so each eligibility column has ~22vh of scroll-time before the next
-      // appears, using more of the pin instead of flashing all 4 in within 0.40.
-      tl.to(cols, { opacity: 1, y: 0, stagger: 0.18, duration: 0.14, ease: 'power3.out' }, 0.10)
+      // Columns staggered 0.18 so each eligibility column has ~22vh of
+      // scroll-time before the next appears. Start position pulled from
+      // 0.10 → 0 (Approach B outlier fix) so the cols begin revealing the
+      // instant the pin engages — was creating a 10% blank window at section
+      // entry. The two cols are the section's only content; no separate
+      // header text to switch to opacity:1.
+      tl.to(cols, { opacity: 1, y: 0, stagger: 0.18, duration: 0.14, ease: 'power3.out' }, 0)
         .to('.el-camera-el', { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.90);
     },
     { scope: sectionRef, dependencies: [reducedMotion, isDesktop, isTablet] },

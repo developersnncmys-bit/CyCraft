@@ -40,8 +40,8 @@ export default function AdmissionSection() {
         return;
       }
 
-      gsap.set('.ad-heading-el', { opacity: 0, y: 24 });
-      gsap.set('.ad-desc-el',    { opacity: 0, y: 16 });
+      // Heading + description stay at default opacity:1 (Approach B).
+      // The 4 admission steps + connectors KEEP their reveal — cinema beat.
       gsap.set(steps,            { opacity: 0, y: 20 });
       gsap.set(connectors,       { scaleX: 0 });
       gsap.set('.ad-camera-el',  { scale: 1, opacity: 1 });
@@ -54,8 +54,7 @@ export default function AdmissionSection() {
         unpinned: true,
       });
 
-      tl.to('.ad-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0)
-        .to('.ad-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.04);
+      // Heading + description reveals removed (Approach B — start opacity:1).
 
       // Steps + connectors interleaved — each step "pulses" as user scrolls
       const STEP_START = 0.18;

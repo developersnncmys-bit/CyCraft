@@ -40,9 +40,8 @@ export function useLabsReveal(containerRef: RefObject<HTMLElement | null>) {
       }
 
       // ── Desktop — PINNED scrub-against-scroll ─────────────────────────
-      gsap.set('.bg-heading-el', { opacity: 0, y: 24 });
-      gsap.set('.bg-badge-el',   { opacity: 0 });
-      gsap.set('.bg-desc-el',    { opacity: 0, y: 16 });
+      // Badge + heading + description stay at default opacity:1 (Approach B).
+      // The 9 lab tiles KEEP their cascade — it is THE cinema beat.
       gsap.set(tiles,            { opacity: 0, y: 32, scale: 0.94 });
       gsap.set('.bg-camera-el',  { scale: 1, opacity: 1 });
 
@@ -58,15 +57,12 @@ export function useLabsReveal(containerRef: RefObject<HTMLElement | null>) {
         // pause/jerk symptom across sections 6+.
       });
 
-      // Header reveals first
-      tl.to('.bg-badge-el',   { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0)
-        .to('.bg-heading-el', { opacity: 1, y: 0, duration: 0.10, ease: 'power3.out' }, 0.04)
-        .to('.bg-desc-el',    { opacity: 1, y: 0, duration: 0.10, ease: 'power2.out' }, 0.12)
+      // Header reveals removed (Approach B — start at opacity:1).
 
       // Tiles cascade ONE BY ONE — scrubbed against scroll so each tile has
       // dwell time as the user scrolls. 9 tiles distributed across 0.25–0.95
       // of the timeline (~70% of pin).
-        .to(tiles,
+      tl.to(tiles,
             { opacity: 1, y: 0, scale: 1, duration: 0.10, ease: 'power2.out',
               stagger: 0.075 }, 0.25);
     },

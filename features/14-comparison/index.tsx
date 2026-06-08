@@ -40,9 +40,9 @@ export default function ComparisonSection() {
         return;
       }
 
-      gsap.set('.cmp-heading-el', { opacity: 0, y: 24 });
-      gsap.set('.cmp-desc-el',    { opacity: 0, y: 16 });
-      gsap.set('.cmp-headers-el', { opacity: 0 });
+      // Heading + description + column-header strip stay at default
+      // opacity:1 (Approach B). The 5 comparison rows KEEP their cascade
+      // reveal — that is the cinema beat for this section.
       gsap.set(rows,              { opacity: 0, y: 30 });
       gsap.set('.cmp-camera-el',  { opacity: 1 });
 
@@ -57,10 +57,8 @@ export default function ComparisonSection() {
         unpinned: true,
       });
 
-      tl.to('.cmp-heading-el', { opacity: 1, y: 0, duration: 0.10, ease: 'power3.out' }, 0)
-        .to('.cmp-desc-el',    { opacity: 1, y: 0, duration: 0.08, ease: 'power2.out' }, 0.05)
-        .to('.cmp-headers-el', { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0.12)
-        .to(rows,
+      // Heading + description + column-header reveals removed (Approach B).
+      tl.to(rows,
             { opacity: 1, y: 0, stagger: 0.20, duration: 0.18, ease: 'power2.out' }, 0.22);
     },
     { scope: sectionRef, dependencies: [reducedMotion, isDesktop] },

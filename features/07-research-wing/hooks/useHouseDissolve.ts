@@ -69,10 +69,11 @@ export function useHouseDissolve(containerRef: RefObject<HTMLElement | null>) {
       //  DESKTOP CINEMA PATH — pin + scrub + camera-pan (2 blocks)
       // ──────────────────────────────────────────────────────────────────
 
-      // Initial state — heading + workstation share the first block, both
-      // composed at camera y=0 so the heading titles the workstation content.
+      // Initial state. Heading stays at default opacity:1 (Approach B —
+      // header text composed from the start). The workstation block, house
+      // block, terminal rotation, walls dissolve, interior reveal, camera
+      // Y pan are all cinema beats and keep their reveals.
       gsap.set('.rw-camera-el', { y: 0, willChange: 'transform' });
-      gsap.set('.rw-heading-el',           { opacity: 0, y: 30 });
       gsap.set('.rw-block-workstation-el', { opacity: 0 });
       gsap.set('.workstation-frame-el',    { rotateY: -15 });
       gsap.set('.rw-block-house-el',       { opacity: 0 });
@@ -93,11 +94,10 @@ export function useHouseDissolve(containerRef: RefObject<HTMLElement | null>) {
         // context on the pause/jerk + unpin symptom.
       });
 
-      // 0.00 – 0.12 Heading reveals (camera y=0)
-      tl.to('.rw-heading-el', { opacity: 1, y: 0, duration: 0.12, ease: 'power3.out' }, 0)
+      // Heading reveal removed (Approach B — starts at opacity:1).
 
       // 0.08 – 0.22 Workstation block fades in + terminal un-tilts
-        .to('.rw-block-workstation-el', { opacity: 1, duration: 0.12, ease: 'power2.out' }, 0.08)
+      tl.to('.rw-block-workstation-el', { opacity: 1, duration: 0.12, ease: 'power2.out' }, 0.08)
         .to('.workstation-frame-el',    { rotateY: 0, duration: 0.14, ease: 'power2.out' }, 0.08)
 
       // 0.32 – 0.62 Camera pans 0 → -100vh so the second block (house)

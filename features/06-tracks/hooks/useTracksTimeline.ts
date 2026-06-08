@@ -84,9 +84,10 @@ export function useTracksTimeline(containerRef: RefObject<HTMLElement | null>) {
       //  DESKTOP CINEMA PATH — pin + scrub, 400vh
       // ──────────────────────────────────────────────────────────────────
 
-      // Initial state
+      // Initial state. Description stays at default opacity:1 (Approach B).
+      // Heading chars KEEP the SplitType yPercent reveal — it's the prelude
+      // beat for the permanent red/blue split moment.
       if (split) gsap.set(split.chars, { opacity: 0, yPercent: 100 });
-      gsap.set('.tracks-desc-el', { opacity: 0 });
       gsap.set('.tracks-bg-tint-el', { opacity: 0 });
       gsap.set('.split-h-beam', { scaleX: 0, opacity: 0, transformOrigin: 'left' });
       gsap.set('.split-flash-el', { opacity: 0, scale: 1 });
@@ -109,12 +110,12 @@ export function useTracksTimeline(containerRef: RefObject<HTMLElement | null>) {
         // point where btech sections began feeling broken from sec 6 onward.
       });
 
-      // 0.00 – 0.10 Heading + description
+      // 0.00 – 0.10 Heading SplitType chars (description starts opacity:1
+      // per Approach B — its reveal tween removed).
       if (split) {
         tl.to(split.chars,
               { opacity: 1, yPercent: 0, stagger: 0.005, duration: 0.10, ease: 'power3.out' }, 0);
       }
-      tl.to('.tracks-desc-el', { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0.06);
 
       // 0.10 – 0.25 Horizontal cyan beam sweeps to centre
       tl.to('.split-h-beam',

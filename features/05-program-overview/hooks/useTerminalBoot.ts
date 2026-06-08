@@ -70,8 +70,9 @@ export function useTerminalBoot(
       //    0.75–1.00  Hold + camera nudge 2%
       // ──────────────────────────────────────────────────────────────────
 
-      // Initial state
-      gsap.set(['.po-heading-el', '.po-badge-el'], { opacity: 0, y: 20 });
+      // Initial state. Heading + badge stay at default opacity:1 (Approach B).
+      // Terminal window, detail cards, and bars KEEP their reveal — terminal
+      // scaling in is the cinema beat; cards + bars cascade is the content.
       gsap.set('.po-terminal-el', { opacity: 0, scale: 0.96 });
       gsap.set('.detail-card-el', { opacity: 0, y: 30 });
       gsap.set('.detail-bar-el', { scaleX: 0, transformOrigin: 'left' });
@@ -89,12 +90,10 @@ export function useTerminalBoot(
         },
       });
 
-      // 0.00 – 0.10 Heading + badge
-      tl.to('.po-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0)
-        .to('.po-badge-el',   { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0.04)
+      // Heading + badge reveals removed (Approach B — start at opacity:1).
 
       // 0.10 – 0.20 Terminal window scales in
-        .to('.po-terminal-el', { opacity: 1, scale: 1, duration: 0.10, ease: 'power2.out' }, 0.10)
+      tl.to('.po-terminal-el', { opacity: 1, scale: 1, duration: 0.10, ease: 'power2.out' }, 0.10)
 
       // 0.55 – 0.75 Detail cards materialise (scroll-bound)
         .to('.detail-card-el',

@@ -50,9 +50,9 @@ export function useProjectShuffle(containerRef: RefObject<HTMLElement | null>) {
       //  DESKTOP CINEMA PATH — pin + scrub
       // ──────────────────────────────────────────────────────────────────
 
-      // Initial state
-      gsap.set('.projects-heading-el',   { opacity: 0, y: 30 });
-      gsap.set('.projects-desc-el',      { opacity: 0, y: 20 });
+      // Initial state. Heading + description stay at default opacity:1
+      // (Approach B). Code window stack, list items, and 3D shuffle KEEP
+      // their reveals — they are the cinema beats.
       gsap.set('.projects-list-item-el', { opacity: 0, x: -20 });
       gsap.set('.projects-stack-wrap-el', { opacity: 0 });
       gsap.set('.code-window-0', { opacity: 1, zIndex: 3 });
@@ -68,12 +68,10 @@ export function useProjectShuffle(containerRef: RefObject<HTMLElement | null>) {
         unpinned: true,
       });
 
-      // 0.00 – 0.10 Heading + description
-      tl.to('.projects-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0)
-        .to('.projects-desc-el',    { opacity: 1, y: 0, duration: 0.08, ease: 'power2.out' }, 0.04)
+      // Heading + description reveals removed (Approach B — start opacity:1).
 
       // 0.10 – 0.30 Code window stack fades in (3D presence)
-        .to('.projects-stack-wrap-el', { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.10)
+      tl.to('.projects-stack-wrap-el', { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.10)
 
       // 0.20 – 0.50 Project list items reveal
         .to('.projects-list-item-el',

@@ -82,11 +82,10 @@ export function useHighwayFlight(containerRef: RefObject<HTMLElement | null>) {
       //  images settle and camera-el's scrollHeight changes).
       // ──────────────────────────────────────────────────────────────────
 
-      // Initial state
+      // Initial state. Badge + heading + description stay at default
+      // opacity:1 (Approach B). Camera Y pan, checkpoints, markers, chips,
+      // and beam line KEEP their reveals — they are the cinema beats.
       gsap.set('.curriculum-camera-el',  { y: 0, opacity: 1 });
-      gsap.set('.curriculum-heading-el', { opacity: 0, y: 30 });
-      gsap.set('.curriculum-badge-el',   { opacity: 0 });
-      gsap.set('.curriculum-desc-el',    { opacity: 0, y: 16 });
       gsap.set(checkpoints,              { opacity: 0, y: 20 });
       gsap.set(markers,                  { opacity: 0 });
       gsap.set(chips,                    { opacity: 0 });
@@ -107,10 +106,8 @@ export function useHighwayFlight(containerRef: RefObject<HTMLElement | null>) {
         invalidateOnRefresh: true,
       });
 
-      // 0.00 – 0.08 Header reveals (camera at y=0)
-      tl.to('.curriculum-badge-el',   { opacity: 1, duration: 0.04, ease: 'power2.out' }, 0)
-        .to('.curriculum-heading-el', { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0.01)
-        .to('.curriculum-desc-el',    { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.04);
+      // Badge + heading + description reveals removed (Approach B —
+      // start at opacity:1, no fade-in on pin engage).
 
       // 0.08 – 0.70 Camera pans linearly so the highway scrolls through the
       // pinned viewport. Ends at 0.70 (was 0.95) so the bottom row (S7/S8)

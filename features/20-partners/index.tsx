@@ -55,9 +55,8 @@ export default function PartnersSection() {
         return;
       }
 
-      gsap.set('.pt-badge-el',       { opacity: 0 });
-      gsap.set('.pt-heading-el',     { opacity: 0, y: 24 });
-      gsap.set('.pt-desc-el',        { opacity: 0, y: 16 });
+      // Badge + heading + description stay at default opacity:1 (Approach B).
+      // Ticker-wrap reveal + camera scale/fade KEEP — cinema beats.
       gsap.set('.pt-ticker-wrap-el', { opacity: 0 });
       gsap.set('.pt-camera-el',      { scale: 1, opacity: 1 });
 
@@ -69,10 +68,8 @@ export default function PartnersSection() {
         unpinned: true,
       });
 
-      tl.to('.pt-badge-el',       { opacity: 1, duration: 0.05, ease: 'power2.out' }, 0)
-        .to('.pt-heading-el',     { opacity: 1, y: 0, duration: 0.08, ease: 'power3.out' }, 0.02)
-        .to('.pt-desc-el',        { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.06)
-        .to('.pt-ticker-wrap-el', { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.20)
+      // Badge + heading + description reveals removed (Approach B).
+      tl.to('.pt-ticker-wrap-el', { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.20)
         .to('.pt-camera-el',      { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.90)
         // In-timeline fade — close the camera before the pin releases so
         // the partners composition doesn't linger on screen as the section

@@ -92,8 +92,10 @@ export function usePhilosophyReveal(containerRef: RefObject<HTMLElement | null>)
       //  DESKTOP CINEMA PATH — pin + scrub
       // ──────────────────────────────────────────────────────────────────
 
-      // Initial state
-      if (headingEl) gsap.set(headingEl, { opacity: 0, y: 30 });
+      // Initial state. The small "OUR PHILOSOPHY" label stays at default
+      // opacity:1 (Approach B). The fractured-heading words KEEP their
+      // y/opacity reveal — "fractured text reassembles" is THE cinema beat
+      // for this section per the file docstring.
       if (words.length) gsap.set(words, { y: '110%', opacity: 0 });
       if (lineEl)  gsap.set(lineEl,  { scaleX: 0, transformOrigin: 'left' });
       if (descEl)  gsap.set(descEl,  { opacity: 0, y: 20 });
@@ -108,10 +110,7 @@ export function usePhilosophyReveal(containerRef: RefObject<HTMLElement | null>)
         unpinned: true,
       });
 
-      // 0.00 – 0.10 Heading
-      if (headingEl) {
-        tl.to(headingEl, { opacity: 1, y: 0, duration: 0.10, ease: 'power3.out' }, 0);
-      }
+      // "OUR PHILOSOPHY" label reveal removed (Approach B — starts opacity:1).
 
       // 0.10 – 0.40 Fractured sentence reassembles word-by-word
       if (words.length) {
