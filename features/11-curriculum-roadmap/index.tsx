@@ -87,14 +87,16 @@ export default function CurriculumRoadmapSection() {
           flexDirection: 'column',
         }}
       >
-        {/* Header — stays composed for the full pin */}
+        {/* Header — already composed at progress 0 so anchor jumps to
+            #curriculum don't show a blank screen. Stays composed for the
+            full pin. */}
         <div style={{ textAlign: 'center', marginBottom: 'clamp(1rem, 2vh, 1.5rem)' }}>
-          <div className="film-fade curriculum-badge-el" data-at="0.03" style={{ display: 'inline-block' }}>
+          <div className="film-fade curriculum-badge-el" data-start-visible="true" style={{ display: 'inline-block' }}>
             <Badge label={curriculumContent.badge} />
           </div>
           <h2
             className="film-fade curriculum-heading-el"
-            data-at="0.06"
+            data-start-visible="true"
             style={{
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(1.25rem, 2.4vw, 2rem)',
@@ -110,7 +112,7 @@ export default function CurriculumRoadmapSection() {
           </h2>
           <p
             className="film-fade curriculum-desc-el"
-            data-at="0.09"
+            data-start-visible="true"
             style={{
               fontFamily: 'var(--font-body)',
               fontSize: 'var(--text-sm)',
@@ -139,9 +141,16 @@ export default function CurriculumRoadmapSection() {
             const at = YEAR_AT[idx];
             const out = YEAR_OUT[idx];
             const dataAttrs: Record<string, string> = {
-              'data-at': String(at),
               'data-dur': FADE_DUR,
             };
+            // Year 1 is composed at progress 0 — without this, an anchor
+            // jump to #curriculum lands the user on a blank screen until
+            // they scroll. Subsequent years use the normal fade-in path.
+            if (idx === 0) {
+              dataAttrs['data-start-visible'] = 'true';
+            } else {
+              dataAttrs['data-at'] = String(at);
+            }
             if (out !== null) {
               dataAttrs['data-out-at'] = String(out);
               dataAttrs['data-out-dur'] = FADE_DUR;

@@ -72,9 +72,12 @@ export function TerminalText({
     return () => clearTimeout(delay);
   }, [currentLine, currentChar, lines, speed, startDelay, reducedMotion, start]);
 
+  // Dual-layer 8px+20px shadow was too hot — terminal text read as a neon
+  // blur on the program-overview section (sole consumer). Single 3px shadow
+  // keeps the CRT/terminal character without lighting the surrounding pixels.
   const glowStyle: React.CSSProperties =
     variant === 'glow'
-      ? { textShadow: '0 0 8px var(--color-terminal), 0 0 20px var(--color-terminal)' }
+      ? { textShadow: '0 0 3px rgba(0,255,148,0.55)' }
       : {};
 
   return (

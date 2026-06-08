@@ -11,9 +11,11 @@ import { researchWingContent } from '@/content/research-wing';
 import { WorkstationFrame } from './components/WorkstationFrame';
 import { HackerHouse } from './components/HackerHouse';
 import { useFilmReveal } from '@/lib/gsap/filmReveal';
+import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
 
 export default function ResearchWingSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
   useFilmReveal(sectionRef, { pin: '+=250%' });
 
   return (
@@ -46,8 +48,12 @@ export default function ResearchWingSection() {
       <div
         className="film-camera rw-camera-el"
         style={{
-          position: 'absolute',
-          inset: 0,
+          // Desktop: absolute-pinned canvas so the two beats cross-fade in
+          // the same area. Mobile: useFilmReveal short-circuits to the
+          // composed "all visible" state, so the section becomes a normal
+          // vertical flow — both beats stack one after another.
+          position: isDesktop ? 'absolute' : 'relative',
+          inset: isDesktop ? 0 : undefined,
           willChange: 'transform',
           paddingTop: 'clamp(5rem, 9vh, 6.5rem)',
           paddingInline: 'var(--section-padding)',
@@ -75,20 +81,22 @@ export default function ResearchWingSection() {
           {researchWingContent.heading}
         </h2>
 
-        {/* Beat stage — both beats absolute-positioned in the same area
-            below the heading, cross-fading via film-fade with data-out-at. */}
+        {/* Beat stage. Desktop: both beats absolute-positioned in the same
+            area, cross-fading via film-fade + data-out-at (height capped so
+            it fits in the pinned 100vh). Mobile: beats stack vertically as
+            normal flow children so they don't overlap each other. */}
         <div
           style={{
             position: 'relative',
             width: '100%',
             maxWidth: '1200px',
             margin: '0 auto',
-            // Reserve enough height for whichever beat is tallest, but cap
-            // so we stay within 100vh.
-            height: 'clamp(360px, 58vh, 560px)',
+            ...(isDesktop
+              ? { height: 'clamp(360px, 58vh, 560px)' }
+              : { display: 'flex', flexDirection: 'column', gap: '2.5rem' }),
           }}
         >
-          {/* Beat 1: Workstation — visible progress 0.10 → 0.45 */}
+          {/* Beat 1: Workstation — visible progress 0.10 → 0.45 (desktop) */}
           <div
             className="film-fade rw-block-workstation-el"
             data-at="0.10"
@@ -96,8 +104,8 @@ export default function ResearchWingSection() {
             data-out-at="0.40"
             data-out-dur="0.10"
             style={{
-              position: 'absolute',
-              inset: 0,
+              position: isDesktop ? 'absolute' : 'relative',
+              inset: isDesktop ? 0 : undefined,
               display: 'flex',
               flexWrap: 'wrap',
               gap: 'clamp(1.5rem, 4vw, 3rem)',
@@ -137,14 +145,14 @@ export default function ResearchWingSection() {
             </div>
           </div>
 
-          {/* Beat 2: Hacker House — visible progress 0.55 → end */}
+          {/* Beat 2: Hacker House — visible progress 0.55 → end (desktop) */}
           <div
             className="film-fade rw-block-house-el"
             data-at="0.55"
             data-dur="0.10"
             style={{
-              position: 'absolute',
-              inset: 0,
+              position: isDesktop ? 'absolute' : 'relative',
+              inset: isDesktop ? 0 : undefined,
               display: 'flex',
               flexWrap: 'wrap',
               gap: 'clamp(1.5rem, 4vw, 3rem)',

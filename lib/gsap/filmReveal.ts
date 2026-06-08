@@ -125,9 +125,15 @@ export function useFilmReveal(
       stats.forEach((el) => {
         el.textContent = '0';
       });
-      // Fades start invisible, dropped 24px.
+      // Fades start invisible, dropped 24px. `data-start-visible="true"`
+      // overrides — the element starts composed (used so anchor-link jumps
+      // to a pinned section don't land on a blank screen at progress 0).
       fades.forEach((el) => {
-        gsap.set(el, { opacity: 0, y: 24, willChange: 'transform, opacity' });
+        if (el.dataset.startVisible === 'true') {
+          gsap.set(el, { opacity: 1, y: 0, willChange: 'transform, opacity' });
+        } else {
+          gsap.set(el, { opacity: 0, y: 24, willChange: 'transform, opacity' });
+        }
       });
 
       // ── Timeline ─────────────────────────────────────────────────────────
@@ -218,13 +224,18 @@ export function useFilmReveal(
         const fadeSpan = 0.50;
         const fadeStagger = fades.length > 1 ? fadeSpan / fades.length : 0;
         fades.forEach((el, i) => {
+          const startVisible = el.dataset.startVisible === 'true';
           const at = Number(el.dataset.at ?? fadeStart + i * fadeStagger);
           const dur = Number(el.dataset.dur ?? 0.12);
-          tl.to(
-            el,
-            { opacity: 1, y: 0, duration: dur, ease: 'power2.out' },
-            at,
-          );
+          // Skip the fade-IN tween for start-visible elements (they're
+          // already composed). They can still fade OUT later via data-out-at.
+          if (!startVisible) {
+            tl.to(
+              el,
+              { opacity: 1, y: 0, duration: dur, ease: 'power2.out' },
+              at,
+            );
+          }
           if (el.dataset.outAt !== undefined) {
             const outAt = Number(el.dataset.outAt);
             const outDur = Number(el.dataset.outDur ?? dur);
