@@ -1,63 +1,50 @@
 'use client';
-/* Global Certifications — Act IV, Section 10 of 22
- * Cinema mode: pinned 150vh. Lightest pin in Act IV — header reveals,
- * ticker scrolls horizontally as it always does. CINEMA_SPEC §2.2. */
+/* Certifications — Act IV, Section 10 of 22.
+ * Film-mode: pinned ~180vh. Header reveals, ticker scrolls horizontally. */
 import { useRef } from 'react';
-import { useGSAP } from '@gsap/react';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { certificationsContent } from '@/content/certifications';
 import { CertTicker } from './components/CertTicker';
-import { gsap } from '@/lib/gsap/register';
-import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
-import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
-import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
+import { useFilmReveal } from '@/lib/gsap/filmReveal';
 
 export default function CertificationsSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotion();
-  const isDesktop = useIsDesktop();
-
-  useGSAP(
-    () => {
-      const container = sectionRef.current;
-      if (!container) return;
-
-      if (reducedMotion || !isDesktop) {
-        gsap.set(['.cert-heading-el', '.cert-desc-el', '.cert-ticker-wrap-el'],
-                 { opacity: 1, y: 0 });
-        return;
-      }
-
-      // Heading + description start at default opacity:1 (Approach B).
-      // Ticker wrap KEEPS its opacity reveal — it's the section's cinema beat.
-      gsap.set('.cert-ticker-wrap-el', { opacity: 0 });
-      gsap.set('.cert-camera-el',      { scale: 1 });
-
-      const tl = makePinnedTimeline({
-        trigger: container,
-        end: PIN_DURATIONS.certifications,
-        scrub: 1,
-        enabled: true,
-        unpinned: true,
-      });
-
-      // Heading + description reveals removed (Approach B — start opacity:1).
-      tl.to('.cert-ticker-wrap-el', { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.25)
-        // Hold 0.50 – 0.85
-        .to('.cert-camera-el',      { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.85);
-    },
-    { scope: sectionRef, dependencies: [reducedMotion, isDesktop] },
-  );
+  useFilmReveal(sectionRef, { pin: '+=180%' });
 
   return (
     <SectionWrapper ref={sectionRef} id="certifications" act={4}>
       <div
-        className="cert-camera-el"
+        className="film-bg-deep"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-10%',
+          zIndex: 0,
+          background:
+            'radial-gradient(ellipse at 50% 50%, rgba(140,80,255,0.10), transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(168,240,255,0.06), transparent 55%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        className="film-bg-mid"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-5%',
+          zIndex: 0,
+          backgroundImage:
+            'repeating-linear-gradient(0deg, transparent, transparent 6px, rgba(168,240,255,0.018) 6px, rgba(168,240,255,0.018) 7px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        className="film-camera cert-camera-el"
         style={{
           position: 'absolute',
           inset: 0,
           transformOrigin: 'center center',
-          willChange: 'transform, opacity',
+          willChange: 'transform',
         }}
       >
         <div
@@ -67,11 +54,11 @@ export default function CertificationsSection() {
             padding: 'clamp(5rem, 9vh, 6rem) 0 clamp(2rem, 4vh, 3rem)',
           }}
         >
-          {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: 'clamp(1.5rem, 3vh, 2.5rem)' }}>
             <div className="section-container">
               <h2
-                className="cert-heading-el"
+                className="film-fade cert-heading-el"
+                data-at="0.05"
                 style={{
                   fontFamily: 'var(--font-display)',
                   fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
@@ -81,13 +68,13 @@ export default function CertificationsSection() {
                   color: 'var(--color-text-primary)',
                   margin: '0 0 0.75rem',
                   lineHeight: 1.1,
-                  willChange: 'transform, opacity',
                 }}
               >
                 {certificationsContent.heading}
               </h2>
               <p
-                className="cert-desc-el"
+                className="film-fade cert-desc-el"
+                data-at="0.12"
                 style={{
                   fontFamily: 'var(--font-body)',
                   fontSize: 'var(--text-base)',
@@ -95,7 +82,6 @@ export default function CertificationsSection() {
                   maxWidth: '560px',
                   margin: '0 auto',
                   lineHeight: 1.55,
-                  willChange: 'opacity',
                 }}
               >
                 {certificationsContent.description}
@@ -103,8 +89,8 @@ export default function CertificationsSection() {
             </div>
           </div>
 
-          {/* Ticker — full bleed */}
-          <div className="cert-ticker-wrap-el" style={{ willChange: 'opacity' }}>
+          {/* Ticker — full bleed, zooms in */}
+          <div className="film-image-zoom cert-ticker-wrap-el">
             <CertTicker
               certs={certificationsContent.certifications}
               footerNote={certificationsContent.footerNote}

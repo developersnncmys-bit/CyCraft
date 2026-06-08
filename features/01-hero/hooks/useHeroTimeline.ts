@@ -181,14 +181,24 @@ export function useHeroTimeline(containerRef: RefObject<HTMLElement | null>) {
         gsap.delayedCall(0.35, playEntry);
       }
 
-      // ── Light scroll parallax — background only (foreground exit is
-      //    handled by the word-by-word fade-out above) ────────────────────
-      // Video object-fit:cover, so a scale-up is safe (no edge reveal).
-      gsap.to('.hero-video-el', {
-        scale: 1.12,
-        ease: 'none',
-        scrollTrigger: { trigger: container, start: 'top top', end: 'bottom top', scrub: 0.5 },
-      });
+      // ── Layered scroll parallax — three depth planes ─────────────────
+      // bg-deep drifts slowest, bg-mid faster, the foreground content
+      // exits via the word-by-word fade-out above. The differing drift
+      // magnitudes read as depth — the user feels the camera moving
+      // through a layered scene, not over a flat panel.
+      const parallax = {
+        trigger: container,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 0.5,
+      };
+      // Video object-fit:cover, so the scale-up is safe (no edge reveal).
+      gsap.to('.hero-video-el', { scale: 1.12, ease: 'none', scrollTrigger: parallax });
+      // bg-deep drifts down 4% — the slowest, deepest layer.
+      gsap.to('.hero-bg-deep-el', { yPercent: 4, ease: 'none', scrollTrigger: parallax });
+      // bg-mid drifts up 14% — opposite direction + larger magnitude reads
+      // as the foreground glow lifting past the deep background.
+      gsap.to('.hero-bg-mid-el', { yPercent: -14, scale: 1.08, ease: 'none', scrollTrigger: parallax });
 
       return () => {
         observer?.disconnect();

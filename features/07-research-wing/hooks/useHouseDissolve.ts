@@ -96,26 +96,33 @@ export function useHouseDissolve(containerRef: RefObject<HTMLElement | null>) {
 
       // Heading reveal removed (Approach B — starts at opacity:1).
 
-      // 0.08 – 0.22 Workstation block fades in + terminal un-tilts
-      tl.to('.rw-block-workstation-el', { opacity: 1, duration: 0.12, ease: 'power2.out' }, 0.08)
-        .to('.workstation-frame-el',    { rotateY: 0, duration: 0.14, ease: 'power2.out' }, 0.08)
+      // Beat positions re-spread across the full 0.05–0.92 of pin so the
+      // animation reads as deliberate at the trimmed +=220% pin (was +=300%
+      // with the same beat positions, which under shrink would have read as
+      // "rushed"). Final state (interior) lands at 0.92, leaving 0.08 of pin
+      // (~18vh) of breathing room before pin release.
 
-      // 0.32 – 0.62 Camera pans 0 → -100vh so the second block (house)
-      // scrolls into the pinned viewport. Restored after the section moved
-      // from unpinned back to fully pinned cinema — without the pan the
-      // house block sat below the viewport for the entire pin.
-        .to('.rw-camera-el', { y: '-100vh', duration: 0.30, ease: 'none' }, 0.32)
+      // 0.05 – 0.22 Workstation block fades in + terminal un-tilts
+      tl.to('.rw-block-workstation-el', { opacity: 1, duration: 0.17, ease: 'power2.out' }, 0.05)
+        .to('.workstation-frame-el',    { rotateY: 0, duration: 0.20, ease: 'power2.out' }, 0.05)
 
-      // 0.55 – 0.68 House reveals + camera zooms in
-        .to('.rw-block-house-el', { opacity: 1, duration: 0.10, ease: 'power2.out' }, 0.55)
-        .to('.hacker-house-el',   { scale: 1.6, duration: 0.15, ease: 'power2.inOut' }, 0.55)
+      // 0.25 – 0.60 Camera pans 0 → -100vh so the house block scrolls into
+      // the pinned viewport. Slowed and started earlier so the pan reads as
+      // a deliberate camera move rather than a fast cut.
+        .to('.rw-camera-el', { y: '-100vh', duration: 0.35, ease: 'none' }, 0.25)
 
-      // 0.68 – 0.85 Walls dissolve, interior revealed
-        .to('.house-wall-el',     { opacity: 0, duration: 0.10, ease: 'none' }, 0.68)
-        .to('.house-interior-el', { opacity: 1, duration: 0.10, ease: 'power1.out' }, 0.71);
+      // 0.55 – 0.72 House reveals + camera zooms in (overlaps the tail of
+      // the camera pan so the house arrives at exactly the right framing)
+        .to('.rw-block-house-el', { opacity: 1, duration: 0.12, ease: 'power2.out' }, 0.55)
+        .to('.hacker-house-el',   { scale: 1.6, duration: 0.17, ease: 'power2.inOut' }, 0.55)
 
-      // 0.85 – 1.00 Inside hold — house stays composed through pin release so the
-      // section hands off directly to the next one (no blank-screen gap).
+      // 0.72 – 0.92 Walls dissolve, interior revealed — stretched so the
+      // final beat lands near pin end instead of leaving 30vh of dead tail.
+        .to('.house-wall-el',     { opacity: 0, duration: 0.14, ease: 'none' }, 0.72)
+        .to('.house-interior-el', { opacity: 1, duration: 0.16, ease: 'power1.out' }, 0.76);
+
+      // 0.92 – 1.00 Composed hold — house stays visible through pin release
+      // so the section hands off directly to the next one (no blank gap).
     },
     { scope: containerRef, dependencies: [reducedMotion, isDesktop] },
   );

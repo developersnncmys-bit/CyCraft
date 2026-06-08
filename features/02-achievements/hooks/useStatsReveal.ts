@@ -35,6 +35,8 @@ export function useStatsReveal(containerRef: RefObject<HTMLElement | null>) {
       const tracerActive = container.querySelector<HTMLElement>('.beam-tracer-active');
 
       // ── Reduced motion: instant composed state ─────────────────────────
+      // Headline morph collapses to just the last phrase so the user sees the
+      // most descriptive copy without any swapping animation.
       if (reducedMotion) {
         waypoints.forEach((wp) => {
           const target = Number(wp.dataset.target ?? 0);
@@ -46,8 +48,19 @@ export function useStatsReveal(containerRef: RefObject<HTMLElement | null>) {
         });
         if (tracerActive) gsap.set(tracerActive, { scaleY: 1 });
         gsap.set(['.achv-badge-el', '.achv-heading-el', '.achv-desc-el'], { opacity: 1 });
+        const morphs = container.querySelectorAll<HTMLElement>('.achv-heading-morph');
+        morphs.forEach((m, i) => {
+          gsap.set(m, { opacity: i === morphs.length - 1 ? 1 : 0 });
+        });
         return;
       }
+
+      // Mobile + desktop both need the first morph visible; later morphs are
+      // hidden initially and only swap in on the desktop scrub timeline.
+      const headingMorphs = container.querySelectorAll<HTMLElement>('.achv-heading-morph');
+      headingMorphs.forEach((m, i) => {
+        gsap.set(m, { opacity: i === 0 ? 1 : 0 });
+      });
 
       // ──────────────────────────────────────────────────────────────────
       //  MOBILE PATH — entry-on-view per-stat. Preserved from landing-page model.
@@ -141,6 +154,28 @@ export function useStatsReveal(containerRef: RefObject<HTMLElement | null>) {
       if (tracerActive) {
         tl.to(tracerActive, { scaleY: 1, duration: 0.10, ease: 'none' }, 0);
       }
+
+      // 0.00 – 0.20 Headline morph — fade each phrase in, then SNAP the
+      // previous out 1ms before the next fades in. The snap (tl.set, 0 dur)
+      // instead of a fade-out avoids stacking two morphs visible at the same
+      // scroll position, which under scrub would read as overlapping text.
+      const MORPH_GAP = 0.07;
+      const MORPH_FADE = 0.025;
+      headingMorphs.forEach((el, i) => {
+        const inAt = i * MORPH_GAP;
+        if (i > 0) {
+          tl.fromTo(
+            el,
+            { opacity: 0, yPercent: 30, filter: 'blur(8px)' },
+            { opacity: 1, yPercent: 0, filter: 'blur(0px)', duration: MORPH_FADE, ease: 'power3.out' },
+            inAt,
+          );
+        }
+        if (i < headingMorphs.length - 1) {
+          const nextInAt = (i + 1) * MORPH_GAP;
+          tl.set(el, { opacity: 0, yPercent: -30, filter: 'blur(8px)' }, nextInAt - 0.001);
+        }
+      });
 
       // Per-stat ignition windows: 0.25, 0.40, 0.55, 0.70
       const STAT_STARTS = [0.25, 0.40, 0.55, 0.70];

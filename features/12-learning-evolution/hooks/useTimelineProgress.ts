@@ -35,8 +35,19 @@ export function useTimelineProgress(containerRef: RefObject<HTMLElement | null>)
         gsap.set([...nodes], { opacity: 1, x: 0 });
         if (beam) gsap.set(beam, { scaleY: 1 });
         gsap.set(['.le-heading-el', '.le-desc-el'], { opacity: 1 });
+        const morphs = container.querySelectorAll<HTMLElement>('.le-heading-morph');
+        morphs.forEach((m, i) => {
+          gsap.set(m, { opacity: i === morphs.length - 1 ? 1 : 0 });
+        });
         return;
       }
+
+      // First morph visible on entry; later morphs only swap in via the
+      // desktop scrub timeline (or stay hidden on mobile).
+      const headingMorphs = container.querySelectorAll<HTMLElement>('.le-heading-morph');
+      headingMorphs.forEach((m, i) => {
+        gsap.set(m, { opacity: i === 0 ? 1 : 0 });
+      });
 
       // ── Mobile path ────────────────────────────────────────────────────
       if (!isDesktop) {
@@ -82,26 +93,49 @@ export function useTimelineProgress(containerRef: RefObject<HTMLElement | null>)
 
       // Heading + description reveals removed (Approach B — start opacity:1).
 
-      // 0.08 – 0.75 Camera pans so the phase nodes scroll through the
-      // pinned viewport. Ends at 0.75 (was 0.90) so the final phase sits
-      // stationary for the last 25% of the pin (~80vh of scroll) instead
-      // of still drifting upward while the reader is trying to absorb it.
+      // 0.00 – 0.18 Headline morph — swap three phrases. Each fade-in is
+      // followed by a snap-out of the previous phrase (0-duration tl.set)
+      // 1ms before the next fades in, so exactly one phrase is visible at
+      // any scroll position (no two-line stack flicker under bidirectional
+      // scrub).
+      const MORPH_GAP = 0.06;
+      const MORPH_FADE = 0.025;
+      headingMorphs.forEach((el, i) => {
+        const inAt = i * MORPH_GAP;
+        if (i > 0) {
+          tl.fromTo(
+            el,
+            { opacity: 0, yPercent: 30, filter: 'blur(8px)' },
+            { opacity: 1, yPercent: 0, filter: 'blur(0px)', duration: MORPH_FADE, ease: 'power3.out' },
+            inAt,
+          );
+        }
+        if (i < headingMorphs.length - 1) {
+          const nextInAt = (i + 1) * MORPH_GAP;
+          tl.set(el, { opacity: 0, yPercent: -30, filter: 'blur(8px)' }, nextInAt - 0.001);
+        }
+      });
+
+      // 0.08 – 0.88 Camera pans so the phase nodes scroll through the
+      // pinned viewport. Stretched to 0.88 (was 0.75) so the pan fills more
+      // of the trimmed +=250% pin window — the previous 0.75 end on the old
+      // +=320% pin left ~80vh of dead-tail scroll where the final phase sat
+      // motionless (read by users as a blank gap after the section). Now
+      // ends with ~30vh of dwell before pin release.
       if (cameraEl) {
-        tl.to(cameraEl, { y: () => -panDistance(), duration: 0.67, ease: 'none' }, 0.08);
+        tl.to(cameraEl, { y: () => -panDistance(), duration: 0.80, ease: 'none' }, 0.08);
       }
 
       if (beam) {
-        tl.to(beam, { scaleY: 1, duration: 0.67, ease: 'none' }, 0.08);
+        tl.to(beam, { scaleY: 1, duration: 0.80, ease: 'none' }, 0.08);
       }
 
-      // Per-phase reveals distributed across the first 70% of the pan
-      // (was 82%) so the final phase has ~30% of the timeline = ~96vh of
-      // dwell scroll for the reader before the section unpins. Final phase
-      // was previously revealing with ~40vh of pin left, which read as
-      // "jumping to the next section before I could finish reading."
+      // Per-phase reveals distributed across 0.12 – 0.83 (was 0.12 – 0.67)
+      // so the final phase reveals near the end of the pan instead of
+      // mid-window.
       const total = nodes.length || 1;
       nodes.forEach((node, i) => {
-        const revealAt = 0.12 + (0.55 * (i / Math.max(total - 1, 1)));
+        const revealAt = 0.12 + (0.71 * (i / Math.max(total - 1, 1)));
         const dot = node.querySelector('.phase-dot-el');
         tl.to(node, { opacity: 1, duration: 0.06, ease: 'power3.out' }, revealAt);
         if (dot) {
@@ -109,14 +143,12 @@ export function useTimelineProgress(containerRef: RefObject<HTMLElement | null>)
         }
       });
 
-      // Fade the camera out over the last 5% of the timeline so it's at
-      // opacity 0 by the time the pin releases. Avoids both the
-      // "lingering bottom phase" tail AND the abrupt blank space that
-      // `hideCameraOnLeave: true` produces. The fade reads as a natural
-      // close to the timeline before the next section enters.
-      if (cameraEl) {
-        tl.to(cameraEl, { opacity: 0, duration: 0.05, ease: 'power2.in' }, 0.95);
-      }
+      // Previously: faded the camera-el to opacity 0 over the last 5% of
+      // the timeline. The SectionWrapper renders a solid void-black
+      // background, so that fade became ~16vh of pure black scroll inside
+      // the pin — perceived as a "blank gap between sections". Removed:
+      // the camera stays visible until the pin releases and the next
+      // section's content slides up over it naturally.
 
       const refreshIds = [120, 400, 1000].map((ms) =>
         window.setTimeout(() => ScrollTrigger.refresh(), ms),

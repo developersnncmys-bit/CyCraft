@@ -15,7 +15,7 @@ export function ComparisonRow({ label, traditional, cycraft }: ComparisonRowProp
     return (
       <div
         className="comparison-row-el"
-        style={{ opacity: 0, transform: 'translateY(16px)', borderBottom: '1px solid rgba(168,240,255,0.06)' }}
+        style={{ borderBottom: '1px solid rgba(168,240,255,0.06)' }}
       >
         {/* Category label */}
         <div style={{ padding: '0.6rem 1rem', background: 'rgba(168,240,255,0.03)', borderBottom: '1px solid rgba(168,240,255,0.04)' }}>
@@ -45,7 +45,7 @@ export function ComparisonRow({ label, traditional, cycraft }: ComparisonRowProp
   return (
     <div
       className="comparison-row-el"
-      style={{ display: 'grid', gridTemplateColumns: '1fr 120px 1fr', gap: '0 1px', opacity: 0, transform: 'translateY(16px)' }}
+      style={{ display: 'grid', gridTemplateColumns: '1fr 120px 1fr', gap: '0 1px' }}
     >
       <div style={{ padding: '0.85rem 1.25rem', background: 'rgba(255,255,255,0.01)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
         <p style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-sm)', color: 'var(--color-text-disabled)', margin: 0, lineHeight: 1.5 }}>

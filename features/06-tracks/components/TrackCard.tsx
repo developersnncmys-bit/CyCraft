@@ -39,7 +39,6 @@ export function TrackCard({ title, description, icon, team, index }: TrackCardPr
         padding: 'clamp(1rem, 1.8vw, 1.4rem)',
         border: `1px solid ${colors.border}`,
         background: `radial-gradient(ellipse at top, ${colors.glow}, transparent 70%), var(--color-carbon)`,
-        opacity: 0,
         willChange: 'transform, opacity',
         cursor: 'default',
         transition: 'border-color 0.3s, box-shadow 0.3s, transform 0.3s',

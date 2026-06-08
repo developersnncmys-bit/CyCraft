@@ -20,7 +20,6 @@ export function RoleNode({ label, domain, team, angle, radius }: RoleNodeProps) 
         top: '50%',
         left: '50%',
         transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-        opacity: 0,
         textAlign: 'center',
         whiteSpace: 'nowrap',
       }}

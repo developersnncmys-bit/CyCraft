@@ -31,7 +31,6 @@ export function PillarCard({ title, description, icon, isCenter = false }: Pilla
           ? 'linear-gradient(135deg, rgba(168,240,255,0.06), rgba(168,240,255,0.02))'
           : 'rgba(13, 16, 20, 0.6)',
         backdropFilter: 'blur(4px)',
-        opacity: 0,
         willChange: 'transform, opacity',
         transition: 'border-color 0.3s, box-shadow 0.3s',
         cursor: 'default',

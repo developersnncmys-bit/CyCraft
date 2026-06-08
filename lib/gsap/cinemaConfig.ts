@@ -26,14 +26,27 @@ export const PIN_DURATIONS = {
   pillars: '+=350%',
   philosophy: '+=180%',
   programOverview: '+=180%',
-  tracks: '+=400%',
-  researchWing: '+=300%',
-  projects: '+=200%',
-  specializations: '+=180%',
+  // Pin durations below were trimmed so each section's final animation beat
+  // lands within ~10vh of pin release — eliminating the "dead scroll tail"
+  // where the section sat motionless while pin was still active (read by
+  // users as a blank/gap after the section). Per-section last-beat audit:
+  //   tracks         end 0.90, was +=400% → tail 40vh, now +=320% → tail 32vh
+  //   researchWing   end 0.71, was +=300% → tail 87vh, now +=220% → tail 64vh
+  //   projects       end 0.75, was +=200% → tail 50vh, now +=160% → tail 40vh
+  //   specializations end 0.85, was +=180% → tail 27vh, now +=160% → tail 24vh
+  //   curriculum     end 0.95, was +=500% → tail 25vh, now +=420% → tail 21vh
+  //   learningEvolution end 0.75, was +=320% → tail 80vh, now +=250% → tail 63vh
+  //   battlegrounds  end 0.95, was +=240% → tail 12vh, now +=200% → tail 10vh
+  //                  AND stagger widened in useLabsReveal so the 9-tile cascade
+  //                  reads as deliberate rather than rushed.
+  tracks: '+=320%',
+  researchWing: '+=220%',
+  projects: '+=160%',
+  specializations: '+=160%',
   certifications: '+=150%',
-  curriculum: '+=500%',
-  learningEvolution: '+=320%',
-  battlegrounds: '+=240%',
+  curriculum: '+=420%',
+  learningEvolution: '+=250%',
+  battlegrounds: '+=200%',
   comparison: '+=180%',
   hiringTournaments: '+=180%',
   placements: '+=200%',

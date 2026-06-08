@@ -1,170 +1,184 @@
 'use client';
-/* Research Wing — Act III, Section 7 of 22
- * Cinema mode: pinned. Two 100vh blocks (heading+workstation → house) pan
- * upward through the viewport as the user scrolls. CINEMA_SPEC §2.2. */
+/* Research Wing — Act III, Section 7 of 22.
+ * Film-mode: pinned ~250vh. Heading stays. Below it, two beats cross-fade:
+ *   progress 0.10 → 0.45  "Your Weapon of Choice" (workstation)
+ *   progress 0.55 → 1.00  "The Red Team Hacker House"
+ * Both beats fill the same area via absolute positioning so the swap reads
+ * as a scene change. Uses `data-out-at` to drive Beat-1 fade-out. */
 import { useRef } from 'react';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { researchWingContent } from '@/content/research-wing';
 import { WorkstationFrame } from './components/WorkstationFrame';
 import { HackerHouse } from './components/HackerHouse';
-import { useHouseDissolve } from './hooks/useHouseDissolve';
-
-const blockStyle: React.CSSProperties = {
-  // 100vh kept (camera-pan math relies on it). Content flows from the top
-  // after paddingTop. Padding tightened so the heading + terminal + feature
-  // list fit within the pinned 100vh (previously the last terminal line + last
-  // feature item got clipped by overflow:hidden).
-  minHeight: '100vh',
-  paddingInline: 'var(--section-padding)',
-  paddingTop: 'clamp(4rem, 7vh, 5rem)',
-  paddingBottom: 'clamp(1rem, 2.5vh, 2rem)',
-  position: 'relative',
-  zIndex: 2,
-};
+import { useFilmReveal } from '@/lib/gsap/filmReveal';
 
 export default function ResearchWingSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  useHouseDissolve(sectionRef);
+  useFilmReveal(sectionRef, { pin: '+=250%' });
 
   return (
     <SectionWrapper ref={sectionRef} id="research-wing" act={3}>
       <div
-        className="rw-camera-el"
+        className="film-bg-deep"
+        aria-hidden="true"
         style={{
-          // Pinned cinema: camera-el is absolute + inset 0 so it fills the
-          // section's 100vh canvas without pushing the section's layout
-          // height to its 200vh content total. The pan animation translates
-          // this wrapper between blocks; pinSpacing reserves the scroll
-          // distance for the pin. After pin release, hideCameraOnLeave
-          // fades the wrapper, and the section stays at its 100vh so
-          // there's no empty tail before the next section. The mobile
-          // override in globals.css promotes this back to relative so the
-          // two blocks flow naturally on phones.
+          position: 'absolute',
+          inset: '-10%',
+          zIndex: 0,
+          background:
+            'radial-gradient(ellipse at 30% 30%, rgba(0,255,148,0.06), transparent 60%), radial-gradient(ellipse at 70% 70%, rgba(255,61,90,0.05), transparent 60%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        className="film-bg-mid"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-5%',
+          zIndex: 0,
+          backgroundImage:
+            'repeating-linear-gradient(135deg, transparent, transparent 6px, rgba(168,240,255,0.02) 6px, rgba(168,240,255,0.02) 7px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        className="film-camera rw-camera-el"
+        style={{
           position: 'absolute',
           inset: 0,
-          willChange: 'transform, opacity',
+          willChange: 'transform',
+          paddingTop: 'clamp(5rem, 9vh, 6.5rem)',
+          paddingInline: 'var(--section-padding)',
+          paddingBottom: 'clamp(1rem, 2.5vh, 2rem)',
+          overflow: 'hidden',
         }}
       >
-        {/* ── Block 1: Heading + Workstation ── */}
-        <div className="rw-block-workstation-el" style={{ ...blockStyle, willChange: 'opacity' }}>
-          <div className="section-container" style={{ width: '100%' }}>
-            <h2
-              className="rw-heading-el"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.5rem, 3vw, 2.75rem)',
-                fontWeight: 700,
-                letterSpacing: '-0.02em',
-                textTransform: 'uppercase',
-                color: 'var(--color-text-primary)',
-                margin: 'clamp(2.5rem, 7vh, 5rem) 0 clamp(1rem, 3vh, 2rem)',
-                maxWidth: '900px',
-                lineHeight: 1.1,
-                willChange: 'transform, opacity',
-              }}
-            >
-              {researchWingContent.heading}
-            </h2>
-
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 'clamp(1.5rem, 4vw, 3rem)',
-                alignItems: 'center',
-              }}
-            >
-              {/* Left: text */}
-              <div className="rw-col" style={{ flex: '1 1 320px', minWidth: 0 }}>
-                <h3
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: 'var(--text-xs)',
-                    color: 'var(--color-terminal)',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    marginBottom: '0.5rem',
-                  }}
-                >
-                  {`// ${researchWingContent.workstation.heading}`}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '13px',
-                    color: 'var(--color-text-secondary)',
-                    lineHeight: 1.4,
-                    margin: 0,
-                  }}
-                >
-                  {researchWingContent.workstation.description}
-                </p>
-              </div>
-
-              {/* Right: workstation terminal */}
-              <div className="rw-col" style={{ flex: '1 1 380px', minWidth: 0 }}>
-                <WorkstationFrame
-                  data={researchWingContent.workstation}
-                  streamingLines={researchWingContent.streamingLines}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Block 2: Hacker House ── */}
-        {/* This block has no top heading, just shield + description, so it's
-            flex-centred vertically within its 100vh (Block 1 isn't, to keep
-            its heading flush with the top). */}
-        <div
-          className="rw-block-house-el"
+        {/* Shared heading — stays composed for the full pin */}
+        <h2
+          className="film-fade rw-heading-el"
+          data-at="0.04"
           style={{
-            ...blockStyle,
-            display: 'flex',
-            alignItems: 'center',
-            willChange: 'opacity',
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(1.4rem, 2.6vw, 2.25rem)',
+            fontWeight: 700,
+            letterSpacing: '-0.01em',
+            textTransform: 'uppercase',
+            color: 'var(--color-text-primary)',
+            margin: '0 auto clamp(1.5rem, 3vh, 2.5rem)',
+            maxWidth: '900px',
+            lineHeight: 1.15,
+            textAlign: 'center',
           }}
         >
-          <div className="section-container" style={{ width: '100%' }}>
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 'clamp(1.5rem, 4vw, 3rem)',
-                alignItems: 'center',
-              }}
-            >
-              {/* Left: Hacker House shield */}
-              <div className="rw-col rw-shield" style={{ flex: '0 0 280px', display: 'flex', justifyContent: 'center' }}>
-                <HackerHouse />
-              </div>
+          {researchWingContent.heading}
+        </h2>
 
-              {/* Right: description */}
-              <div className="rw-col" style={{ flex: '1 1 320px', minWidth: 0 }}>
-                <h3
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: 'var(--text-xs)',
-                    color: 'var(--color-red-team)',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    marginBottom: '0.5rem',
-                  }}
-                >
-                  {`// ${researchWingContent.hackerHouse.heading}`}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '13px',
-                    color: 'var(--color-text-secondary)',
-                    lineHeight: 1.4,
-                    margin: 0,
-                  }}
-                >
-                  {researchWingContent.hackerHouse.description}
-                </p>
-              </div>
+        {/* Beat stage — both beats absolute-positioned in the same area
+            below the heading, cross-fading via film-fade with data-out-at. */}
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            maxWidth: '1200px',
+            margin: '0 auto',
+            // Reserve enough height for whichever beat is tallest, but cap
+            // so we stay within 100vh.
+            height: 'clamp(360px, 58vh, 560px)',
+          }}
+        >
+          {/* Beat 1: Workstation — visible progress 0.10 → 0.45 */}
+          <div
+            className="film-fade rw-block-workstation-el"
+            data-at="0.10"
+            data-dur="0.10"
+            data-out-at="0.40"
+            data-out-dur="0.10"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 'clamp(1.5rem, 4vw, 3rem)',
+              alignItems: 'center',
+            }}
+          >
+            <div className="rw-col" style={{ flex: '1 1 320px', minWidth: 0 }}>
+              <h3
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 'var(--text-sm)',
+                  color: 'var(--color-terminal)',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  margin: '0 0 0.75rem',
+                }}
+              >
+                {`// ${researchWingContent.workstation.heading}`}
+              </h3>
+              <p
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 'var(--text-base)',
+                  color: 'var(--color-text-secondary)',
+                  lineHeight: 1.55,
+                  margin: 0,
+                }}
+              >
+                {researchWingContent.workstation.description}
+              </p>
+            </div>
+            <div className="rw-col film-image-zoom" style={{ flex: '1 1 380px', minWidth: 0 }}>
+              <WorkstationFrame
+                data={researchWingContent.workstation}
+                streamingLines={researchWingContent.streamingLines}
+              />
+            </div>
+          </div>
+
+          {/* Beat 2: Hacker House — visible progress 0.55 → end */}
+          <div
+            className="film-fade rw-block-house-el"
+            data-at="0.55"
+            data-dur="0.10"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 'clamp(1.5rem, 4vw, 3rem)',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <div className="rw-col rw-shield film-image-zoom" style={{ flex: '0 0 280px', display: 'flex', justifyContent: 'center' }}>
+              <HackerHouse />
+            </div>
+            <div className="rw-col" style={{ flex: '1 1 320px', minWidth: 0, maxWidth: '480px' }}>
+              <h3
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 'var(--text-sm)',
+                  color: 'var(--color-red-team)',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  margin: '0 0 0.75rem',
+                }}
+              >
+                {`// ${researchWingContent.hackerHouse.heading}`}
+              </h3>
+              <p
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 'var(--text-base)',
+                  color: 'var(--color-text-secondary)',
+                  lineHeight: 1.55,
+                  margin: 0,
+                }}
+              >
+                {researchWingContent.hackerHouse.description}
+              </p>
             </div>
           </div>
         </div>

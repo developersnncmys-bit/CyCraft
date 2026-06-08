@@ -211,27 +211,44 @@ h1, h2, h3, h4 {
    (same SectionWrapper component, different content density) are
    unaffected. Hero keeps its 100vh intentionally — it's a landing hero,
    not a SectionWrapper. */
-@media (max-width: 767px) {
-  main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) {
-    min-height: auto !important;
-    padding-bottom: 3rem !important;
-  }
-  main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) > div {
-    min-height: auto !important;
-  }
-  main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) [class*="-camera-el"] {
-    position: relative !important;
-    inset: auto !important;
-  }
-  /* Some sections (cta-footer, research-wing) wrap their content in an
-     inner flex column with inline `min-height: 100vh` + `justify-content:
-     center` so the desktop pinned section can centre its composition. On
-     mobile that forced 100vh leaves the content floating in the middle of
-     an oversized box (huge gap before/after). Drop it. */
-  main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) [style*="min-height: 100vh"] {
-    min-height: 0 !important;
-    justify-content: flex-start !important;
-  }
+/* btech now uses the non-cinema (entry-on-view) motion path on every
+   viewport — see useIsDesktop.ts. Sections size to their actual content
+   (height: auto). Dwell time per section comes from the slower btech
+   Lenis glide (see SmoothScrollProvider.tsx), NOT from artificially-tall
+   sections. */
+main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) {
+  min-height: auto !important;
+  height: auto !important;
+  /* No section-level padding here — sections own their internal padding
+     below, and stacking section padding on top of that produced
+     excessive gaps between content-sparse neighbours. */
+  padding: 0 !important;
+}
+main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) > div {
+  min-height: auto !important;
+  height: auto !important;
+}
+/* Internal padded wrappers inside each section's camera-el were sized for
+   the OLD pinned 100vh layout (paddingTop: clamp(7rem, 13vh, 9rem) so
+   content sat below the top of the pinned viewport). Without pinning, those
+   144px top pads stacked between sections to produce visible empty strips.
+   Trim them to a uniform reading-comfort value across every btech section. */
+main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) [class*="-camera-el"] > div:first-child {
+  padding-top: clamp(3rem, 6vh, 4.5rem) !important;
+  padding-bottom: clamp(2rem, 4vh, 3rem) !important;
+}
+main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) [class*="-camera-el"] {
+  position: relative !important;
+  inset: auto !important;
+}
+/* Some sections (cta-footer, research-wing) wrap their content in an
+   inner flex column with inline `min-height: 100vh` + `justify-content:
+   center` so the previous desktop pinned section could centre its
+   composition. Without pinning, that forced 100vh leaves the content
+   floating in the middle of an oversized box. Drop it. */
+main#main-content:has([data-page="btech"]) > section[data-act]:not(#hero) [style*="min-height: 100vh"] {
+  min-height: 0 !important;
+  justify-content: flex-start !important;
 }
 
 /* ── Placements: 1-col on phones, 2-col on phablets ── */
@@ -443,3 +460,16 @@ h1, h2, h3, h4 {
     inset: auto !important;
   }
 }
+
+/* ── Btech film-mode atmosphere dimming ─────────────────────────────────────
+   Per-section parallax layers (.film-bg-deep / .film-bg-mid) are radial
+   gradient washes that, when stacked behind the global FilmAtmosphere tint,
+   over-brightened every section past the hero. Scaling the layer opacity
+   globally is faster + cheaper than editing 20 individual gradient stops. */
+.film-bg-deep { opacity: 0.4; }
+/* film-bg-mid was a `repeating-linear-gradient` scanline pattern (0deg /
+   45deg / 90deg / 135deg variants per section). Disabled globally — the
+   horizontal/diagonal lines read as a visual artefact rather than texture
+   on the actual page. The layer is kept in JSX (and still parallaxes) in
+   case a future pass wants to swap in a non-stripe texture. */
+.film-bg-mid  { display: none; }

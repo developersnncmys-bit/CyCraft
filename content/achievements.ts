@@ -1,6 +1,14 @@
 export const achievementsContent = {
   badge: 'ACHIEVEMENTS',
-  heading: 'HISTORY MADE IN CYBER DEFENSE',
+  // Three-phrase morph swapped through during the section's first 20% of pin.
+  // Phrases share a meaning shape (achievements / records / fieldwork) so the
+  // morph reads as the same idea rotating through frames, not three unrelated
+  // statements. Lengths kept within 4–6 words to avoid line-break shifts.
+  headingMorphs: [
+    'HISTORY MADE IN CYBER DEFENSE',
+    'RECORDS SET. THREATS NEUTRALISED.',
+    'OUR STUDENTS, ON THE FRONT LINE.',
+  ],
   description:
     "While others watched livestreams, our students were actively securing critical infrastructure and presenting vulnerability research to the world's top security analysts at global conferences.",
   stats: [

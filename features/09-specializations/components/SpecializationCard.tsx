@@ -37,7 +37,6 @@ export function SpecializationCard({ title, icon, index, x, y }: SpecializationC
         background: 'var(--color-carbon)',
         border: '1px solid rgba(168, 240, 255, 0.1)',
         textAlign: 'center',
-        opacity: 0,
         zIndex: 3,
         cursor: 'default',
         transition: 'border-color 0.3s, box-shadow 0.3s',
@@ -71,7 +70,7 @@ export function SpecializationCard({ title, icon, index, x, y }: SpecializationC
           height: Math.sqrt(x * x + y * y) - 40 + 'px',
           background:
             'linear-gradient(to bottom, var(--color-beam), transparent)',
-          opacity: 0,
+          opacity: 0.4,
           transformOrigin: 'top center',
           transform: `rotate(${Math.atan2(y, x) * (180 / Math.PI) + 90}deg) translate(-50%, 0)`,
           pointerEvents: 'none',

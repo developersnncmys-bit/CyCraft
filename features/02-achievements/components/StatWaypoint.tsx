@@ -10,14 +10,13 @@ interface StatWaypointProps {
 export function StatWaypoint({ value, suffix, label, index }: StatWaypointProps) {
   return (
     <div
-      className={`stat-waypoint-el stat-waypoint-${index}`}
+      className={`stat-waypoint-el stat-waypoint-${index} film-fade`}
       data-target={value}
       style={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         gap: '0.5rem',
-        opacity: 0,
         willChange: 'transform, opacity',
       }}
     >
@@ -37,7 +36,8 @@ export function StatWaypoint({ value, suffix, label, index }: StatWaypointProps)
 
       <div style={{ position: 'relative' }}>
         <span
-          className="stat-value-el"
+          className="stat-value-el film-stat"
+          data-target={value}
           style={{
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(2rem, 4vw, 3rem)',

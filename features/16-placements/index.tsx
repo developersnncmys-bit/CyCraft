@@ -1,17 +1,12 @@
 'use client';
-/* Placements — Act V, Section 16 of 22
- * Cinema mode: pinned 250vh. Number constellation forms — metrics fade up,
- * each value counts from 0 to target via scroll-bound onUpdate. */
+/* Placements — Act V, Section 16 of 22.
+ * Film-mode: pinned ~220vh. 6 metric cards with dramatic counter ignition. */
 import { useRef } from 'react';
-import { useGSAP } from '@gsap/react';
-import { gsap } from '@/lib/gsap/register';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { Badge } from '@/components/ui/Badge';
 import { placementsContent } from '@/content/placements';
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
-import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
-import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
-import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
+import { useFilmReveal } from '@/lib/gsap/filmReveal';
 
 const FONT_SIZE_D: Record<string, string> = {
   highest: '2.75rem', top10: '2rem', average: '1.75rem',
@@ -35,106 +30,42 @@ export default function PlacementsSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const isTablet = useMediaQuery('(min-width: 768px)');
   const isPhone   = !useMediaQuery('(min-width: 480px)');
-  const isDesktop = useIsDesktop();
-  const reducedMotion = useReducedMotion();
-
-  useGSAP(
-    () => {
-      const container = sectionRef.current;
-      if (!container) return;
-
-      const cards = container.querySelectorAll<HTMLElement>('.metric-card-el');
-      const values = container.querySelectorAll<HTMLElement>('.metric-value-el');
-
-      if (reducedMotion) {
-        gsap.set(cards, { opacity: 1, y: 0 });
-        values.forEach((el) => {
-          const numeric = parseFloat(el.dataset.numeric ?? '0');
-          const isFloat = (el.dataset.numeric ?? '').includes('.');
-          const prefix  = el.dataset.prefix ?? '';
-          el.textContent = `${prefix}${isFloat ? numeric.toFixed(1) : Math.round(numeric)}`;
-        });
-        gsap.set(['.pl-heading-el', '.pl-badge-el', '.pl-desc-el'], { opacity: 1 });
-        return;
-      }
-
-      if (!isDesktop) {
-        gsap.fromTo(cards, { opacity: 0, y: 30 }, {
-          opacity: 1, y: 0, stagger: 0.08, duration: 0.7, ease: 'power3.out',
-          scrollTrigger: { trigger: container, start: 'top 70%', toggleActions: 'play none none reset' },
-        });
-        values.forEach((el) => {
-          const numeric = parseFloat(el.dataset.numeric ?? '0');
-          const isFloat = (el.dataset.numeric ?? '').includes('.');
-          const prefix  = el.dataset.prefix ?? '';
-          const obj = { val: 0 };
-          gsap.to(obj, {
-            val: numeric, duration: 1.8, ease: 'power2.out',
-            onUpdate() {
-              el.textContent = `${prefix}${isFloat ? obj.val.toFixed(1) : Math.round(obj.val)}`;
-            },
-            scrollTrigger: { trigger: el, start: 'top 80%', toggleActions: 'play none none reset' },
-          });
-        });
-        return;
-      }
-
-      // ── Desktop cinema ────────────────────────────────────────────────
-      // Heading + badge + description stay at default opacity:1 (Approach B).
-      // The 6 metric cards KEEP their reveal + counters — cinema beat.
-      gsap.set(cards,            { opacity: 0, y: 30 });
-      gsap.set('.pl-camera-el',  { scale: 1, opacity: 1 });
-
-      // Reset counter text
-      values.forEach((el) => {
-        const prefix = el.dataset.prefix ?? '';
-        el.textContent = `${prefix}0`;
-      });
-
-      const tl = makePinnedTimeline({
-        trigger: container,
-        end: PIN_DURATIONS.placements,
-        scrub: 1,
-        enabled: true,
-        unpinned: true,
-      });
-
-      // Badge + heading + description reveals removed (Approach B).
-      tl.to(cards,
-            { opacity: 1, y: 0, stagger: 0.04, duration: 0.10, ease: 'power3.out' }, 0.15);
-
-      // Counters per metric, scroll-bound onUpdate
-      const COUNTER_START = 0.20;
-      const COUNTER_SPAN = 0.40;
-      values.forEach((el, i) => {
-        const numeric = parseFloat(el.dataset.numeric ?? '0');
-        const isFloat = (el.dataset.numeric ?? '').includes('.');
-        const prefix  = el.dataset.prefix ?? '';
-        const obj = { val: 0 };
-        const startAt = COUNTER_START + (COUNTER_SPAN * (i / Math.max(values.length, 1)));
-        tl.to(obj, {
-          val: numeric, duration: 0.20, ease: 'power2.out',
-          onUpdate() {
-            el.textContent = `${prefix}${isFloat ? obj.val.toFixed(1) : Math.round(obj.val)}`;
-          },
-        }, startAt);
-      });
-
-      // Pin exit
-      tl.to('.pl-camera-el', { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.90);
-    },
-    { scope: sectionRef, dependencies: [reducedMotion, isDesktop, isTablet, isPhone] },
-  );
+  useFilmReveal(sectionRef, { pin: '+=220%' });
 
   return (
     <SectionWrapper ref={sectionRef} id="placements" act={5}>
       <div
-        className="pl-camera-el"
+        className="film-bg-deep"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-10%',
+          zIndex: 0,
+          background:
+            'radial-gradient(ellipse at 50% 50%, rgba(0,255,148,0.12), transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(168,240,255,0.08), transparent 55%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        className="film-bg-mid"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-5%',
+          zIndex: 0,
+          backgroundImage:
+            'repeating-linear-gradient(0deg, transparent, transparent 5px, rgba(0,255,148,0.02) 5px, rgba(0,255,148,0.02) 6px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        className="film-camera pl-camera-el"
         style={{
           position: 'absolute',
           inset: 0,
           transformOrigin: 'center center',
-          willChange: 'transform, opacity',
+          willChange: 'transform',
         }}
       >
         <div
@@ -147,11 +78,12 @@ export default function PlacementsSection() {
         >
           {/* Header */}
           <div className="section-container" style={{ textAlign: 'center', marginBottom: 'clamp(1.5rem, 3vh, 2.5rem)' }}>
-            <div className="pl-badge-el" style={{ display: 'inline-block' }}>
+            <div className="film-fade pl-badge-el" data-at="0.05" style={{ display: 'inline-block' }}>
               <Badge label={placementsContent.badge} />
             </div>
             <h2
-              className="pl-heading-el"
+              className="film-fade pl-heading-el"
+              data-at="0.10"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
@@ -161,13 +93,13 @@ export default function PlacementsSection() {
                 color: 'var(--color-text-primary)',
                 margin: '1rem 0 0.75rem',
                 lineHeight: 1.1,
-                willChange: 'transform, opacity',
               }}
             >
               {placementsContent.heading}
             </h2>
             <p
-              className="pl-desc-el"
+              className="film-fade pl-desc-el"
+              data-at="0.14"
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 'var(--text-base)',
@@ -175,14 +107,13 @@ export default function PlacementsSection() {
                 maxWidth: '540px',
                 margin: '0 auto',
                 lineHeight: 1.55,
-                willChange: 'opacity',
               }}
             >
               {placementsContent.description}
             </p>
           </div>
 
-          {/* Metrics grid */}
+          {/* Metrics grid — staggered + counter ignition */}
           <div
             className="section-container"
             style={{
@@ -192,22 +123,24 @@ export default function PlacementsSection() {
               background: 'rgba(168,240,255,0.06)',
             }}
           >
-            {placementsContent.metrics.map((m) => {
+            {placementsContent.metrics.map((m, idx) => {
               const isTop = m.id === 'highest';
               const { prefix, unit } = parseMetric(m.value);
               const sizeMap = isPhone ? FONT_SIZE_M : FONT_SIZE_D;
               const fontSize = sizeMap[m.id] ?? '1.75rem';
+              const isFloat = String(m.numericValue).includes('.');
 
               return (
                 <div
                   key={m.id}
-                  className="metric-card-el"
+                  className="film-fade metric-card-el"
+                  data-at={`${0.20 + idx * 0.06}`}
+                  data-dur="0.10"
                   style={{
                     padding: '1.5rem 1.25rem',
                     background: isTop ? 'rgba(168,240,255,0.04)' : 'var(--color-void)',
                     textAlign: 'center',
                     position: 'relative',
-                    opacity: 0,
                   }}
                 >
                   {isTop && (
@@ -215,7 +148,7 @@ export default function PlacementsSection() {
                       aria-hidden="true"
                       style={{
                         position: 'absolute', inset: 0,
-                        background: 'radial-gradient(ellipse at center, rgba(168,240,255,0.07) 0%, transparent 70%)',
+                        background: 'radial-gradient(ellipse at center, rgba(168,240,255,0.10) 0%, transparent 70%)',
                         pointerEvents: 'none',
                       }}
                     />
@@ -223,9 +156,10 @@ export default function PlacementsSection() {
 
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '0.25em', marginBottom: '0.5rem', flexWrap: 'nowrap' }}>
                     <span
-                      className="metric-value-el"
-                      data-numeric={m.numericValue}
+                      className="metric-value-el film-stat"
+                      data-target={m.numericValue}
                       data-prefix={prefix}
+                      data-decimals={isFloat ? 1 : 0}
                       style={{
                         fontFamily: 'var(--font-mono)',
                         fontSize,

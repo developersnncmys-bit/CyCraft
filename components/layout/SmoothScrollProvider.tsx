@@ -19,9 +19,11 @@ export function SmoothScrollProvider({
   const reducedMotion = useReducedMotion();
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const pathname = usePathname();
-  // btech has 21 pinned sections back-to-back; the global snappy 0.6 glide
-  // reads as a hard step between each pin handoff. A longer glide here
-  // smooths those handoffs without affecting any other page.
+  // btech no longer pins (see useIsDesktop.ts override), so each section
+  // is a normal scroll surface. A slightly longer Lenis glide here gives
+  // each wheel tick more visible glide distance — users get more time to
+  // read content before scrolling past. Other pages keep the snappier
+  // 0.6s since their pinned/scrub timelines need responsive scrub input.
   const isBtech = pathname?.startsWith('/btech') ?? false;
 
   useEffect(() => {
@@ -36,14 +38,29 @@ export function SmoothScrollProvider({
     }
 
     const lenis = new Lenis({
-      // Shorter glide (was 1.2) so scroll responds to the wheel quickly instead
-      // of feeling floaty/laggy — keeps smoothing, just snappier. btech gets
-      // a longer glide so the pin-to-pin handoffs across its 21 cinematic
-      // sections feel continuous rather than stepped.
-      duration: isBtech ? 1.1 : 0.6,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      // Per-page glide duration. btech gets the longer/softer glide because
+      // it's a pure content scroll with no scrub-driven timelines that need
+      // responsive wheel input — every section is just standard layout with
+      // entry-on-view reveals. 1.4s + a softer expo-out easing produces a
+      // noticeably smoother, more cinematic scroll than the snappy 0.6s
+      // used on the other pages (which need wheel-responsive input for
+      // their pinned scrub timelines).
+      duration: isBtech ? 1.4 : 0.6,
+      // btech easing: sineOut-like decay (softer landing, longer tail).
+      // Other pages: original expoOut for snap.
+      easing: isBtech
+        ? (t) => 1 - Math.pow(1 - t, 3.2)
+        : (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      touchMultiplier: 2,
+      // Wheel multiplier — slightly lower on btech so each wheel tick
+      // translates to less raw scroll distance; combined with the longer
+      // glide, scrolling feels deliberate without skipping past content.
+      wheelMultiplier: isBtech ? 0.85 : 1,
+      touchMultiplier: isBtech ? 1.5 : 2,
+      // Lerp acts as a per-frame interpolation factor; lower = smoother.
+      // Lenis uses `duration` OR `lerp`, not both — keep duration as the
+      // primary control. (Documented here so future tuning starts from
+      // the right knob.)
     });
 
     lenisRef.current = lenis;

@@ -1,22 +1,47 @@
 'use client';
-/* Tracks — Act III, Section 6 of 22 — THE permanent red/blue split.
- * After this section, beams are red+blue for the rest of the page.
- * Cinema mode: pinned 400vh. CINEMA_SPEC §7.4. */
+/* Tracks — Act III, Section 6 of 22.
+ * Film-mode: pinned ~320vh. Red/blue duality split + 4 track cards. */
 import { useRef } from 'react';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { tracksContent } from '@/content/tracks';
 import { BeamSplit } from './components/BeamSplit';
 import { TrackCard } from './components/TrackCard';
-import { useTracksTimeline } from './hooks/useTracksTimeline';
+import { useFilmReveal } from '@/lib/gsap/filmReveal';
 
 export default function TracksSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  useTracksTimeline(sectionRef);
+  useFilmReveal(sectionRef, { pin: '+=320%' });
 
   return (
     <SectionWrapper ref={sectionRef} id="tracks" act={3}>
+      {/* Parallax depth */}
       <div
-        className="tracks-camera-el"
+        className="film-bg-deep"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-10%',
+          zIndex: 0,
+          background:
+            'linear-gradient(to right, rgba(255,61,90,0.10) 0%, transparent 50%, rgba(61,168,255,0.10) 100%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        className="film-bg-mid"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-6%',
+          zIndex: 0,
+          backgroundImage:
+            'repeating-linear-gradient(0deg, transparent, transparent 5px, rgba(168,240,255,0.02) 5px, rgba(168,240,255,0.02) 6px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        className="film-camera tracks-camera-el"
         style={{
           position: 'absolute',
           inset: 0,
@@ -24,29 +49,9 @@ export default function TracksSection() {
           willChange: 'transform',
         }}
       >
-        {/* ── Background: left red tint / right blue tint — scrubbed in during
-            split. Kept INSIDE camera-el so it hides with the rest of the
-            section on pin release (no ghosting into the gap below). ── */}
-        <div
-          className="tracks-bg-tint-el"
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 1,
-            background:
-              'linear-gradient(to right, rgba(255,61,90,0.04) 0%, transparent 50%, rgba(61,168,255,0.04) 100%)',
-            pointerEvents: 'none',
-            opacity: 0,
-            willChange: 'opacity',
-          }}
-        />
-
-        {/* ── Beam split animation — also inside camera-el so the red/blue
-            beams don't persist past the pin and ghost over the next section. ── */}
         <BeamSplit />
 
-        {/* ── Header ── */}
+        {/* Header */}
         <div
           style={{
             position: 'relative',
@@ -58,7 +63,8 @@ export default function TracksSection() {
         >
           <div className="section-container">
             <h2
-              className="tracks-heading-el"
+              className="film-fade tracks-heading-el"
+              data-at="0.05"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
@@ -68,20 +74,19 @@ export default function TracksSection() {
                 color: 'var(--color-text-primary)',
                 margin: '0 0 0.5rem',
                 lineHeight: 1.1,
-                willChange: 'transform, opacity',
               }}
             >
               {tracksContent.heading}
             </h2>
             <p
-              className="tracks-desc-el"
+              className="film-fade tracks-desc-el"
+              data-at="0.12"
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 'var(--text-base)',
                 color: 'var(--color-text-secondary)',
                 marginBottom: '0',
                 lineHeight: 1.55,
-                willChange: 'opacity',
               }}
             >
               {tracksContent.description}
@@ -89,7 +94,7 @@ export default function TracksSection() {
           </div>
         </div>
 
-        {/* ── Track cards grid ── */}
+        {/* Track cards grid */}
         <div
           style={{
             position: 'relative',
@@ -102,18 +107,21 @@ export default function TracksSection() {
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-              gap: '1rem',
+              gap: '1.25rem',
+              maxWidth: '1180px',
+              marginInline: 'auto',
             }}
           >
             {tracksContent.tracks.map((track, i) => (
-              <TrackCard
-                key={track.id}
-                title={track.title}
-                description={track.description}
-                icon={track.icon}
-                team={track.team}
-                index={i}
-              />
+              <div key={track.id} className="film-fade" data-at={`${0.30 + i * 0.10}`} data-dur="0.15">
+                <TrackCard
+                  title={track.title}
+                  description={track.description}
+                  icon={track.icon}
+                  team={track.team}
+                  index={i}
+                />
+              </div>
             ))}
           </div>
         </div>

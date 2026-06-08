@@ -34,21 +34,37 @@ export default function HeroSection() {
         justifyContent: 'center',
       }}
     >
-      {/* ── Atmosphere ───────────────────────────────────────────────────── */}
+      {/* ── Atmosphere — three depth planes, each parallaxing at a different
+          speed against page scroll so the hero reads as a layered scene
+          rather than a flat panel:
+            • bg-deep (z=0) — video, drifts slowest
+            • bg-mid  (z=1) — central glow / scanlines, drifts faster
+            • bg-near (z=2) — vignette wash, drifts fastest
+          Foreground content (z=6) is parallaxed by the existing entry
+          timeline. Parallax tweens are wired in useHeroTimeline.ts. */}
 
-      {/* Subtle cyber-security background video — heavily dimmed so it reads
-          as ambient motion behind the content, not a foreground video. */}
+      {/* Layer bg-deep — video. Heavily dimmed so it reads as ambient motion
+          behind everything, not foreground content. */}
       <div
+        className="hero-bg-deep-el"
         aria-hidden="true"
-        style={{ position: 'absolute', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}
+        style={{
+          position: 'absolute',
+          inset: '-6%',
+          zIndex: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+          willChange: 'transform',
+        }}
       >
         <video
+          className="hero-video-el"
           autoPlay
           muted
           loop
           playsInline
           preload="metadata"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.4 }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.4, willChange: 'transform' }}
         >
           <source src="/videos/cyber-hero.mp4" type="video/mp4" />
         </video>
@@ -76,9 +92,11 @@ export default function HeroSection() {
         }}
       />
 
-      {/* Central glow pool — breathes slowly, no harsh lines. Size clamps so it
-          doesn't blow past narrow viewports while still filling desktop. */}
+      {/* Layer bg-mid — central glow pool, breathes slowly. Size clamps so it
+          doesn't blow past narrow viewports while still filling desktop.
+          Parallaxes faster than the video below it for depth. */}
       <div
+        className="hero-bg-mid-el"
         aria-hidden="true"
         style={{
           position: 'absolute',
@@ -94,6 +112,7 @@ export default function HeroSection() {
           animation: 'hero-glow-breathe 5s ease-in-out infinite',
           pointerEvents: 'none',
           zIndex: 3,
+          willChange: 'transform',
         }}
       />
 

@@ -1,23 +1,51 @@
 'use client';
-/* Achievements section — Act I, Section 2 of 22
- * Cinema mode: pinned 250vh, beam arrives from above, stats ignite one-by-one. */
+/* Achievements — Act I, Section 2 of 22.
+ * Film-mode POC: pinned ~250vh, scroll drives camera, parallax layers,
+ * headline morph (3 phrases), and the 4-stat counter ignition.
+ */
 import { useRef } from 'react';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { GlitchText } from '@/components/core/GlitchText/GlitchText';
 import { Badge } from '@/components/ui/Badge';
 import { achievementsContent } from '@/content/achievements';
 import { StatsConstellation } from './components/StatsConstellation';
-import { useStatsReveal } from './hooks/useStatsReveal';
+import { useFilmReveal } from '@/lib/gsap/filmReveal';
 
 export default function AchievementsSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  useStatsReveal(sectionRef);
+  useFilmReveal(sectionRef, { pin: '+=250%' });
 
   return (
     <SectionWrapper ref={sectionRef} id="achievements" act={1}>
-      {/* Camera wrapper — scales 1→0.95 during 0.85-1.00 (constellation hold + zoom-out) */}
+      {/* Layered parallax — three depths drift at different speeds. */}
       <div
-        className="achv-camera-el"
+        className="film-bg-deep"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-10%',
+          zIndex: 0,
+          background:
+            'radial-gradient(ellipse at 30% 30%, rgba(168,240,255,0.10), transparent 65%), radial-gradient(ellipse at 70% 80%, rgba(168,240,255,0.06), transparent 60%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        className="film-bg-mid"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-6%',
+          zIndex: 0,
+          backgroundImage:
+            'repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(168,240,255,0.02) 4px, rgba(168,240,255,0.02) 5px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Pinned camera — scales 1.04 → 1.00 → 0.98 across the pin. */}
+      <div
+        className="film-camera achv-camera-el"
         style={{
           position: 'absolute',
           inset: 0,
@@ -40,9 +68,13 @@ export default function AchievementsSection() {
               <Badge label={achievementsContent.badge} />
             </div>
 
+            {/* Headline morph stack — 3 phrases swap during the first ~25% of pin. */}
             <h2
               className="achv-heading-el"
               style={{
+                position: 'relative',
+                display: 'block',
+                minHeight: 'clamp(2.4rem, 5vw, 4rem)',
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
                 fontWeight: 700,
@@ -51,14 +83,28 @@ export default function AchievementsSection() {
                 color: 'var(--color-text-primary)',
                 margin: '1rem 0 0.75rem',
                 lineHeight: 1.1,
-                willChange: 'transform, opacity',
               }}
             >
-              <GlitchText>{achievementsContent.heading}</GlitchText>
+              {achievementsContent.headingMorphs.map((phrase, i) => (
+                <span
+                  key={phrase}
+                  className="film-headline-morph achv-heading-morph"
+                  aria-hidden={i === 0 ? undefined : 'true'}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'block',
+                    willChange: 'transform, opacity, filter',
+                  }}
+                >
+                  <GlitchText>{phrase}</GlitchText>
+                </span>
+              ))}
             </h2>
 
             <p
-              className="achv-desc-el"
+              className="film-fade achv-desc-el"
+              data-at="0.10"
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 'var(--text-base)',
@@ -66,7 +112,6 @@ export default function AchievementsSection() {
                 maxWidth: '560px',
                 margin: '0 auto',
                 lineHeight: 1.55,
-                willChange: 'opacity',
               }}
             >
               {achievementsContent.description}
@@ -88,7 +133,7 @@ export default function AchievementsSection() {
           transform: 'translateX(-50%)',
           width: '800px',
           height: '200px',
-          background: 'radial-gradient(ellipse, rgba(168,240,255,0.04) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse, rgba(168,240,255,0.05) 0%, transparent 70%)',
           pointerEvents: 'none',
           zIndex: 1,
         }}

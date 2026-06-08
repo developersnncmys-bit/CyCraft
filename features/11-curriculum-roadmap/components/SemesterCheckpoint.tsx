@@ -19,10 +19,7 @@ export function SemesterCheckpoint({ semester, isYearStart }: SemesterCheckpoint
   const phaseColor = PHASE_COLOR[semester.phase] ?? 'var(--color-beam)';
 
   return (
-    <div
-      className="semester-checkpoint-el"
-      style={{ transform: 'translateY(20px)' }}
-    >
+    <div className="semester-checkpoint-el">
       {/* Year marker (only at start of each year) */}
       {isYearStart && (
         <div
@@ -34,7 +31,6 @@ export function SemesterCheckpoint({ semester, isYearStart }: SemesterCheckpoint
             color: phaseColor,
             textTransform: 'uppercase',
             marginBottom: '0.75rem',
-            opacity: 0,
           }}
         >
           ── Year {semester.year} · {semester.phase}

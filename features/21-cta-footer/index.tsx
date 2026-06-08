@@ -1,138 +1,101 @@
 'use client';
-/* Final CTA + Footer — Act VI, Section 21 of 22 — THE CONVERGENCE
- * Red + blue beams arc inward to meet at the APPLY button location; headline
- * materialises; button forms from the converged beam point. Played once on
- * enter (NOT pinned): as the last section, a scrub-pin left a post-pin
- * duplicate of the content, so this settles as a single clean final screen. */
+/* Final CTA + Footer — Act VI, Section 21 of 22 — THE CONVERGENCE.
+ * Film-mode: pinned ~120vh. Red+blue beams arc inward to a convergence
+ * glow → headline materialises → button forms. Pin is intentionally shorter
+ * than other sections to avoid a blank scroll tail at end of document. */
 import { useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '@/lib/gsap/register';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { ctaFooterContent } from '@/content/cta-footer';
-import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
-import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
+import { useFilmReveal } from '@/lib/gsap/filmReveal';
 
 const ApplyModal = dynamic(() => import('@/features/22-apply-modal'), { ssr: false });
 
 export default function CTAFooterSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const isDesktop = useIsDesktop();
-  const reducedMotion = useReducedMotion();
 
+  useFilmReveal(sectionRef, { pin: '+=120%' });
+
+  // Beam convergence — plays once on section enter (non-scrub), separate from
+  // the film-mode scrub timeline so it can use back.out and other elastic
+  // eases for the dramatic CTA payoff moment.
   useGSAP(
     () => {
       const container = sectionRef.current;
       if (!container) return;
-
-      const headline = container.querySelector<HTMLElement>('.cta-headline-el');
-      const desc = container.querySelector<HTMLElement>('.cta-desc-el');
-      const btn = container.querySelector<HTMLElement>('.cta-btn-el');
-      const disclaimer = container.querySelector<HTMLElement>('.cta-disclaimer-el');
       const redBeam = container.querySelector<HTMLElement>('.cta-red-beam-el');
       const blueBeam = container.querySelector<HTMLElement>('.cta-blue-beam-el');
       const convergeGlow = container.querySelector<HTMLElement>('.cta-converge-glow-el');
 
-      if (reducedMotion) {
-        gsap.set([headline, desc, btn, disclaimer].filter(Boolean), { opacity: 1, y: 0, scale: 1 });
-        gsap.set([redBeam, blueBeam, convergeGlow].filter(Boolean), { opacity: 1 });
-        return;
-      }
-
-      if (!isDesktop) {
-        gsap.timeline({
-          scrollTrigger: { trigger: container, start: 'top 65%', toggleActions: 'play none none reset' },
-        })
-          .fromTo(headline, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0)
-          .fromTo(desc, { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0.3)
-          .fromTo(btn, { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.7)' }, 0.5)
-          .fromTo(disclaimer, { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0.7);
-        return;
-      }
-
-      // ── Desktop ── THE CONVERGENCE, scrub-pinned. The composed CTA scrolls
-      // out of the viewport naturally after pin release — the footer (which
-      // sits absolute-bottom of the section, outside the camera) is the last
-      // thing visible at the end of the page.
-      gsap.set(headline, { opacity: 0, y: 30 });
-      gsap.set(desc, { opacity: 0, y: 20 });
-      gsap.set(btn, { opacity: 0, scale: 0.85 });
-      gsap.set(disclaimer, { opacity: 0 });
       if (redBeam) gsap.set(redBeam, { opacity: 0, scaleY: 0, transformOrigin: 'top right' });
       if (blueBeam) gsap.set(blueBeam, { opacity: 0, scaleY: 0, transformOrigin: 'top left' });
       if (convergeGlow) gsap.set(convergeGlow, { opacity: 0, scale: 0 });
-      gsap.set('.cta-camera-el', { scale: 1, opacity: 1 });
 
-      // Non-pinning scrub trigger — the section is the LAST on the page,
-      // so any pinSpacing extends the document past the visible content
-      // and leaves an extra "blank scroll" tail at the bottom. Original
-      // intent (per the file header) was "played once on enter (NOT
-      // pinned)"; this scrubs across the section's natural entry window
-      // (top bottom → top top, i.e. one viewport of scroll) so the
-      // animations land synchronously with the section reaching the top,
-      // and the page ends exactly when the CTA composition does.
-      const tl = gsap.timeline({
+      gsap.timeline({
         scrollTrigger: {
           trigger: container,
-          start: 'top bottom',
-          end: 'top top',
-          scrub: 1,
-          // `invalidateOnRefresh` removed — all tween values are static
-          // literals (scaleY, opacity, scale, y, duration), no function-based
-          // properties to re-evaluate. Was contributing to pause/jerk at
-          // refresh events. Trigger window is `top bottom → top top` (one
-          // viewport of scroll), which doesn't depend on dynamic measurement.
+          start: 'top 75%',
+          toggleActions: 'play none none reset',
         },
-      });
-
-      // Red + Blue beams arc inward and meet at centre
-      if (redBeam)  tl.to(redBeam,  { opacity: 0.9, scaleY: 1, duration: 0.20, ease: 'power2.out' }, 0);
-      if (blueBeam) tl.to(blueBeam, { opacity: 0.9, scaleY: 1, duration: 0.20, ease: 'power2.out' }, 0);
-
-      // Convergence glow flares at the meeting point
-      if (convergeGlow) {
-        tl.to(convergeGlow, { opacity: 1, scale: 1, duration: 0.12, ease: 'back.out(2)' }, 0.22);
-      }
-
-      // Beams dim slightly as they "feed" into the glow
-      if (redBeam)  tl.to(redBeam,  { opacity: 0.4, duration: 0.15, ease: 'power2.inOut' }, 0.30);
-      if (blueBeam) tl.to(blueBeam, { opacity: 0.4, duration: 0.15, ease: 'power2.inOut' }, 0.30);
-
-      // Headline materialises from the glow, then desc, button, disclaimer
-      tl.to(headline, { opacity: 1, y: 0, duration: 0.20, ease: 'power3.out' }, 0.32);
-      tl.to(desc,     { opacity: 1, y: 0, duration: 0.15, ease: 'power2.out' }, 0.46);
-      tl.to(btn,      { opacity: 1, scale: 1, duration: 0.15, ease: 'back.out(1.6)' }, 0.58);
-      tl.to(disclaimer, { opacity: 1, duration: 0.15, ease: 'power2.out' }, 0.72);
+      })
+        .to(redBeam, { opacity: 0.9, scaleY: 1, duration: 0.9, ease: 'power2.out' }, 0)
+        .to(blueBeam, { opacity: 0.9, scaleY: 1, duration: 0.9, ease: 'power2.out' }, 0)
+        .to(convergeGlow, { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(2)' }, 0.5)
+        .to(redBeam, { opacity: 0.4, duration: 0.6, ease: 'power2.inOut' }, 0.8)
+        .to(blueBeam, { opacity: 0.4, duration: 0.6, ease: 'power2.inOut' }, 0.8);
     },
-    { scope: sectionRef, dependencies: [reducedMotion, isDesktop] },
+    { scope: sectionRef },
   );
 
   return (
     <>
       <SectionWrapper ref={sectionRef} id="cta" act={6}>
-        {/* Mobile-only padding rescue. On narrow viewports the bottom
-            footer (CyCraft address + Privacy/Terms + copyright) wraps to
-            ~200px tall and sits as `position: absolute; bottom: 0` with an
-            opaque void background. The centered CTA content above uses
-            `min-height: 100vh` + flex-center, so the APPLY NOW button
-            lands in the bottom portion of the centered area and gets
-            covered. Reserving bottom space here lifts the centered block
-            above the footer. */}
         <style>{`
+          .cta-content-wrap-el {
+            padding-bottom: clamp(9rem, 20vh, 12rem) !important;
+          }
           @media (max-width: 768px) {
             .cta-content-wrap-el {
               padding-bottom: clamp(11rem, 28vh, 14rem) !important;
             }
           }
         `}</style>
+
         <div
-          className="cta-camera-el"
+          className="film-bg-deep"
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: '-10%',
+            zIndex: 0,
+            background:
+              'radial-gradient(ellipse at 50% 50%, rgba(168,240,255,0.18), transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(255,61,90,0.06), transparent 55%), radial-gradient(ellipse at 80% 80%, rgba(61,168,255,0.06), transparent 55%)',
+            pointerEvents: 'none',
+          }}
+        />
+        <div
+          className="film-bg-mid"
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: '-5%',
+            zIndex: 0,
+            backgroundImage:
+              'repeating-linear-gradient(0deg, transparent, transparent 6px, rgba(168,240,255,0.025) 6px, rgba(168,240,255,0.025) 7px)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <div
+          className="film-camera cta-camera-el"
           style={{
             position: 'absolute',
             inset: 0,
             transformOrigin: 'center center',
-            willChange: 'transform, opacity',
+            willChange: 'transform',
           }}
         >
           {/* Vignette */}
@@ -145,7 +108,7 @@ export default function CTAFooterSection() {
             }}
           />
 
-          {/* Red beam — arcs from upper-left into centre */}
+          {/* Red beam */}
           <div
             className="cta-red-beam-el"
             aria-hidden="true"
@@ -157,14 +120,14 @@ export default function CTAFooterSection() {
               height: '40%',
               background: 'linear-gradient(to bottom, transparent, var(--color-red-team))',
               boxShadow: '0 0 12px var(--color-red-team-glow)',
-              transform: 'rotate(35deg) scaleY(0)',
+              transform: 'rotate(35deg)',
               opacity: 0,
               zIndex: 1,
               willChange: 'transform, opacity',
             }}
           />
 
-          {/* Blue beam — arcs from upper-right into centre */}
+          {/* Blue beam */}
           <div
             className="cta-blue-beam-el"
             aria-hidden="true"
@@ -176,15 +139,14 @@ export default function CTAFooterSection() {
               height: '40%',
               background: 'linear-gradient(to bottom, transparent, var(--color-blue-team))',
               boxShadow: '0 0 12px var(--color-blue-team-glow)',
-              transform: 'rotate(-35deg) scaleY(0)',
+              transform: 'rotate(-35deg)',
               opacity: 0,
               zIndex: 1,
               willChange: 'transform, opacity',
             }}
           />
 
-          {/* Convergence glow — pools where the beams meet. Clamps so it
-              doesn't overflow narrow viewports. */}
+          {/* Convergence glow */}
           <div
             className="cta-converge-glow-el"
             aria-hidden="true"
@@ -192,14 +154,15 @@ export default function CTAFooterSection() {
               position: 'absolute',
               top: '50%',
               left: '50%',
-              transform: 'translate(-50%, -50%) scale(0)',
+              transform: 'translate(-50%, -50%)',
               width: 'clamp(280px, 70vw, 600px)',
               height: 'clamp(180px, 40vw, 300px)',
               maxWidth: '100vw',
-              background: 'radial-gradient(ellipse, rgba(168,240,255,0.10) 0%, transparent 70%)',
+              background: 'radial-gradient(ellipse, rgba(168,240,255,0.12) 0%, transparent 70%)',
               pointerEvents: 'none',
               zIndex: 2,
               willChange: 'transform, opacity',
+              opacity: 0,
             }}
           />
 
@@ -218,7 +181,9 @@ export default function CTAFooterSection() {
             }}
           >
             <h2
-              className="cta-headline-el"
+              className="film-fade cta-headline-el"
+              data-at="0.30"
+              data-dur="0.20"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1.75rem, 3.5vw, 3rem)',
@@ -229,15 +194,15 @@ export default function CTAFooterSection() {
                 maxWidth: '800px',
                 lineHeight: 1.1,
                 margin: 0,
-                opacity: 0,
-                willChange: 'transform, opacity',
               }}
             >
               {ctaFooterContent.heading}
             </h2>
 
             <p
-              className="cta-desc-el"
+              className="film-fade cta-desc-el"
+              data-at="0.45"
+              data-dur="0.15"
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 'var(--text-lg)',
@@ -245,15 +210,15 @@ export default function CTAFooterSection() {
                 maxWidth: '480px',
                 margin: 0,
                 lineHeight: 1.55,
-                opacity: 0,
-                willChange: 'transform, opacity',
               }}
             >
               {ctaFooterContent.description}
             </p>
 
             <button
-              className="cta-btn-el"
+              className="film-fade cta-btn-el"
+              data-at="0.58"
+              data-dur="0.16"
               onClick={() => setModalOpen(true)}
               style={{
                 fontFamily: 'var(--font-mono)',
@@ -265,10 +230,8 @@ export default function CTAFooterSection() {
                 padding: '1rem 2.5rem',
                 cursor: 'pointer',
                 textTransform: 'uppercase',
-                opacity: 0,
                 animation: 'glow-pulse 3s ease-in-out infinite',
                 position: 'relative',
-                willChange: 'transform, opacity',
               }}
             >
               {ctaFooterContent.cta.label}
@@ -285,16 +248,15 @@ export default function CTAFooterSection() {
             </button>
 
             <p
-              className="cta-disclaimer-el"
+              className="film-fade cta-disclaimer-el"
+              data-at="0.74"
               style={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: 'var(--text-xs)',
                 color: 'var(--color-text-disabled)',
                 maxWidth: '480px',
                 lineHeight: 1.6,
-                opacity: 0,
                 margin: 0,
-                willChange: 'opacity',
               }}
             >
               {ctaFooterContent.disclaimer}
@@ -302,8 +264,7 @@ export default function CTAFooterSection() {
           </div>
         </div>
 
-        {/* Footer — outside camera so it doesn't fade with pin exit
-            (CTA section has no pin exit anyway — it's the page's resting state) */}
+        {/* Footer — outside camera so it stays at section bottom */}
         <footer
           style={{
             position: 'absolute',

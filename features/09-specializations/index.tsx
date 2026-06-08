@@ -1,16 +1,15 @@
 'use client';
-/* Advanced Specializations — Act III, Section 9 of 22
- * Cinema mode: pinned 300vh. Prism spins, refracted beams shoot to 6 hex cards. */
+/* Specializations — Act III, Section 9 of 22.
+ * Film-mode: pinned ~200vh. Hex constellation of 6 specialization cards. */
 import { useRef } from 'react';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { Badge } from '@/components/ui/Badge';
 import { specializationsContent } from '@/content/specializations';
 import { Prism } from './components/Prism';
 import { SpecializationCard } from './components/SpecializationCard';
-import { usePrismRefraction } from './hooks/usePrismRefraction';
-import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
+import { useFilmReveal } from '@/lib/gsap/filmReveal';
+import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 
-// Hex positions: 6 cards at radius 130px, starting from top (−90°)
 const HEX_RADIUS = 130;
 const HEX_POSITIONS = Array.from({ length: 6 }, (_, i) => {
   const angle = (i * 60 - 90) * (Math.PI / 180);
@@ -22,13 +21,38 @@ const HEX_POSITIONS = Array.from({ length: 6 }, (_, i) => {
 
 export default function SpecializationsSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
-  usePrismRefraction(sectionRef);
+  const isDesktop = useIsDesktop();
+  useFilmReveal(sectionRef, { pin: '+=200%' });
 
   return (
     <SectionWrapper ref={sectionRef} id="specializations" act={3}>
       <div
-        className="spec-camera-el"
+        className="film-bg-deep"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-10%',
+          zIndex: 0,
+          background:
+            'radial-gradient(ellipse at 50% 60%, rgba(168,240,255,0.12), transparent 55%), radial-gradient(ellipse at 80% 20%, rgba(140,80,255,0.06), transparent 60%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        className="film-bg-mid"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-5%',
+          zIndex: 0,
+          backgroundImage:
+            'repeating-linear-gradient(0deg, transparent, transparent 7px, rgba(168,240,255,0.02) 7px, rgba(168,240,255,0.02) 8px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        className="film-camera spec-camera-el"
         style={{
           position: 'absolute',
           inset: 0,
@@ -36,7 +60,6 @@ export default function SpecializationsSection() {
           willChange: 'transform',
         }}
       >
-        {/* ── Header ── */}
         <div
           style={{
             position: 'relative',
@@ -47,11 +70,12 @@ export default function SpecializationsSection() {
           }}
         >
           <div className="section-container">
-            <div className="spec-badge-el" style={{ display: 'inline-block' }}>
+            <div className="film-fade spec-badge-el" data-at="0.05" style={{ display: 'inline-block' }}>
               <Badge label={specializationsContent.badge} />
             </div>
             <h2
-              className="spec-heading-el"
+              className="film-fade spec-heading-el"
+              data-at="0.10"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
@@ -61,13 +85,13 @@ export default function SpecializationsSection() {
                 color: 'var(--color-text-primary)',
                 margin: '1rem 0 0.5rem',
                 lineHeight: 1.1,
-                willChange: 'transform, opacity',
               }}
             >
               {specializationsContent.heading}
             </h2>
             <p
-              className="spec-desc-el"
+              className="film-fade spec-desc-el"
+              data-at="0.15"
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 'var(--text-base)',
@@ -75,7 +99,6 @@ export default function SpecializationsSection() {
                 maxWidth: '560px',
                 margin: '0 auto',
                 lineHeight: 1.55,
-                willChange: 'opacity',
               }}
             >
               {specializationsContent.description}
@@ -84,9 +107,17 @@ export default function SpecializationsSection() {
         </div>
 
         {isDesktop ? (
-          /* ── Desktop: hex constellation ── */
           <>
+            {/* film-fade wrapping the WHOLE constellation, not individual
+                cards. Per-card film-fade wrappers added `transform: translate`
+                which created a new CSS positioning context for each card's
+                `position: absolute` — collapsing the hex layout. Fading the
+                container instead keeps the cards' absolute positioning
+                relative to the constellation centre. */}
             <div
+              className="film-fade spec-constellation-el"
+              data-at="0.25"
+              data-dur="0.30"
               role="list"
               aria-label="Specialization areas"
               style={{ position: 'relative', zIndex: 2, height: 'clamp(300px, 36vh, 360px)', margin: 'clamp(1.5rem, 3vh, 2.5rem) auto 0', maxWidth: '540px' }}
@@ -101,7 +132,6 @@ export default function SpecializationsSection() {
             <div style={{ height: 'clamp(2rem, 4vh, 3rem)' }} aria-hidden="true" />
           </>
         ) : (
-          /* ── Mobile: simple responsive grid ── */
           <div
             role="list"
             aria-label="Specialization areas"

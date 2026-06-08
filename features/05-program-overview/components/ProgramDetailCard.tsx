@@ -14,7 +14,6 @@ export function ProgramDetailCard({ label, value, index }: ProgramDetailCardProp
         padding: '0.9rem 1rem',
         border: '1px solid rgba(168, 240, 255, 0.08)',
         background: 'var(--color-carbon)',
-        opacity: 0,
         willChange: 'transform, opacity',
       }}
     >

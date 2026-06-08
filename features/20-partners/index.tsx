@@ -1,31 +1,25 @@
 'use client';
-/* Hiring Partners — Act VI, Section 20 of 22
- * Cinema mode: pinned 200vh. Header reveals, marquee ticker plays
- * continuously. CINEMA_SPEC §2.2 ("Constellation drift"). */
+/* Hiring Partners — Act VI, Section 20 of 22.
+ * Film-mode: pinned ~160vh. Continuous marquee + film-treated header. */
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
-import { useGSAP } from '@gsap/react';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { Badge } from '@/components/ui/Badge';
 import { partnersContent } from '@/content/partners';
 import { gsap } from '@/lib/gsap/register';
-import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
-import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
-import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
+import { useFilmReveal } from '@/lib/gsap/filmReveal';
 
-/** Partner ids that have a real logo asset under /public/images/. */
 const HAS_LOGO = new Set(['google', 'ibm', 'hp', 'cisco', 'mcafee', 'microland', 'vodafone', 'seciq']);
 
 export default function PartnersSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const tickerRef = useRef<HTMLDivElement>(null);
-  const animRef   = useRef<gsap.core.Tween | null>(null);
-  const isDesktop = useIsDesktop();
-  const reducedMotion = useReducedMotion();
+  const animRef = useRef<gsap.core.Tween | null>(null);
+  useFilmReveal(sectionRef, { pin: '+=160%' });
 
   const doubled = [...partnersContent.partners, ...partnersContent.partners];
 
-  // Always-on marquee (independent of pin timeline)
+  // Continuous marquee — independent of pin timeline.
   useEffect(() => {
     const inner = tickerRef.current;
     if (!inner) return;
@@ -38,57 +32,40 @@ export default function PartnersSection() {
     return () => { animRef.current?.kill(); };
   }, []);
 
-  useGSAP(
-    () => {
-      const container = sectionRef.current;
-      if (!container) return;
-
-      if (reducedMotion) {
-        gsap.set(['.pt-heading-el', '.pt-badge-el', '.pt-desc-el', '.pt-ticker-wrap-el'],
-                 { opacity: 1, y: 0 });
-        return;
-      }
-
-      if (!isDesktop) {
-        gsap.set(['.pt-heading-el', '.pt-badge-el', '.pt-desc-el', '.pt-ticker-wrap-el'],
-                 { opacity: 1, y: 0 });
-        return;
-      }
-
-      // Badge + heading + description stay at default opacity:1 (Approach B).
-      // Ticker-wrap reveal + camera scale/fade KEEP — cinema beats.
-      gsap.set('.pt-ticker-wrap-el', { opacity: 0 });
-      gsap.set('.pt-camera-el',      { scale: 1, opacity: 1 });
-
-      const tl = makePinnedTimeline({
-        trigger: container,
-        end: PIN_DURATIONS.partners,
-        scrub: 1,
-        enabled: true,
-        unpinned: true,
-      });
-
-      // Badge + heading + description reveals removed (Approach B).
-      tl.to('.pt-ticker-wrap-el', { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.20)
-        .to('.pt-camera-el',      { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.90)
-        // In-timeline fade — close the camera before the pin releases so
-        // the partners composition doesn't linger on screen as the section
-        // drifts past during its post-pin scroll tail. Same fix pattern as
-        // curriculum + learning-evolution + cta-footer.
-        .to('.pt-camera-el',      { opacity: 0, duration: 0.05, ease: 'power2.in' }, 0.95);
-    },
-    { scope: sectionRef, dependencies: [reducedMotion, isDesktop] },
-  );
-
   return (
     <SectionWrapper ref={sectionRef} id="partners" act={6}>
       <div
-        className="pt-camera-el"
+        className="film-bg-deep"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-10%',
+          zIndex: 0,
+          background:
+            'radial-gradient(ellipse at 50% 50%, rgba(168,240,255,0.14), transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(140,80,255,0.06), transparent 55%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        className="film-bg-mid"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-5%',
+          zIndex: 0,
+          backgroundImage:
+            'repeating-linear-gradient(0deg, transparent, transparent 6px, rgba(168,240,255,0.022) 6px, rgba(168,240,255,0.022) 7px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        className="film-camera pt-camera-el"
         style={{
           position: 'absolute',
           inset: 0,
           transformOrigin: 'center center',
-          willChange: 'transform, opacity',
+          willChange: 'transform',
         }}
       >
         {/* Header */}
@@ -103,11 +80,12 @@ export default function PartnersSection() {
           }}
         >
           <div className="section-container">
-            <div className="pt-badge-el" style={{ display: 'inline-block' }}>
+            <div className="film-fade pt-badge-el" data-at="0.05" style={{ display: 'inline-block' }}>
               <Badge label={partnersContent.badge} />
             </div>
             <h2
-              className="pt-heading-el"
+              className="film-fade pt-heading-el"
+              data-at="0.10"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
@@ -117,13 +95,13 @@ export default function PartnersSection() {
                 color: 'var(--color-text-primary)',
                 margin: '1rem 0 0.75rem',
                 lineHeight: 1.1,
-                willChange: 'transform, opacity',
               }}
             >
               {partnersContent.heading}
             </h2>
             <p
-              className="pt-desc-el"
+              className="film-fade pt-desc-el"
+              data-at="0.15"
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 'var(--text-base)',
@@ -131,7 +109,6 @@ export default function PartnersSection() {
                 maxWidth: '480px',
                 margin: '0 auto',
                 lineHeight: 1.55,
-                willChange: 'opacity',
               }}
             >
               {partnersContent.description}
@@ -139,10 +116,12 @@ export default function PartnersSection() {
           </div>
         </div>
 
-        {/* ── Marquee ── */}
+        {/* Marquee */}
         <div
-          className="pt-ticker-wrap-el"
-          style={{ position: 'relative', zIndex: 3, overflow: 'hidden', paddingBlock: '1.25rem', willChange: 'opacity' }}
+          className="film-fade pt-ticker-wrap-el"
+          data-at="0.25"
+          data-dur="0.18"
+          style={{ position: 'relative', zIndex: 3, overflow: 'hidden', paddingBlock: '1.25rem' }}
           onMouseEnter={() => animRef.current?.pause()}
           onMouseLeave={() => animRef.current?.resume()}
         >

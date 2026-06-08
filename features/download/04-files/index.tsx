@@ -9,9 +9,13 @@
  *   0.22–0.30  Table frame + header row reveal
  *   0.30–0.80  10 rows cascade in (~5% each)
  *   0.85–1.00  Camera dollies in 4%
+ *
+ * Action buttons render as visual-only spans — the per-entry hrefs all
+ * pointed to placeholder routes (404). The buttons stay visible because
+ * their label/colour conveys the file's tier status (Free / Member /
+ * Premium); restore the Link/a once the download endpoints are wired.
  */
 import { useRef } from 'react';
-import Link from 'next/link';
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '@/lib/gsap/register';
 import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
@@ -22,8 +26,6 @@ import {
   downloadFilesContent,
   type FileTier,
 } from '@/content/download/files';
-
-const isInternalRoute = (href: string) => href.startsWith('/') && !href.startsWith('//');
 
 const tierTone = (tier: FileTier) => {
   switch (tier) {
@@ -360,53 +362,18 @@ export default function DownloadFiles() {
                         fontWeight: 600,
                         letterSpacing: '0.16em',
                         textTransform: 'uppercase' as const,
-                        textDecoration: 'none' as const,
                         boxShadow: `0 0 10px ${tone.glow}`,
                         whiteSpace: 'nowrap' as const,
-                        cursor: 'pointer' as const,
-                        transition: 'background 0.2s, box-shadow 0.2s, transform 0.2s',
                       };
-                      const hoverIn = (e: React.MouseEvent<HTMLElement>) => {
-                        const el = e.currentTarget as HTMLElement;
-                        el.style.background = `${tone.glow}`;
-                        el.style.boxShadow = `0 0 18px ${tone.glow}`;
-                        el.style.transform = 'translateY(-1px)';
-                      };
-                      const hoverOut = (e: React.MouseEvent<HTMLElement>) => {
-                        const el = e.currentTarget as HTMLElement;
-                        el.style.background = 'transparent';
-                        el.style.boxShadow = `0 0 10px ${tone.glow}`;
-                        el.style.transform = 'translateY(0)';
-                      };
-                      const label = (
-                        <>
+                      return (
+                        <span
+                          className="download-files-action"
+                          style={actionStyle}
+                          aria-label={`${entry.actionLabel} ${entry.name}`}
+                        >
                           <span className="download-files-action-label">{entry.actionLabel}</span>
                           <span aria-hidden="true">↓</span>
-                        </>
-                      );
-                      return isInternalRoute(entry.href) ? (
-                        <Link
-                          href={entry.href}
-                          className="download-files-action"
-                          style={actionStyle}
-                          aria-label={`${entry.actionLabel} ${entry.name}`}
-                          onMouseEnter={hoverIn}
-                          onMouseLeave={hoverOut}
-                        >
-                          {label}
-                        </Link>
-                      ) : (
-                        <a
-                          href={entry.href}
-                          download
-                          className="download-files-action"
-                          style={actionStyle}
-                          aria-label={`${entry.actionLabel} ${entry.name}`}
-                          onMouseEnter={hoverIn}
-                          onMouseLeave={hoverOut}
-                        >
-                          {label}
-                        </a>
+                        </span>
                       );
                     })()}
                   </span>

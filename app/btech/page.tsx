@@ -1,8 +1,7 @@
 'use client';
-// Sections load statically (not lazy/client-only) so the whole pinned layout —
-// every section's GSAP pin-spacer — initialises in one pass. Lazy `ssr: false`
-// imports mounted at staggered times, forcing repeated ScrollTrigger refreshes
-// that jumped/glitched the section-to-section handoffs.
+// Btech page — film-mode cinema. Every section (2-21) pins, scrubs against
+// scroll, parallaxes its layers, and hands off via a full-screen masked
+// reveal at every act boundary.
 import HeroSection from '@/features/01-hero';
 import AchievementsSection from '@/features/02-achievements';
 import PillarsSection from '@/features/03-pillars';
@@ -24,25 +23,28 @@ import AdmissionSection from '@/features/18-admission';
 import EligibilitySection from '@/features/19-eligibility';
 import PartnersSection from '@/features/20-partners';
 import CTAFooterSection from '@/features/21-cta-footer';
-import { ActTransition } from '@/components/layout/ActTransition';
-import { BTechAtmosphere } from '@/components/layout/BTechAtmosphere';
+import { FilmAtmosphere } from '@/components/layout/FilmAtmosphere';
+import { FilmActTransition } from '@/components/layout/FilmActTransition';
 
 export default function BTechPage() {
   return (
     <>
-      <BTechAtmosphere />
+      <FilmAtmosphere />
 
       {/* Act I — Dormancy */}
       <HeroSection />
       <AchievementsSection />
 
-      {/* Act I → II boundary — beam fires forward + white fade */}
-      <ActTransition targetSelector="#pillars" type="i-to-ii" />
+      {/* Act I → II */}
+      <FilmActTransition targetSelector="#pillars" type="beam-burst" />
 
       {/* Act II — Ignition */}
       <PillarsSection />
       <PhilosophySection />
       <ProgramOverviewSection />
+
+      {/* Act II → III */}
+      <FilmActTransition targetSelector="#tracks" type="iris" />
 
       {/* Act III — Divergence */}
       <TracksSection />
@@ -50,17 +52,26 @@ export default function BTechPage() {
       <ProjectsSection />
       <SpecializationsSection />
 
+      {/* Act III → IV */}
+      <FilmActTransition targetSelector="#certifications" type="slash" />
+
       {/* Act IV — Architecture */}
       <CertificationsSection />
       <CurriculumRoadmapSection />
       <LearningEvolutionSection />
       <BattlegroundsSection />
 
+      {/* Act IV → V */}
+      <FilmActTransition targetSelector="#comparison" type="curtain-red" />
+
       {/* Act V — Proof */}
       <ComparisonSection />
       <HiringTournamentsSection />
       <PlacementsSection />
       <CampusSection />
+
+      {/* Act V → VI */}
+      <FilmActTransition targetSelector="#admission" type="split" />
 
       {/* Act VI — Invitation */}
       <AdmissionSection />

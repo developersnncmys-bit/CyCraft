@@ -27,7 +27,7 @@ export function PhaseNode({ number, title, description, semesters, index, isLast
     return (
       <div
         className="phase-node-el"
-        style={{ display: 'flex', gap: '1rem', opacity: 0, transform: 'translateY(16px)', position: 'relative' }}
+        style={{ display: 'flex', gap: '1rem', position: 'relative' }}
       >
         {/* Left: dot + connector */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
@@ -72,8 +72,6 @@ export function PhaseNode({ number, title, description, semesters, index, isLast
         display: 'grid',
         gridTemplateColumns: '1fr 48px 1fr',
         gap: '0 1.5rem',
-        opacity: 0,
-        transform: `translateX(${isRight ? '20px' : '-20px'})`,
         position: 'relative',
       }}
     >

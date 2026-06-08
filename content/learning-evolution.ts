@@ -1,5 +1,13 @@
 export const learningEvolutionContent = {
-  heading: 'THE LEARNING EVOLUTION',
+  // Three-phrase morph swapped through during the section's first 18% of pin.
+  // All three frame the same arc — eight semesters of guided ascent — with
+  // shifting vocabulary so the morph reads as the same idea reframed three
+  // ways, not three separate claims.
+  headingMorphs: [
+    'THE LEARNING EVOLUTION',
+    'EIGHT SEMESTERS. ONE TRAJECTORY.',
+    'FUNDAMENTALS TO FRONT LINE.',
+  ],
   description: 'A precision-guided technical progression from fundamentals to elite specializations.',
   phases: [
     {

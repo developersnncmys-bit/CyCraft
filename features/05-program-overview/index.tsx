@@ -1,28 +1,53 @@
 'use client';
-/* Program Overview — Act II, Section 5 of 22
- * Cinema mode: pinned 250vh. Header reveals → terminal scales in → typing
- * starts at progress 0.20 → cards materialise via scroll-bound tween at
- * 0.55–0.75 (decoupled from bootComplete so fast scrollers see them). */
+/* Program Overview — Act II, Section 5 of 22.
+ * Film-mode: pinned ~220vh. Header + terminal + 4 detail cards stagger in. */
 import { useRef, useState, useCallback } from 'react';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { Badge } from '@/components/ui/Badge';
 import { programOverviewContent } from '@/content/program-overview';
 import { TerminalWindow } from './components/TerminalWindow';
 import { ProgramDetailCard } from './components/ProgramDetailCard';
-import { useTerminalBoot } from './hooks/useTerminalBoot';
+import { useFilmReveal } from '@/lib/gsap/filmReveal';
 
 export default function ProgramOverviewSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [bootComplete, setBootComplete] = useState(false);
-
   const handleBootComplete = useCallback(() => setBootComplete(true), []);
+  // Terminal boot starts immediately on mount in film-mode (the existing
+  // scroll-gated boot was tied to the old useTerminalBoot hook).
+  void bootComplete;
 
-  const { terminalStarted } = useTerminalBoot(sectionRef, bootComplete);
+  useFilmReveal(sectionRef, { pin: '+=220%' });
 
   return (
     <SectionWrapper ref={sectionRef} id="program-overview" act={2}>
       <div
-        className="po-camera-el"
+        className="film-bg-deep"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-10%',
+          zIndex: 0,
+          background:
+            'radial-gradient(ellipse at 50% 50%, rgba(0,255,148,0.06), transparent 65%), radial-gradient(ellipse at 80% 20%, rgba(168,240,255,0.05), transparent 55%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        className="film-bg-mid"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-5%',
+          zIndex: 0,
+          backgroundImage:
+            'repeating-linear-gradient(0deg, transparent, transparent 5px, rgba(0,255,148,0.018) 5px, rgba(0,255,148,0.018) 6px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        className="film-camera po-camera-el"
         style={{
           position: 'absolute',
           inset: 0,
@@ -38,10 +63,11 @@ export default function ProgramOverviewSection() {
           }}
         >
           <div className="section-container">
-            {/* ── Header ── */}
+            {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: 'clamp(0.75rem, 1.5vh, 1.25rem)' }}>
               <h2
-                className="po-heading-el"
+                className="film-fade po-heading-el"
+                data-at="0.05"
                 style={{
                   fontFamily: 'var(--font-display)',
                   fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
@@ -51,27 +77,26 @@ export default function ProgramOverviewSection() {
                   color: 'var(--color-text-primary)',
                   marginBottom: '0.5rem',
                   lineHeight: 1.1,
-                  willChange: 'transform, opacity',
                 }}
               >
                 {programOverviewContent.heading}
               </h2>
-              <div className="po-badge-el" style={{ display: 'inline-block' }}>
+              <div className="film-fade po-badge-el" data-at="0.10" style={{ display: 'inline-block' }}>
                 <Badge label="4-YEAR PROGRAM" />
               </div>
             </div>
 
-            {/* ── Terminal window ── */}
-            <div className="po-terminal-el" style={{ willChange: 'transform, opacity' }}>
+            {/* Terminal — fades in with image-zoom feel */}
+            <div className="film-fade po-terminal-el" data-at="0.20" data-dur="0.20" style={{ willChange: 'transform, opacity' }}>
               <TerminalWindow
                 prompt={programOverviewContent.terminal.prompt}
                 lines={programOverviewContent.terminal.lines}
                 onComplete={handleBootComplete}
-                start={terminalStarted}
+                start
               />
             </div>
 
-            {/* ── Detail cards ── aligned to terminal width (680px) for visual cohesion */}
+            {/* Detail cards — staggered */}
             <div
               className="po-details-grid"
               style={{
@@ -86,7 +111,7 @@ export default function ProgramOverviewSection() {
               aria-label="Program details"
             >
               {programOverviewContent.details.map((detail, i) => (
-                <div key={detail.label} role="listitem">
+                <div key={detail.label} role="listitem" className="film-fade" data-at={`${0.55 + i * 0.06}`}>
                   <ProgramDetailCard label={detail.label} value={detail.value} index={i} />
                 </div>
               ))}
@@ -95,7 +120,6 @@ export default function ProgramOverviewSection() {
         </div>
       </div>
 
-      {/* Glow pool beneath terminal */}
       <div
         aria-hidden="true"
         style={{
@@ -105,7 +129,7 @@ export default function ProgramOverviewSection() {
           transform: 'translate(-50%, -50%)',
           width: '500px',
           height: '300px',
-          background: 'radial-gradient(ellipse, rgba(0,255,148,0.03) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse, rgba(0,255,148,0.04) 0%, transparent 70%)',
           pointerEvents: 'none',
           zIndex: 1,
         }}

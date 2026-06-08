@@ -1,22 +1,46 @@
 'use client';
-/* Philosophy section — Act II, Section 4 of 22
- * Cinema mode: pinned 200vh. Tight, punchy reveal — fractured sentence
- * reassembles word-by-word as the user scrolls. CINEMA_SPEC §2.2. */
+/* Philosophy — Act II, Section 4 of 22.
+ * Film-mode: pinned ~200vh. Tight reveal + tilted video parallax. */
 import { useRef } from 'react';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { philosophyContent } from '@/content/philosophy';
 import { FracturedHeading } from './components/FracturedHeading';
 import { TiltedVideo } from './components/TiltedVideo';
-import { usePhilosophyReveal } from './hooks/usePhilosophyReveal';
+import { useFilmReveal } from '@/lib/gsap/filmReveal';
 
 export default function PhilosophySection() {
   const sectionRef = useRef<HTMLElement>(null);
-  usePhilosophyReveal(sectionRef);
+  useFilmReveal(sectionRef, { pin: '+=200%' });
 
   return (
     <SectionWrapper ref={sectionRef} id="philosophy" act={2}>
       <div
-        className="philosophy-camera-el"
+        className="film-bg-deep"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-10%',
+          zIndex: 0,
+          background:
+            'radial-gradient(ellipse at 25% 40%, rgba(168,240,255,0.10), transparent 60%), radial-gradient(ellipse at 75% 60%, rgba(255,61,90,0.06), transparent 55%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        className="film-bg-mid"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-6%',
+          zIndex: 0,
+          backgroundImage:
+            'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(168,240,255,0.02) 8px, rgba(168,240,255,0.02) 9px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        className="film-camera philosophy-camera-el"
         style={{
           position: 'absolute',
           inset: 0,
@@ -40,10 +64,11 @@ export default function PhilosophySection() {
             width: '100%',
           }}
         >
-          {/* ── Left column ── */}
+          {/* Left column */}
           <div className="philosophy-col" style={{ flex: '1 1 min(480px, 100%)', minWidth: 0 }}>
             <h2
-              className="philosophy-heading-el"
+              className="film-fade philosophy-heading-el"
+              data-at="0.05"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1rem, 1.8vw, 1.5rem)',
@@ -52,14 +77,12 @@ export default function PhilosophySection() {
                 textTransform: 'uppercase',
                 color: 'var(--color-beam)',
                 marginBottom: '1rem',
-                willChange: 'transform, opacity',
               }}
             >
               {philosophyContent.heading}
             </h2>
 
-            {/* Fractured sentence — "is broken" = literally broken chars */}
-            <div style={{ marginBottom: '1rem' }}>
+            <div className="film-fade" data-at="0.15" data-dur="0.20" style={{ marginBottom: '1rem' }}>
               <FracturedHeading
                 as="p"
                 style={{
@@ -72,41 +95,40 @@ export default function PhilosophySection() {
               </FracturedHeading>
             </div>
 
-            {/* Cyan draw line — visual punctuation after reassembly */}
             <div
-              className="philosophy-line-el"
+              className="film-fade philosophy-line-el"
+              data-at="0.40"
               aria-hidden="true"
               style={{
                 height: '1px',
                 background: 'linear-gradient(to right, var(--color-beam), transparent)',
                 marginBottom: '1rem',
-                transformOrigin: 'left',
-                willChange: 'transform',
               }}
             />
 
             <p
-              className="philosophy-desc-el"
+              className="film-fade philosophy-desc-el"
+              data-at="0.45"
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 'var(--text-base)',
                 color: 'var(--color-text-secondary)',
                 lineHeight: 1.6,
                 maxWidth: '520px',
-                opacity: 0,
-                willChange: 'opacity',
               }}
             >
               {philosophyContent.description}
             </p>
           </div>
 
-          {/* ── Right column — tilted video ── */}
-          <TiltedVideo
-            mp4={philosophyContent.video.mp4}
-            poster={philosophyContent.video.poster}
-            label={philosophyContent.video.label}
-          />
+          {/* Right column — tilted video, zooms in across pin */}
+          <div className="film-image-zoom" style={{ flex: '1 1 min(420px, 100%)' }}>
+            <TiltedVideo
+              mp4={philosophyContent.video.mp4}
+              poster={philosophyContent.video.poster}
+              label={philosophyContent.video.label}
+            />
+          </div>
         </div>
       </div>
     </SectionWrapper>

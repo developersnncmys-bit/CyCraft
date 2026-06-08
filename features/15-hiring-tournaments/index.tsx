@@ -1,95 +1,55 @@
 'use client';
-/* Hiring Tournaments — Act V, Section 15 of 22
- * Cinema mode: pinned 300vh. Centre node ignites → 8 beams fire outward →
- * 8 role nodes materialise in radial pattern. CINEMA_SPEC §2.2. */
+/* Hiring Tournaments — Act V, Section 15 of 22.
+ * Film-mode: pinned ~220vh. Centre "YOU" node + 8 radial role beams. */
 import { useRef } from 'react';
-import { useGSAP } from '@gsap/react';
-import { gsap } from '@/lib/gsap/register';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
 import { Badge } from '@/components/ui/Badge';
 import { hiringTournamentsContent } from '@/content/hiring-tournaments';
 import { RoleNode } from './components/RoleNode';
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
-import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
-import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
-import { makePinnedTimeline, PIN_DURATIONS } from '@/lib/gsap/cinemaConfig';
+import { useFilmReveal } from '@/lib/gsap/filmReveal';
 
 const RADIUS = 130;
 
 export default function HiringTournamentsSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const isTablet = useMediaQuery('(min-width: 768px)');
-  const isDesktop = useIsDesktop();
-  const reducedMotion = useReducedMotion();
-
-  useGSAP(
-    () => {
-      const container = sectionRef.current;
-      if (!container) return;
-
-      const nodes = container.querySelectorAll<HTMLElement>('.role-node-el');
-      const beams = container.querySelectorAll<HTMLElement>('.role-beam-el');
-      const centre = container.querySelector<HTMLElement>('.centre-node-el');
-
-      if (reducedMotion) {
-        gsap.set([...nodes], { opacity: 1 });
-        gsap.set(beams, { scaleX: 1 });
-        if (centre) gsap.set(centre, { scale: 1 });
-        gsap.set(['.ht-heading-el', '.ht-badge-el', '.ht-desc-el'], { opacity: 1 });
-        return;
-      }
-
-      if (!isDesktop) {
-        gsap.timeline({
-          scrollTrigger: { trigger: container, start: 'top 65%', toggleActions: 'play none none reset' },
-        })
-          .fromTo(centre, { scale: 0 }, { scale: 1, duration: 0.5, ease: 'back.out(1.7)' }, 0)
-          .fromTo(beams, { scaleX: 0 }, { scaleX: 1, stagger: 0.08, duration: 0.4, ease: 'power2.out' }, 0.3)
-          .to(nodes, { opacity: 1, stagger: 0.08, duration: 0.4, ease: 'power2.out' }, 0.4);
-        return;
-      }
-
-      // Heading + badge + description stay at default opacity:1 (Approach B).
-      // Centre node, beams, role nodes, and camera KEEP their cinema reveals.
-      if (centre) gsap.set(centre, { scale: 0 });
-      gsap.set(beams, { scaleX: 0 });
-      gsap.set(nodes, { opacity: 0, scale: 0.85 });
-      gsap.set('.ht-camera-el', { scale: 1, opacity: 1 });
-
-      const tl = makePinnedTimeline({
-        trigger: container,
-        end: PIN_DURATIONS.hiringTournaments,
-        scrub: 1,
-        enabled: true,
-        unpinned: true,
-      });
-
-      // Badge + heading + description reveals removed (Approach B).
-
-      // Centre node ignites
-      tl.to(centre,           { scale: 1, duration: 0.10, ease: 'back.out(1.7)' }, 0.15)
-        // 8 beams fire outward in radial stagger (widened 0.02 → 0.04 so
-        // each beam is visible firing instead of all 8 flashing together).
-        .to(beams,            { scaleX: 1, stagger: 0.04, duration: 0.10, ease: 'power2.out' }, 0.22)
-        // 8 role nodes materialise at beam endpoints. Stagger 0.02 → 0.06
-        // so each role label has ~11vh of scroll to be read before the next
-        // appears (was ~3.6vh — all 8 roles flashed in within 25vh).
-        .to(nodes,            { opacity: 1, scale: 1, stagger: 0.06, duration: 0.08, ease: 'back.out(1.4)' }, 0.32)
-        // Pin exit
-        .to('.ht-camera-el',  { scale: 0.98, duration: 0.10, ease: 'power2.inOut' }, 0.90);
-    },
-    { scope: sectionRef, dependencies: [reducedMotion, isDesktop, isTablet] },
-  );
+  useFilmReveal(sectionRef, { pin: '+=220%' });
 
   return (
     <SectionWrapper ref={sectionRef} id="hiring" act={5}>
       <div
-        className="ht-camera-el"
+        className="film-bg-deep"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-10%',
+          zIndex: 0,
+          background:
+            'radial-gradient(ellipse at 50% 60%, rgba(168,240,255,0.12), transparent 55%), radial-gradient(ellipse at 80% 20%, rgba(0,255,148,0.05), transparent 60%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        className="film-bg-mid"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: '-5%',
+          zIndex: 0,
+          backgroundImage:
+            'repeating-linear-gradient(0deg, transparent, transparent 6px, rgba(168,240,255,0.02) 6px, rgba(168,240,255,0.02) 7px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        className="film-camera ht-camera-el"
         style={{
           position: 'absolute',
           inset: 0,
           transformOrigin: 'center center',
-          willChange: 'transform, opacity',
+          willChange: 'transform',
         }}
       >
         <div
@@ -101,13 +61,13 @@ export default function HiringTournamentsSection() {
             paddingInline: 'var(--section-padding)',
           }}
         >
-          {/* Header */}
           <div className="section-container" style={{ textAlign: 'center', marginBottom: 'clamp(4rem, 8vh, 6rem)' }}>
-            <div className="ht-badge-el" style={{ display: 'inline-block' }}>
+            <div className="film-fade ht-badge-el" data-at="0.05" style={{ display: 'inline-block' }}>
               <Badge label={hiringTournamentsContent.badge} />
             </div>
             <h2
-              className="ht-heading-el"
+              className="film-fade ht-heading-el"
+              data-at="0.10"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1.25rem, 2.4vw, 2rem)',
@@ -117,13 +77,13 @@ export default function HiringTournamentsSection() {
                 color: 'var(--color-text-primary)',
                 margin: '0.75rem 0 0.5rem',
                 lineHeight: 1.1,
-                willChange: 'transform, opacity',
               }}
             >
               {hiringTournamentsContent.heading}
             </h2>
             <p
-              className="ht-desc-el"
+              className="film-fade ht-desc-el"
+              data-at="0.14"
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 'var(--text-sm)',
@@ -131,7 +91,6 @@ export default function HiringTournamentsSection() {
                 margin: '0 auto',
                 lineHeight: 1.5,
                 whiteSpace: 'nowrap',
-                willChange: 'opacity',
               }}
             >
               {hiringTournamentsContent.description}
@@ -140,7 +99,9 @@ export default function HiringTournamentsSection() {
 
           {isTablet ? (
             <div
-              className="section-container"
+              className="section-container film-fade"
+              data-at="0.20"
+              data-dur="0.20"
               aria-label="Career role constellation"
               style={{ position: 'relative', height: `${RADIUS * 2 + 70}px`, maxWidth: '700px', margin: '0 auto' }}
             >
@@ -152,16 +113,61 @@ export default function HiringTournamentsSection() {
                 const rotDeg = (Math.atan2(y2, x2) * 180) / Math.PI;
                 const color = role.team === 'red' ? 'var(--color-red-team)' : 'var(--color-blue-team)';
                 return (
-                  <div key={role.id} className="role-beam-el" aria-hidden="true"
-                    style={{ position: 'absolute', top: '50%', left: '50%', width: `${len}px`, height: '1px', background: `linear-gradient(to right, ${color}, transparent)`, transform: `rotate(${rotDeg}deg) scaleX(0)`, transformOrigin: 'left center', opacity: 0.4 }} />
+                  <div
+                    key={role.id}
+                    className="film-fade role-beam-el"
+                    data-at={`${0.25 + i * 0.04}`}
+                    data-dur="0.06"
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      width: `${len}px`,
+                      height: '1px',
+                      background: `linear-gradient(to right, ${color}, transparent)`,
+                      transform: `rotate(${rotDeg}deg)`,
+                      transformOrigin: 'left center',
+                      opacity: 0.4,
+                    }}
+                  />
                 );
               })}
-              <div className="centre-node-el" aria-hidden="true"
-                style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%) scale(0)', width: '44px', height: '44px', borderRadius: '50%', border: '1px solid rgba(168,240,255,0.4)', background: 'rgba(168,240,255,0.06)', boxShadow: '0 0 24px rgba(168,240,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div
+                className="film-image-zoom centre-node-el"
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  border: '1px solid rgba(168,240,255,0.5)',
+                  background: 'rgba(168,240,255,0.08)',
+                  boxShadow: '0 0 32px rgba(168,240,255,0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--color-beam)', letterSpacing: '0.1em' }}>YOU</span>
               </div>
               {hiringTournamentsContent.roles.map((role, i) => (
-                <RoleNode key={role.id} label={role.label} domain={role.domain} team={role.team} angle={i * 45 - 90} radius={RADIUS} />
+                /* No per-role film-fade wrapper — that applied a transform
+                   that broke RoleNode's absolute radial positioning by
+                   creating a new containing block. The constellation div
+                   above wears film-fade so the whole hex composition fades
+                   in as one. */
+                <RoleNode
+                  key={role.id}
+                  label={role.label}
+                  domain={role.domain}
+                  team={role.team}
+                  angle={i * 45 - 90}
+                  radius={RADIUS}
+                />
               ))}
             </div>
           ) : (
@@ -177,7 +183,6 @@ export default function HiringTournamentsSection() {
               })}
             </div>
           )}
-
         </div>
       </div>
     </SectionWrapper>
