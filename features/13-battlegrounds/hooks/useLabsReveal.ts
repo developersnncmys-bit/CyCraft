@@ -51,7 +51,11 @@ export function useLabsReveal(containerRef: RefObject<HTMLElement | null>) {
         end: PIN_DURATIONS.battlegrounds,
         scrub: 1,
         enabled: true,
-        invalidateOnRefresh: true,
+        // `invalidateOnRefresh` removed — every tween here uses static literal
+        // values (opacity, y, scale, duration, stagger). No function-based
+        // properties to re-evaluate, so refresh-time re-measurement was just
+        // recomputing trigger start/end mid-scroll and contributing to the
+        // pause/jerk symptom across sections 6+.
       });
 
       // Header reveals first

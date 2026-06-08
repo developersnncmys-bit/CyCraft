@@ -78,7 +78,11 @@ export default function CTAFooterSection() {
           start: 'top bottom',
           end: 'top top',
           scrub: 1,
-          invalidateOnRefresh: true,
+          // `invalidateOnRefresh` removed — all tween values are static
+          // literals (scaleY, opacity, scale, y, duration), no function-based
+          // properties to re-evaluate. Was contributing to pause/jerk at
+          // refresh events. Trigger window is `top bottom → top top` (one
+          // viewport of scroll), which doesn't depend on dynamic measurement.
         },
       });
 

@@ -86,7 +86,11 @@ export function useHouseDissolve(containerRef: RefObject<HTMLElement | null>) {
         scrub: 1,
         enabled: true,
         unpinned: true,
-        invalidateOnRefresh: true,
+        // `invalidateOnRefresh` removed — camera-pan uses a static `y: '-100vh'`
+        // string literal (parsed by GSAP at init), not a function, so refresh-
+        // time re-evaluation was a no-op and only caused the trigger to
+        // recompute start/end mid-scroll. See useTracksTimeline for full
+        // context on the pause/jerk + unpin symptom.
       });
 
       // 0.00 – 0.12 Heading reveals (camera y=0)

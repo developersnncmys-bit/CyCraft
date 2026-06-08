@@ -101,7 +101,12 @@ export function useTracksTimeline(containerRef: RefObject<HTMLElement | null>) {
         scrub: 1,
         enabled: true,
         unpinned: true,
-        invalidateOnRefresh: true,
+        // `invalidateOnRefresh` removed — this timeline has no function-based
+        // tween values, so re-measurement on refresh was unnecessary and was
+        // causing the ScrollTrigger's start/end to recompute mid-scroll,
+        // producing the pause/jerk + momentary unpin at every refresh event
+        // (resize, sibling pin engage/release). Identified as the inflection
+        // point where btech sections began feeling broken from sec 6 onward.
       });
 
       // 0.00 – 0.10 Heading + description
