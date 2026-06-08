@@ -112,9 +112,13 @@ export function useStatsReveal(containerRef: RefObject<HTMLElement | null>) {
       //  DESKTOP CINEMA PATH — pin + scrub per CINEMA_SPEC §7.2
       // ──────────────────────────────────────────────────────────────────
 
-      // Initial state: void. BeamTracer at scaleY 0, stats hidden, copy hidden.
-      gsap.set(['.achv-badge-el', '.achv-desc-el'], { opacity: 0 });
-      gsap.set('.achv-heading-el', { opacity: 0, yPercent: 30 });
+      // Initial state. Header elements (badge / heading / desc) stay at
+      // their default opacity:1 — NO fade-in on pin engage. The ×2.5 scrub
+      // multiplier made progress-0 fade-ins trail the scroll perceptibly,
+      // reading as a "pinned-but-blank" window at section entry. With the
+      // headers composed from the start, content is visible the instant the
+      // pin engages. Cinematic scrub-driven motion below (beam tracer scaleY,
+      // stat ignitions, counter, underlines, camera scale) is preserved.
       gsap.set('.achv-camera-el', { scale: 1, transformOrigin: 'center center' });
       if (tracerActive) gsap.set(tracerActive, { scaleY: 0, transformOrigin: 'top' });
       waypoints.forEach((wp) => {
@@ -133,17 +137,10 @@ export function useStatsReveal(containerRef: RefObject<HTMLElement | null>) {
         unpinned: true,
       });
 
-      // 0.00 – 0.10 Beam arrives + badge enters
+      // 0.00 – 0.10 Beam tracer enters (headers already composed, no fade-in)
       if (tracerActive) {
         tl.to(tracerActive, { scaleY: 1, duration: 0.10, ease: 'none' }, 0);
       }
-      tl.to('.achv-badge-el', { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0.02);
-
-      // 0.10 – 0.25 Heading + description reveal
-      tl.to('.achv-heading-el',
-            { opacity: 1, yPercent: 0, duration: 0.15, ease: 'power3.out' }, 0.10)
-        .to('.achv-desc-el',
-            { opacity: 1, duration: 0.10, ease: 'power2.out' }, 0.16);
 
       // Per-stat ignition windows: 0.25, 0.40, 0.55, 0.70
       const STAT_STARTS = [0.25, 0.40, 0.55, 0.70];
