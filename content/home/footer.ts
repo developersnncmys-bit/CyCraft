@@ -30,7 +30,7 @@ export const homeFooterContent = {
   contact: {
     email: 'support@cycraft.in',
     phone: '+91 7259787316',
-    address: '12, Peenya 2nd Stage, Bangalore 560058',
+    address: 'Sattva Global City, Mysore Road, Bengaluru, Karnataka 560059',
   },
   socials: [
     { label: 'LinkedIn', href: 'https://linkedin.com/company/cycraft' },

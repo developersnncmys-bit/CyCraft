@@ -287,6 +287,7 @@ export default function HomeResearch() {
           })}
         </div>
 
+        {/* Research page hidden for now — CTA temporarily commented out.
         <div className="section-container" style={{ textAlign: 'center' }}>
           <div className="research-cta" style={{ display: 'inline-block' }}>
             <Button as="a" href={homeResearchContent.cta.href} variant="outline">
@@ -294,6 +295,7 @@ export default function HomeResearch() {
             </Button>
           </div>
         </div>
+        */}
       </div>
     </section>
   );

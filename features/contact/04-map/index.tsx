@@ -378,7 +378,7 @@ export default function ContactMap() {
                     margin: 0,
                   }}
                 >
-                  CyCraft HQ — Bangalore
+                  CyCraft HQ — Bengaluru
                 </h3>
               </div>
 

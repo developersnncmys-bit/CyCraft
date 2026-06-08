@@ -16,16 +16,22 @@ export const PIN_DURATIONS = {
   // sections (researchWing, curriculum, learningEvolution, battlegrounds)
   // keep their longer pins because their content walks through more beats.
   hero: '+=150%',
-  achievements: '+=180%',
-  pillars: '+=180%',
+  // CINEMA_SPEC §2.2 cinematic durations — pinned scenes earn scroll budget
+  // proportional to choreography depth. Achievements (4-stat ignition) gets
+  // 250%; Pillars (heading + beam + 3 rails + 3 cards + reform) gets 350%;
+  // Tracks (4-rail divergence) gets 400%; Curriculum Highway (multi-stop
+  // roadmap pan) gets 500%. Previous uniform 180% under the snappy ×0.4
+  // scrub completed mid-scroll without the eye registering mid-states.
+  achievements: '+=250%',
+  pillars: '+=350%',
   philosophy: '+=180%',
   programOverview: '+=180%',
-  tracks: '+=180%',
+  tracks: '+=400%',
   researchWing: '+=300%',
   projects: '+=200%',
   specializations: '+=180%',
   certifications: '+=150%',
-  curriculum: '+=320%',
+  curriculum: '+=500%',
   learningEvolution: '+=320%',
   battlegrounds: '+=240%',
   comparison: '+=180%',
@@ -98,6 +104,15 @@ export const PIN_DURATIONS = {
   coursesCatalog:      '+=600%',
   coursesLearningPath: '+=350%',
   coursesGuidance:     '+=300%',
+  /* ── Course detail page cinematic pin ───────────────────────────────────
+     Act II (Curriculum) becomes the cinematic centrepiece of the per-course
+     detail experience: pinned for +=600% so the layered parallax (course
+     image zoom, drifting grid, breathing glow), morphing headline (3
+     phrases), four dramatic stat counters, and the module cascade can all
+     breathe at deliberate 8–10 minute pacing. The other acts on the
+     course detail page (hero, operator profile, deployment) stay
+     unpinned. */
+  coursesDetailCurriculum: '+=600%',
   /* ── Verify page cinematic pins ─────────────────────────────────────────
      Utility page. Hero is unpinned (autoplay reveal). 4 pinned acts —
      Form, How It Works, QR, CTA. Form gets the longest hold since it walks
@@ -232,10 +247,15 @@ export function makePinnedTimeline({
       end,
       pin: enabled,
       pinSpacing: enabled,
-      // Scale the scrub down (×0.4 → the usual 1 becomes 0.4) so pinned
-      // animations track the wheel tightly instead of lagging ~1s behind —
-      // snappier while still smoothed.
-      scrub: enabled ? (typeof scrub === 'number' ? scrub * 0.4 : scrub) : false,
+      // Scale the scrub UP (×2.5 → the usual 1 becomes 2.5) so pinned
+      // animations visibly trail the wheel by ~2.5s of smoothing. The previous
+      // ×0.4 multiplier was tuned for "snappy" response but completed pin
+      // animations so quickly that mid-states (counter ticks, beam draws,
+      // card cascades) were invisible at normal scroll speed — the eye only
+      // caught the final composed state. With ×2.5 the user feels they're
+      // driving the scrub, and the cinematic beats actually breathe.
+      // CINEMA_SPEC §2.1 prescribes this longer trail for pinned scenes.
+      scrub: enabled ? (typeof scrub === 'number' ? scrub * 2.5 : scrub) : false,
       // anticipatePin guards against a fast-native-scroll pin flash, but Lenis
       // already smooths scroll velocity — leaving it on makes content jump-then-
       // settle as each section engages its pin, glitching the section handoff.

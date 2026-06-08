@@ -7,22 +7,29 @@
  * Router async-params convention) and passes plain props down to the
  * client section components.
  *
+ * Page flow (4 acts, no pinned animations — cinematic CyCraft scroll
+ * reveals only):
+ *
+ *   I    — Mission Briefing       (replaces full-bleed image hero)
+ *   II   — Curriculum Timeline    (vertical numbered timeline)
+ *   III  — Operator Profile       (HUD-panelled prereqs + outcomes)
+ *   IV   — Deployment             (apply CTA + enquiry form on its own)
+ *
  * Content sources:
- *   1. content/courses/catalog.ts — base record (title, level, weeks,
- *      price, short description). Required: a 404 is shown if the slug
- *      isn't in the catalogue.
+ *   1. content/courses/catalog.ts — base record. Required: a 404 is
+ *      shown if the slug isn't in the catalogue.
  *   2. content/courses/details/<slug>.ts — long-form fields (long
- *      description, syllabus, prerequisites, outcomes). Optional: when
- *      no detail entry is registered yet, the page still renders the
- *      hero + enquiry form using catalogue data alone and the syllabus
- *      column shows a friendly "being finalised" notice.
+ *      description, syllabus, prerequisites, outcomes). Optional —
+ *      each section degrades gracefully when missing.
  */
 import { notFound } from 'next/navigation';
 import { coursesCatalogContent } from '@/content/courses/catalog';
 import { getCourseDetail } from '@/content/courses/details';
+import { ActTransition } from '@/components/layout/ActTransition';
 import CourseHero from '@/features/course-detail/01-hero';
-import CourseSyllabusForm from '@/features/course-detail/03-syllabus-form';
-import CoursePrereqOutcomes from '@/features/course-detail/04-prereq-outcomes';
+import CourseCurriculum from '@/features/course-detail/03-curriculum';
+import OperatorProfile from '@/features/course-detail/04-operator-profile';
+import CourseDeployment from '@/features/course-detail/05-deployment';
 import HomeFooter from '@/features/home/11-footer';
 
 interface PageProps {
@@ -41,14 +48,34 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
   const details = getCourseDetail(slug);
 
+  // Each section receives `key={slug}` so React tears down + remounts on
+  // every navigation between course detail pages, instead of treating
+  // them as the same component instance with new props. Without the key,
+  // useGSAP's cleanup/setup runs but ScrollTrigger and the preloader-
+  // gated playEntry can land in an in-between state where the reveal
+  // animations don't fire on the second/third visit.
   return (
     <>
-      <CourseHero course={course} longDescription={details?.longDescription} />
-      <CourseSyllabusForm course={course} syllabus={details?.syllabus ?? null} />
-      <CoursePrereqOutcomes
+      <CourseHero key={`hero-${slug}`} course={course} longDescription={details?.longDescription} />
+
+      {/* I → II — beam fires forward, white flash dissolves into curriculum */}
+      <ActTransition targetSelector="#cd-curriculum" type="i-to-ii" />
+
+      <CourseCurriculum key={`cur-${slug}`} course={course} syllabus={details?.syllabus ?? null} />
+
+      {/* II → III — radial iris from centre outward into operator profile */}
+      <ActTransition targetSelector="#cd-operator-profile" type="ii-to-iii" />
+
+      <OperatorProfile
+        key={`op-${slug}`}
         prerequisites={details?.prerequisites ?? []}
         outcomes={details?.outcomes ?? []}
       />
+
+      {/* III → IV — diagonal cyan slash into deployment */}
+      <ActTransition targetSelector="#cd-deployment" type="iii-to-iv" />
+
+      <CourseDeployment key={`dep-${slug}`} course={course} />
       <HomeFooter />
     </>
   );

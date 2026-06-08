@@ -663,6 +663,11 @@ export default function CoursesCatalog() {
 
       // Pin-and-scrub timeline. invalidateOnRefresh because the camera-pan
       // distance depends on dynamically-measured camera/grid height.
+      // scrub: 1 picks up the factory's ×2.5 multiplier → effective 2.5s lag,
+      // which is the page-wide cinematic default. (Earlier this section
+      // passed scrub: 2 to override the old snappy ×0.4 default; with the
+      // factory now defaulting to 2.5s lag, the override is redundant and
+      // would compound to 5s — too laggy to feel responsive.)
       const tl = makePinnedTimeline({
         trigger: root,
         end: PIN_DURATIONS.coursesCatalog,
@@ -671,8 +676,10 @@ export default function CoursesCatalog() {
         invalidateOnRefresh: true,
       });
 
-      // ── Camera pan — runs from 0.36 to 0.92 (the "credits" window) ───
+      // ── Camera pan — runs from 0.46 to 0.92 (the "credits" window) ───
       // Computed lazily so dynamic content height is current at each refresh.
+      // Start pushed from 0.36 → 0.46 to let the slowed-down morphs + subhead
+      // + filter reveals settle before the camera begins its credits roll.
       tl.to(
         camera,
         {
@@ -683,9 +690,9 @@ export default function CoursesCatalog() {
             return -(cameraHeight - viewportHeight);
           },
           ease: 'none',
-          duration: 0.56,
+          duration: 0.46,
         },
-        0.36,
+        0.46,
       );
 
       // ── Parallax depth layers — drift across the entire pin window ───
@@ -700,7 +707,7 @@ export default function CoursesCatalog() {
       // ── 0.00-0.04 Badge ──────────────────────────────────────────────
       tl.to('.courses-catalog-badge', { opacity: 1, y: 0, duration: 0.04, ease: 'power2.out' }, 0);
 
-      // ── 0.04-0.20 Headline morph (3 phrases) ─────────────────────────
+      // ── 0.04-0.40 Headline morph (3 phrases) ─────────────────────────
       // Each phrase fades in via a short scrub tween, holds, then SNAPS
       // out (tl.set, 0-duration) just before the next phrase appears.
       // The snap-out instead of a fade-out is the fix for the previous
@@ -708,9 +715,12 @@ export default function CoursesCatalog() {
       // morph mid-fade-out at yPercent:-50, new morph mid-fade-in).
       // With set, exactly one morph is visible at any scroll position —
       // the bidirectional scrub still reverses cleanly.
+      // GAP raised 0.06 → 0.12 so each phrase holds for ~0.72 viewports of
+      // scroll (was ~0.36 vh, too quick to read). FADE 0.02 → 0.04 keeps
+      // the in-blur transition perceptible at the slower cadence.
       const morphs = root.querySelectorAll<HTMLElement>('.courses-catalog-heading-morph');
-      const MORPH_GAP = 0.06;
-      const MORPH_FADE = 0.02;
+      const MORPH_GAP = 0.12;
+      const MORPH_FADE = 0.04;
       morphs.forEach((el, i) => {
         const inAt = 0.04 + i * MORPH_GAP;
         tl.fromTo(
@@ -736,25 +746,31 @@ export default function CoursesCatalog() {
         }
       });
 
-      // ── 0.22-0.32 Stats wrappers fade in via scrub ──────────────────
+      // ── 0.04-0.13 Stats wrappers fade in via scrub ──────────────────
+      // Pulled earlier so the 4 big numbers are visible directly under
+      // the morphing headline during phrases 1-3. Previously they only
+      // appeared after the morphs (at 0.22), leaving the scene feeling
+      // empty during the morph window.
       const stats = root.querySelectorAll<HTMLElement>('.courses-catalog-stat');
       stats.forEach((statEl, i) => {
-        const at = 0.22 + i * 0.022;
+        const at = 0.04 + i * 0.022;
         tl.to(statEl, { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' }, at);
       });
 
-      // ── 0.22 Stats COUNT-UP fires once as a non-scrub tween ─────────
-      // Putting the count animation inside the scrub timeline meant
-      // pausing scroll mid-count froze the numbers at intermediate
-      // values (e.g. "18 / 21" on Programs). Firing the count as an
-      // independent gsap.to lets it play to completion regardless of
-      // scroll position. A latch ref prevents re-firing on backward
-      // scrubs.
-      const countersStarted = { current: false };
-      tl.call(
-        () => {
-          if (countersStarted.current) return;
-          countersStarted.current = true;
+      // ── Stats COUNT-UP fires once on section enter ──────────────────
+      // Previously this was a `tl.call(..., 0.04)` on the scrub timeline,
+      // but a call placed so close to the timeline origin doesn't reliably
+      // fire — when scrub initialises, the playhead can land just past
+      // 0.04 without crossing it forward, so the callback registers as
+      // "already past" and never executes. Decoupling it into its own
+      // ScrollTrigger with `once: true` guarantees the count animates the
+      // moment the section enters the viewport, regardless of where the
+      // scrub timeline's playhead happens to be.
+      ScrollTrigger.create({
+        trigger: root,
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
           stats.forEach((statEl, i) => {
             const valueEl = statEl.querySelector<HTMLElement>(
               '.courses-catalog-stat-value',
@@ -773,27 +789,29 @@ export default function CoursesCatalog() {
             });
           });
         },
-        undefined,
-        0.22,
-      );
+      });
 
-      // ── 0.30-0.36 Subhead reveal ────────────────────────────────────
+      // ── 0.40-0.46 Subhead reveal ────────────────────────────────────
+      // Pushed from 0.30 → 0.40 because the morph window now ends at 0.32
+      // (after the GAP/FADE slowdown). Revealing the subhead earlier would
+      // have it competing with the third morph phrase mid-fade.
       tl.to(
         '.courses-catalog-sub',
         { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.06, ease: 'power2.out' },
-        0.30,
+        0.40,
       );
 
-      // ── 0.32-0.36 Filter rows slide in ──────────────────────────────
+      // ── 0.42-0.46 Filter rows slide in ──────────────────────────────
       tl.to(
         '.courses-catalog-filter',
         { opacity: 1, y: 0, duration: 0.04, stagger: 0.008, ease: 'power3.out' },
-        0.32,
+        0.42,
       );
 
-      // ── 0.36-0.85 Cards cascade as camera pans past them ────────────
+      // ── 0.46-0.85 Cards cascade as camera pans past them ────────────
       // Card stagger window aligns roughly with the pan so each card lands
-      // just as the camera reaches its visible row.
+      // just as the camera reaches its visible row. Start pushed from
+      // 0.36 → 0.46 to align with the new camera-pan start time.
       tl.to(
         '.courses-card',
         {
@@ -804,7 +822,7 @@ export default function CoursesCatalog() {
           stagger: 0.018,
           ease: 'power3.out',
         },
-        0.36,
+        0.46,
       );
 
       // ── 0.92-1.00 Camera scale pull-back ────────────────────────────
@@ -965,7 +983,7 @@ export default function CoursesCatalog() {
       >
         <div
           className="section-container"
-          style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 'clamp(2rem, 4vw, 3rem)' }}
+          style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 'clamp(3.5rem, 7vw, 6rem)' }}
         >
           {/* Header block: badge + morphing headline + stats counter */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
@@ -997,22 +1015,11 @@ export default function CoursesCatalog() {
               ))}
             </h2>
 
-            <p
-              className="courses-catalog-sub"
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 'var(--text-lg)',
-                color: 'var(--color-text-secondary)',
-                lineHeight: 1.65,
-                margin: 0,
-                maxWidth: '880px',
-                willChange: 'transform, opacity, filter',
-              }}
-            >
-              {coursesCatalogContent.subhead}
-            </p>
-
-            {/* Dramatic stats counter — 4 big numbers count up */}
+            {/* Dramatic stats counter — 4 big numbers count up.
+                Placed BEFORE the subhead so it sits directly under the
+                morphing headline; that way the numbers stay visible
+                during the morph phase instead of leaving the viewport
+                blank until later in the scroll. */}
             <div className="courses-catalog-stats">
               {coursesCatalogContent.stats.map((stat) => {
                 const color = STATS_ACCENT[stat.accent];
@@ -1068,6 +1075,21 @@ export default function CoursesCatalog() {
                 );
               })}
             </div>
+
+            <p
+              className="courses-catalog-sub"
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 'var(--text-lg)',
+                color: 'var(--color-text-secondary)',
+                lineHeight: 1.65,
+                margin: 0,
+                maxWidth: '880px',
+                willChange: 'transform, opacity, filter',
+              }}
+            >
+              {coursesCatalogContent.subhead}
+            </p>
           </div>
 
           {/* Cards block — filter chips live INSIDE this group so they read

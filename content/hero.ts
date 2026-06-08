@@ -12,7 +12,7 @@ export const heroContent = {
     },
     curriculum: {
       label: 'EXPLORE CURRICULUM',
-      href: '/courses',
+      href: '#curriculum',
     },
   },
   scrollHint: '↓ SCROLL',

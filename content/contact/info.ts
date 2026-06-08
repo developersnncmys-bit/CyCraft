@@ -16,8 +16,8 @@ export const contactInfoContent = {
     {
       key: 'address',
       label: 'Address',
-      value: 'Peenya 2nd Stage\nBangalore 560058',
-      href: 'https://maps.google.com/?q=Peenya+2nd+Stage+Bangalore+560058',
+      value: 'Sattva Global City, Mysore Road\nBengaluru, Karnataka 560059',
+      href: 'https://maps.google.com/?q=Sattva+Global+City+Mysore+Road+Bengaluru+560059',
     },
     {
       key: 'hours',
