@@ -20,7 +20,12 @@ export default function HeroSection() {
       aria-label="Hero — Cyber Intelligence Engineering"
       style={{
         position: 'relative',
-        minHeight: '100vh',
+        // `height: 100vh` (not `min-height`) so the unpinned hero is
+        // EXACTLY one viewport tall. With `min-height`, the hero could
+        // grow past 100vh under tight viewports, adding natural scroll
+        // before Achievements' pin engaged — that excess read as the
+        // first black gap on the page.
+        height: '100vh',
         background: 'var(--color-void)',
         overflow: 'hidden',
         display: 'flex',
