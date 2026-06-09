@@ -325,11 +325,16 @@ export default function HomeHero() {
                 {homeHeroContent.ctas.secondary.label}
               </Button>
             </span>
+            {/* RESEARCH LABS CTA commented per request. Tertiary entry kept
+                in content/home/hero.ts so it can be re-enabled by uncommenting
+                this block without touching the content file. */}
+            {/*
             <span className="hero-cta">
               <Button as="a" href={homeHeroContent.ctas.tertiary.href} variant="ghost">
                 {homeHeroContent.ctas.tertiary.label}
               </Button>
             </span>
+            */}
           </div>
 
           <div
