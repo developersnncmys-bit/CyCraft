@@ -1,19 +1,126 @@
 'use client';
 /* Achievements — Act I, Section 2 of 22.
  * Film-mode POC: pinned ~250vh, scroll drives camera, parallax layers,
- * headline morph (3 phrases), and the 4-stat counter ignition.
+ * heading + description word-by-word reveal, and the 4-stat counter ignition.
+ * Previous 3-phrase morph swap retired in favour of a single heading whose
+ * words ignite one after another (desktop scrub / mobile stagger).
  */
 import { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
 import { SectionWrapper } from '@/components/core/SectionWrapper/SectionWrapper';
-import { GlitchText } from '@/components/core/GlitchText/GlitchText';
 import { Badge } from '@/components/ui/Badge';
 import { achievementsContent } from '@/content/achievements';
 import { StatsConstellation } from './components/StatsConstellation';
 import { useFilmReveal } from '@/lib/gsap/filmReveal';
+import { gsap } from '@/lib/gsap/register';
+import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
+import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
+
+const HEADING_TEXT = 'HISTORY MADE IN CYBER DEFENSE';
+
+function splitWords(text: string): string[] {
+  return text.split(/\s+/).filter(Boolean);
+}
 
 export default function AchievementsSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const reducedMotion = useReducedMotion();
   useFilmReveal(sectionRef, { pin: '+=250%' });
+
+  // Word-by-word reveal for heading + description. Runs alongside
+  // useFilmReveal — same scroll trigger window on desktop (scrub), per-element
+  // entry-on-view stagger on mobile. Words are set to opacity:0/y:20 in JSX
+  // (initial state below) so they don't paint composed before the timeline
+  // takes over.
+  useGSAP(
+    () => {
+      const container = sectionRef.current;
+      if (!container) return;
+      const headingWords = container.querySelectorAll<HTMLElement>('.achv-heading-word');
+      const descWords = container.querySelectorAll<HTMLElement>('.achv-desc-word');
+      if (headingWords.length === 0 && descWords.length === 0) return;
+
+      if (reducedMotion) {
+        gsap.set([...headingWords, ...descWords], { opacity: 1, y: 0, filter: 'blur(0px)' });
+        return;
+      }
+
+      gsap.set([...headingWords, ...descWords], { opacity: 0, y: 20, filter: 'blur(6px)' });
+
+      if (!isDesktop) {
+        // Mobile — staggered cascade on section entry. Heading first, then
+        // description tail follows.
+        gsap.to(headingWords, {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.55,
+          stagger: 0.08,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top 85%',
+            toggleActions: 'play none none reset',
+          },
+        });
+        gsap.to(descWords, {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.45,
+          stagger: 0.02,
+          ease: 'power2.out',
+          delay: 0.35,
+          scrollTrigger: {
+            trigger: container,
+            start: 'top 80%',
+            toggleActions: 'play none none reset',
+          },
+        });
+        return;
+      }
+
+      // Desktop — scrub against the pin so words ignite as the user scrolls
+      // through the first ~22% of the pin window. Matches useFilmReveal's
+      // pinned ScrollTrigger window (`top top` → `+=250%`).
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: 'top top',
+          end: '+=250%',
+          scrub: 1.2,
+        },
+      });
+
+      tl.to(
+        headingWords,
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.05,
+          stagger: 0.012,
+          ease: 'power2.out',
+        },
+        0.02,
+      );
+
+      tl.to(
+        descWords,
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.04,
+          stagger: 0.004,
+          ease: 'power1.out',
+        },
+        0.10,
+      );
+    },
+    { scope: sectionRef, dependencies: [isDesktop, reducedMotion] },
+  );
 
   return (
     <SectionWrapper ref={sectionRef} id="achievements" act={1}>
@@ -68,13 +175,13 @@ export default function AchievementsSection() {
               <Badge label={achievementsContent.badge} />
             </div>
 
-            {/* Headline morph stack — 3 phrases swap during the first ~25% of pin. */}
+            {/* Single heading — words ignite one after another (desktop
+                scrub / mobile stagger). aria-label exposes the full phrase
+                for screen readers; the per-word spans are presentational. */}
             <h2
               className="achv-heading-el"
+              aria-label={HEADING_TEXT}
               style={{
-                position: 'relative',
-                display: 'block',
-                minHeight: 'clamp(2.4rem, 5vw, 4rem)',
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
                 fontWeight: 700,
@@ -85,26 +192,25 @@ export default function AchievementsSection() {
                 lineHeight: 1.1,
               }}
             >
-              {achievementsContent.headingMorphs.map((phrase, i) => (
+              {splitWords(HEADING_TEXT).map((word, i, arr) => (
                 <span
-                  key={phrase}
-                  className="film-headline-morph achv-heading-morph"
-                  aria-hidden={i === 0 ? undefined : 'true'}
+                  key={`${word}-${i}`}
+                  className="achv-heading-word"
+                  aria-hidden="true"
                   style={{
-                    position: 'absolute',
-                    inset: 0,
-                    display: 'block',
+                    display: 'inline-block',
                     willChange: 'transform, opacity, filter',
                   }}
                 >
-                  <GlitchText>{phrase}</GlitchText>
+                  {word}
+                  {i < arr.length - 1 ? ' ' : ''}
                 </span>
               ))}
             </h2>
 
             <p
-              className="film-fade achv-desc-el"
-              data-at="0.10"
+              className="achv-desc-el"
+              aria-label={achievementsContent.description}
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 'var(--text-base)',
@@ -114,7 +220,20 @@ export default function AchievementsSection() {
                 lineHeight: 1.55,
               }}
             >
-              {achievementsContent.description}
+              {splitWords(achievementsContent.description).map((word, i, arr) => (
+                <span
+                  key={`${word}-${i}`}
+                  className="achv-desc-word"
+                  aria-hidden="true"
+                  style={{
+                    display: 'inline-block',
+                    willChange: 'transform, opacity, filter',
+                  }}
+                >
+                  {word}
+                  {i < arr.length - 1 ? ' ' : ''}
+                </span>
+              ))}
             </p>
           </div>
         </div>

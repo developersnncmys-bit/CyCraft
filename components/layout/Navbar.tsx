@@ -93,10 +93,11 @@ export function Navbar() {
           CyCraft
         </Link>
 
-        {/* Desktop nav — shows from lg (1024px+) with tightened spacing so
-            all 11 items fit on a standard 1366-wide laptop without
-            collapsing to the hamburger. */}
-        <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-3 xl:gap-4 mx-4">
+        {/* Desktop nav — shows from lg (1024px+). Spacing scales up with
+            viewport: tight at lg so all 10 items fit on a 1366-wide laptop,
+            opens up at xl/2xl where there's room for proper breathing room
+            between links. */}
+        <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-3 xl:gap-6 2xl:gap-8 mx-4 xl:mx-6 2xl:mx-8">
           {NAV_LINKS.map((link) => {
             const active = isActiveLink(link.href);
             // Active links: beam colour + a 2px beam underline with subtle

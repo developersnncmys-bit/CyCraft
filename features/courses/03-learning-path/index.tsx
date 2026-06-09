@@ -127,19 +127,25 @@ export default function CoursesLearningPath() {
           { opacity: 0, y: 8 },
           { opacity: 1, y: 0, duration: 0.4, delay: 0.45, scrollTrigger: trigger },
         );
-        gsap.fromTo(
-          '.courses-lp-card',
-          { opacity: 0, y: 32 },
-          {
+        // Cards reveal one by one as each enters the viewport — per-card
+        // ScrollTrigger so the user sees each pillar pop in as they scroll
+        // past it, instead of all three firing within ~0.4s of the section
+        // header entering.
+        const lpCards = root.querySelectorAll<HTMLElement>('.courses-lp-card');
+        gsap.set(lpCards, { opacity: 0, y: 32 });
+        lpCards.forEach((card) => {
+          gsap.to(card, {
             opacity: 1,
             y: 0,
             duration: 0.7,
-            stagger: 0.14,
             ease: 'power3.out',
-            delay: 0.6,
-            scrollTrigger: trigger,
-          },
-        );
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 88%',
+              toggleActions: 'play none none none',
+            },
+          });
+        });
         return;
       }
 

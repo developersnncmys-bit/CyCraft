@@ -76,14 +76,13 @@ export function useFilmReveal(
       const stats = container.querySelectorAll<HTMLElement>('.film-stat');
       const fades = container.querySelectorAll<HTMLElement>('.film-fade');
 
-      // ── Reduced-motion / non-desktop: compose final state, no scroll trigger.
-      if (reducedMotion || !isDesktop) {
+      // ── Reduced motion: hard-compose every element, no entry animation. ──
+      if (reducedMotion) {
         if (cam) gsap.set(cam, { scale: 1 });
         if (bgDeep) gsap.set(bgDeep, { yPercent: 0 });
         if (bgMid) gsap.set(bgMid, { yPercent: 0, scale: 1 });
         if (bgFront) gsap.set(bgFront, { yPercent: 0 });
         zoomImages.forEach((el) => gsap.set(el, { scale: 1 }));
-        // Headline morph: show the LAST phrase (most descriptive).
         morphs.forEach((el, i) => {
           gsap.set(el, { opacity: i === morphs.length - 1 ? 1 : 0 });
         });
@@ -92,6 +91,162 @@ export function useFilmReveal(
           el.textContent = String(target);
         });
         fades.forEach((el) => gsap.set(el, { opacity: 1, y: 0, x: 0 }));
+        return;
+      }
+
+      // ── Mobile (< 1024) path: not pinned, but per-element entry-on-view
+      // animations so the page doesn't read as a static wall of text. Each
+      // tween is keyed to its own element's scroll position via toggleActions
+      // 'play none none reset', so the animation re-fires if the user scrolls
+      // back up and then down again. `data-out-at` (used by desktop cross-fades)
+      // is intentionally ignored on mobile — all film-fade beats are stacked
+      // vertically there and need to remain visible after their entry. ──
+      if (!isDesktop) {
+        if (cam) gsap.set(cam, { scale: 1 });
+
+        // Light parallax drift on bg layers across the whole section. Cheap
+        // single-trigger tween per layer, scrub:0.5 for a forgiving feel.
+        if (bgDeep) {
+          gsap.fromTo(
+            bgDeep,
+            { yPercent: 6 },
+            {
+              yPercent: -6,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: container,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 0.5,
+              },
+            },
+          );
+        }
+        if (bgMid) {
+          gsap.fromTo(
+            bgMid,
+            { yPercent: 12, scale: 1.06 },
+            {
+              yPercent: -10,
+              scale: 1,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: container,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 0.5,
+              },
+            },
+          );
+        }
+        if (bgFront) {
+          gsap.fromTo(
+            bgFront,
+            { yPercent: 18 },
+            {
+              yPercent: -22,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: container,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 0.5,
+              },
+            },
+          );
+        }
+
+        // Headline morph: show the LAST phrase only (no swap animation on
+        // mobile — the cross-fade is a desktop scrub effect).
+        morphs.forEach((el, i) => {
+          gsap.set(el, { opacity: i === morphs.length - 1 ? 1 : 0 });
+        });
+
+        // Image zoom — scale 1.12 → 1 as element enters view.
+        zoomImages.forEach((el) => {
+          gsap.fromTo(
+            el,
+            { scale: 1.12 },
+            {
+              scale: 1,
+              duration: 1.1,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top 85%',
+                toggleActions: 'play none none reset',
+              },
+            },
+          );
+        });
+
+        // Stats — counter ticks 0 → target when the value enters view.
+        stats.forEach((el) => {
+          const target = Number(el.dataset.target ?? 0);
+          if (!Number.isFinite(target) || target === 0) {
+            el.textContent = String(target);
+            return;
+          }
+          const prefix = el.dataset.prefix ?? '';
+          const decimals = Number(el.dataset.decimals ?? 0);
+          el.textContent = `${prefix}${decimals > 0 ? (0).toFixed(decimals) : '0'}`;
+          const obj = { val: 0 };
+          gsap.to(obj, {
+            val: target,
+            duration: 1.6,
+            ease: 'power2.out',
+            onUpdate() {
+              el.textContent = `${prefix}${decimals > 0 ? obj.val.toFixed(decimals) : Math.round(obj.val)}`;
+            },
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 85%',
+              toggleActions: 'play none none reset',
+            },
+          });
+        });
+
+        // Generic fade — group siblings by parent so tiles in the same
+        // grid/row reveal one-by-one (rather than all firing the moment any
+        // sibling enters view). `data-start-visible` keeps the element
+        // composed on first paint (header elements that should be visible
+        // immediately on anchor jumps).
+        const groupedByParent = new Map<HTMLElement, HTMLElement[]>();
+        fades.forEach((el) => {
+          const parent = el.parentElement;
+          if (!parent) return;
+          const list = groupedByParent.get(parent) ?? [];
+          list.push(el);
+          groupedByParent.set(parent, list);
+        });
+
+        groupedByParent.forEach((siblings) => {
+          const startVisible = siblings.filter((el) => el.dataset.startVisible === 'true');
+          const animatable = siblings.filter((el) => el.dataset.startVisible !== 'true');
+
+          startVisible.forEach((el) => gsap.set(el, { opacity: 1, y: 0 }));
+
+          if (animatable.length === 0) return;
+
+          // Set initial state on the group, then stagger them via a single
+          // ScrollTrigger keyed to the first sibling's entry. Total cascade
+          // for N siblings = ~(N-1) × 0.12s + 0.7s duration — comfortable
+          // pacing for grids up to ~10 tiles before the tail drags.
+          gsap.set(animatable, { opacity: 0, y: 28 });
+          gsap.to(animatable, {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: 'power3.out',
+            stagger: 0.12,
+            scrollTrigger: {
+              trigger: animatable[0],
+              start: 'top 88%',
+              toggleActions: 'play none none reset',
+            },
+          });
+        });
+
         return;
       }
 

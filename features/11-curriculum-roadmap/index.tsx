@@ -16,6 +16,8 @@ import { SemesterCheckpoint } from './components/SemesterCheckpoint';
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
 import { useFilmReveal } from '@/lib/gsap/filmReveal';
 
+const DESKTOP_QUERY = '(min-width: 1024px)';
+
 // Group semesters by year (1..4), 2 semesters per year.
 type Semester = (typeof curriculumContent.semesters)[number];
 const YEARS: { year: number; phase: string; semesters: Semester[] }[] = (() => {
@@ -43,7 +45,11 @@ const FADE_DUR = '0.06';
 
 export default function CurriculumRoadmapSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  // Two breakpoints: `isDesktop` (≥1024) gates the pinned cross-fade
+  // layout; `isTablet` (≥768) toggles the 2-col / mobile-stacked semester
+  // grid inside each year beat.
+  const isTablet = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaQuery(DESKTOP_QUERY);
   useFilmReveal(sectionRef, { pin: '+=320%' });
 
   return (
@@ -76,8 +82,11 @@ export default function CurriculumRoadmapSection() {
       <div
         className="film-camera curriculum-camera-el"
         style={{
-          position: 'absolute',
-          inset: 0,
+          // Desktop: pinned-absolute canvas, year beats cross-fade in the
+          // same area. Mobile: relative flow so years stack vertically and
+          // don't overlap each other.
+          position: isDesktop ? 'absolute' : 'relative',
+          inset: isDesktop ? 0 : undefined,
           willChange: 'transform',
           overflow: 'hidden',
           paddingTop: 'clamp(5rem, 8.5vh, 6rem)',
@@ -162,8 +171,11 @@ export default function CurriculumRoadmapSection() {
                 className="film-fade"
                 {...dataAttrs}
                 style={{
-                  position: 'absolute',
-                  inset: 0,
+                  // Mobile renders all years stacked vertically — see the
+                  // outer camera-el flex column. Absolute is desktop-only.
+                  position: isDesktop ? 'absolute' : 'relative',
+                  inset: isDesktop ? 0 : undefined,
+                  marginBottom: isDesktop ? undefined : '2.5rem',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 'clamp(1rem, 2vh, 1.5rem)',
@@ -185,7 +197,7 @@ export default function CurriculumRoadmapSection() {
                 </div>
 
                 {/* Two semester checkpoints + beam line */}
-                {isDesktop ? (
+                {isTablet ? (
                   <div
                     style={{
                       display: 'grid',

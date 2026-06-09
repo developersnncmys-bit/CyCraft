@@ -68,8 +68,11 @@ export default function HeroSection() {
         >
           <source src="/videos/cyber-hero.mp4" type="video/mp4" />
         </video>
-        {/* Dark overlay keeps the video subtle and the text legible */}
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,6,8,0.78)' }} />
+        {/* Dark overlay — dialed from 0.78 → 0.35 so the cyber-hero video
+            reads through more vividly behind the headline. Text remains
+            legible because the headline + sub-text sit on opaque background
+            tints of their own further up the z-stack. */}
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,6,8,0.35)' }} />
       </div>
 
       {/* Grid */}

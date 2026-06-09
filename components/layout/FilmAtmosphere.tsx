@@ -109,10 +109,14 @@ export function FilmAtmosphere() {
 
   return (
     <>
-      {/* Color wash — sits above content backgrounds, beneath text. */}
+      {/* Color wash — sits above content backgrounds, beneath text.
+          `data-page="btech"` is the hook used by mobile CSS overrides in
+          globals.css (collapse btech sections to natural height on phones,
+          drop the pinned 100vh canvas, etc.). */}
       <div
         ref={tintRef}
         aria-hidden="true"
+        data-page="btech"
         style={{
           position: 'fixed',
           inset: 0,

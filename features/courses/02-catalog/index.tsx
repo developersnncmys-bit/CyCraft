@@ -621,23 +621,26 @@ export default function CoursesCatalog() {
         );
         const cards = gridRef.current?.querySelectorAll<HTMLElement>('.courses-card');
         if (cards && cards.length > 0) {
-          gsap.fromTo(
-            cards,
-            { opacity: 0, y: 40, scale: 0.96 },
-            {
+          // Per-card ScrollTrigger — each card reveals one by one as it
+          // enters the viewport (instead of the previous single-trigger
+          // stagger that fired all 21 cards within ~1s of the grid first
+          // appearing, leaving the lower cards already-revealed by the
+          // time the user scrolled past them).
+          gsap.set(cards, { opacity: 0, y: 40, scale: 0.96 });
+          cards.forEach((card) => {
+            gsap.to(card, {
               opacity: 1,
               y: 0,
               scale: 1,
               duration: 0.6,
-              stagger: 0.05,
               ease: 'power3.out',
               scrollTrigger: {
-                trigger: gridRef.current,
-                start: 'top 95%',
+                trigger: card,
+                start: 'top 90%',
                 toggleActions: 'play none none none',
               },
-            },
-          );
+            });
+          });
         }
 
         // After the mobile setup finishes laying out, refresh once so the
