@@ -61,6 +61,16 @@ export function Navbar() {
     };
   }, []);
 
+  // Auto-open the Apply modal once the preloader's boot sequence finishes.
+  // The Preloader dispatches `cycraft:preloader-done` on a fresh page load;
+  // we only listen for it (no fallback fire) so client-side navigations,
+  // where the preloader is skipped, do not re-pop the modal.
+  useEffect(() => {
+    const onDone = () => setApplyOpen(true);
+    window.addEventListener('cycraft:preloader-done', onDone, { once: true });
+    return () => window.removeEventListener('cycraft:preloader-done', onDone);
+  }, []);
+
   return (
     <>
     <header

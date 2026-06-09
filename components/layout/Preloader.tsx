@@ -111,6 +111,8 @@ function PreloaderImpl() {
             // then flip the React-owned `done` flag to hide the wrapper.
             hasPlayed = true;
             setDone(true);
+            // Signal downstream listeners (e.g. Navbar opens the Apply modal)
+            window.dispatchEvent(new CustomEvent('cycraft:preloader-done'));
           },
         },
         '>-0.1'

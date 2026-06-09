@@ -63,7 +63,7 @@ export default function ApplyModal({ isOpen, onClose }: ApplyModalProps) {
           inset: 0,
           margin: 'auto',
           boxShadow: '0 0 80px rgba(0,0,0,0.8), 0 0 40px rgba(168,240,255,0.04)',
-          overflow: 'auto',
+          overflow: 'hidden',
         }}
       >
         {/* Top beam accent */}
@@ -75,14 +75,14 @@ export default function ApplyModal({ isOpen, onClose }: ApplyModalProps) {
           }}
         />
 
-        <div style={{ padding: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
+        <div style={{ padding: 'clamp(1.25rem, 2.4vw, 1.75rem)' }}>
           {/* Header row */}
           <div
             style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'flex-start',
-              marginBottom: '2rem',
+              marginBottom: '1.1rem',
             }}
           >
             <div>
@@ -94,7 +94,7 @@ export default function ApplyModal({ isOpen, onClose }: ApplyModalProps) {
                   color: 'var(--color-beam)',
                   letterSpacing: '0.2em',
                   textTransform: 'uppercase',
-                  marginBottom: '0.75rem',
+                  marginBottom: '0.5rem',
                   opacity: 0.8,
                 }}
               >
@@ -105,12 +105,12 @@ export default function ApplyModal({ isOpen, onClose }: ApplyModalProps) {
                 id="apply-modal-title"
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(1.6rem, 3.5vw, 2.25rem)',
+                  fontSize: 'clamp(1.4rem, 2.8vw, 1.85rem)',
                   fontWeight: 800,
                   letterSpacing: '-0.03em',
                   textTransform: 'uppercase',
                   color: 'var(--color-text-primary)',
-                  margin: '0 0 0.4rem',
+                  margin: '0 0 0.3rem',
                   lineHeight: 1.1,
                 }}
               >
@@ -170,7 +170,7 @@ export default function ApplyModal({ isOpen, onClose }: ApplyModalProps) {
             style={{
               height: '1px',
               background: 'rgba(168,240,255,0.07)',
-              marginBottom: '1.75rem',
+              marginBottom: '1rem',
             }}
           />
 

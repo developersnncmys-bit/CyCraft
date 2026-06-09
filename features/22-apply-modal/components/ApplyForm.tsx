@@ -89,7 +89,7 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
       <form
         onSubmit={handleSubmit(onSubmit)}
         noValidate
-        style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
+        style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}
       >
         {/* Honeypot */}
         <input {...register('website')} type="text" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
@@ -156,7 +156,7 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
             {...register('educationalBackground', {
               onChange: (e) => setCharCount(e.target.value.length),
             })}
-            rows={3}
+            rows={2}
             maxLength={500}
             placeholder="Tell us about your background…"
             className="apply-input"
