@@ -180,37 +180,18 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
           </p>
         )}
 
-        {/* Actions */}
+        {/* Actions — Cancel button removed; the modal's close (X) at the
+            top-right is the only dismiss surface. Submit button is now
+            right-aligned in the row. */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end',
             paddingTop: '0.25rem',
             gap: '1rem',
           }}
         >
-          <button
-            type="button"
-            onClick={onClose}
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '11px',
-              letterSpacing: '0.14em',
-              color: 'var(--color-text-disabled)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '0.5rem 0',
-              textTransform: 'uppercase',
-              transition: 'color 0.2s',
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-secondary)'; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-disabled)'; }}
-          >
-            Cancel
-          </button>
-
           <button
             type="submit"
             disabled={!isValid || status === 'loading'}

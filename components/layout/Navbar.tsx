@@ -103,18 +103,14 @@ export function Navbar() {
           aria-label="CyCraft home"
           onClick={() => handleSamePageNav('/')}
         >
-          {/* Logo fills the 64px navbar bar exactly. Setting height to 64px
-              maximises the logo's visible size without expanding the bar's
-              vertical bounds (which would push every other page's first-
-              section content down by the extra navbar height). */}
           <Image
             src="/logo.png"
             alt="CyCraft"
             width={1700}
-            height={1269}
+            height={1300}
             priority
-            sizes="120px"
-            style={{ height: '64px', width: 'auto', display: 'block' }}
+            sizes="100px"
+            style={{ height: '54px', width: 'auto', display: 'block' }}
           />
         </Link>
 

@@ -29,10 +29,13 @@ export interface GalleryVideo {
 export const galleryVideosContent = {
   // Badge changed from "VIDEO GALLERY" → "SPOTLIGHTS" per Updates v1.3 §11:
   // the brief specifies "featured spotlight cards" (image + title + blurb),
-  // not video tiles. The section name "Highlight Reels" stays — that's the
-  // PDF section title — but the badge above now reads correctly.
+  // not video tiles. Heading changed from "Highlight Reels" → "Featured
+  // Highlights" because there are no actual reels (no video playback) —
+  // each card is a static image-and-blurb spotlight, so the "Reels" word
+  // would mislead. "Featured Highlights" preserves the spirit of the PDF
+  // §11 section name without implying video.
   badge: 'SPOTLIGHTS',
-  heading: 'Highlight Reels',
+  heading: 'Featured Highlights',
   description:
     'Spotlights from recent CyCraft initiatives — bootcamps, partnerships, faculty enablement, and career outcomes.',
   videos: [
