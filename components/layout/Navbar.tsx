@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
@@ -92,15 +93,29 @@ export function Navbar() {
       }}
     >
       <div className="section-container flex items-center justify-between h-16">
-        {/* Logo */}
+        {/* Logo — shield-and-lock mark from /public/logo.png. priority=true so
+            Next.js fetches it during initial paint instead of lazy-loading
+            (above-the-fold). Intrinsic 1700×1269 (~1.34:1 aspect); rendered
+            at 44px tall in the 64px-tall navbar. */}
         <Link
           href="/"
-          className="font-mono text-sm tracking-widest uppercase"
-          style={{ color: 'var(--color-beam)' }}
+          className="inline-flex items-center"
           aria-label="CyCraft home"
           onClick={() => handleSamePageNav('/')}
         >
-          CyCraft
+          {/* Logo fills the 64px navbar bar exactly. Setting height to 64px
+              maximises the logo's visible size without expanding the bar's
+              vertical bounds (which would push every other page's first-
+              section content down by the extra navbar height). */}
+          <Image
+            src="/logo.png"
+            alt="CyCraft"
+            width={1700}
+            height={1269}
+            priority
+            sizes="120px"
+            style={{ height: '64px', width: 'auto', display: 'block' }}
+          />
         </Link>
 
         {/* Desktop nav — shows from lg (1024px+). Spacing scales up with

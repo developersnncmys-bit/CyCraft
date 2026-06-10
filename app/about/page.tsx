@@ -1,4 +1,20 @@
 'use client';
+/**
+ * About page (v1.3 content rewrite).
+ *
+ * Section order now follows the partner-facing narrative:
+ *   1  Hero            — Empowering Institutions. Shaping Future Talent.
+ *   2  Why CyCraft     — Building Future-Ready Professionals      (03-mission)
+ *   3  What We Do      — Comprehensive Academic Partnership       (04-values)
+ *   4  Our Impact      — Creating Measurable Outcomes             (02-stats)
+ *   5  Our Approach    — Learn. Practice. Apply. Excel.           (05-approach)
+ *   6  Partnership     — Supporting Institutions at Every Stage   (06-leadership)
+ *   7  Vision          — Future-of-institutional-partnerships     (08-milestones)
+ *   8  CTA             — Let's Build the Future Together          (10-final-cta)
+ *
+ * 07-team and 09-timeline are intentionally dropped — the v1.3 spec has no
+ * copy for them. Files left on disk so they can be re-introduced later.
+ */
 import dynamic from 'next/dynamic';
 import AboutHero from '@/features/about/01-hero';
 import { ActTransition } from '@/components/layout/ActTransition';
@@ -25,15 +41,7 @@ const AboutLeadership = dynamic(() => import('@/features/about/06-leadership'), 
   loading: placeholder('100vh'),
   ssr: false,
 });
-const AboutTeam = dynamic(() => import('@/features/about/07-team'), {
-  loading: placeholder('100vh'),
-  ssr: false,
-});
 const AboutMilestones = dynamic(() => import('@/features/about/08-milestones'), {
-  loading: placeholder('100vh'),
-  ssr: false,
-});
-const AboutTimeline = dynamic(() => import('@/features/about/09-timeline'), {
   loading: placeholder('100vh'),
   ssr: false,
 });
@@ -49,43 +57,49 @@ const HomeFooter = dynamic(() => import('@/features/home/11-footer'), {
 export default function AboutPage() {
   return (
     <>
-      {/* Act I — Identity */}
+      {/* 1 — Hero */}
       <AboutHero />
 
-      {/* Act I → II — Beam fires forward, white flash */}
-      <ActTransition targetSelector="#about-stats" type="i-to-ii" />
+      {/* Hero → Why CyCraft — beam fires forward, white flash */}
+      <ActTransition targetSelector="#about-mission" type="i-to-ii" />
 
-      {/* Act II — Proof of decade */}
-      <AboutStats />
+      {/* 2 — Why CyCraft */}
       <AboutMission />
 
-      {/* Act II → III — Radial iris (camera lens) */}
+      {/* → What We Do — radial iris */}
       <ActTransition targetSelector="#about-values" type="ii-to-iii" />
 
-      {/* Act III — Values, method, people */}
+      {/* 3 — What We Do */}
       <AboutValues />
+
+      {/* → Our Impact — diagonal cyan slash */}
+      <ActTransition targetSelector="#about-stats" type="iii-to-iv" />
+
+      {/* 4 — Our Impact */}
+      <AboutStats />
+
+      {/* → Our Approach — red curtain */}
+      <ActTransition targetSelector="#about-approach" type="iv-to-v" />
+
+      {/* 5 — Our Learning Approach */}
       <AboutApproach />
 
-      {/* Act III → IV — Diagonal cyan slash */}
-      <ActTransition targetSelector="#about-leadership" type="iii-to-iv" />
+      {/* → Partnership Model — vertical curtain split */}
+      <ActTransition targetSelector="#about-leadership" type="v-to-vi" />
 
+      {/* 6 — Academic Partnership Model */}
       <AboutLeadership />
-      <AboutTeam />
 
-      {/* Act IV → V — Red curtain close (foreshadows CTA) */}
-      <ActTransition targetSelector="#about-milestones" type="iv-to-v" />
+      {/* → Vision — radial iris reused as a softer hand-off */}
+      <ActTransition targetSelector="#about-milestones" type="ii-to-iii" />
 
-      {/* Act V — Track record */}
+      {/* 7 — Vision for the Future */}
       <AboutMilestones />
 
-      {/* V → VI — Vertical curtain split */}
-      <ActTransition targetSelector="#about-timeline" type="v-to-vi" />
-
-      <AboutTimeline />
-
-      {/* Final beam-and-flash into the CTA crescendo */}
+      {/* → CTA — final beam-and-flash crescendo */}
       <ActTransition targetSelector="#about-cta" type="i-to-ii" />
 
+      {/* 8 — Call to Action */}
       <AboutFinalCta />
       <HomeFooter />
     </>

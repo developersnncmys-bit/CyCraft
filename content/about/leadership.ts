@@ -1,37 +1,53 @@
-export interface LeadershipProfile {
+/**
+ * Content (v1.3) — Section 6 "Academic Partnership Model": Supporting
+ * Institutions at Every Stage.
+ *
+ * Repurposed from the old leadership-profile shape. Two parallel bullet
+ * columns now sit inside the same section: how we partner (left) and why
+ * institutions pick us (right). Type renamed to `PartnershipColumn`; the
+ * original `LeadershipProfile` export retained as an alias so any out-of-tree
+ * consumer keeps compiling (none currently exists in this repo).
+ */
+export interface PartnershipColumn {
   id: string;
-  name: string;
-  role: string;
-  bio: string;
-  initials: string;
+  title: string;
+  items: readonly string[];
 }
 
+/** @deprecated kept as an alias for any legacy import path. */
+export type LeadershipProfile = PartnershipColumn;
+
 export const aboutLeadershipContent = {
-  badge: 'LEADERSHIP',
-  heading: 'Built by Practitioners',
-  description:
-    'CyCraft is led by security engineers, researchers, and educators who have shipped real systems and chased real threats — not classroom instructors.',
-  leaders: [
+  badge: 'PARTNERSHIP MODEL',
+  heading: 'Supporting Institutions at Every Stage',
+  description: 'We collaborate with educational institutions through:',
+  columns: [
     {
-      id: 'founder',
-      name: 'Founder & CEO',
-      role: 'Cybersecurity Strategy · Curriculum',
-      bio: 'A decade of hands-on offensive and defensive security, advising enterprises and shaping the cybersecurity workforce pipeline in India.',
-      initials: 'F',
+      id: 'partnership-activities',
+      title: 'Partnership Activities',
+      items: [
+        'Industry-oriented training programs',
+        'Technology Centers of Excellence',
+        'Technical clubs and communities',
+        'Faculty enablement initiatives',
+        'Skill development programs',
+        'Research and innovation activities',
+        'Placement support initiatives',
+        'Industry engagement opportunities',
+      ],
     },
     {
-      id: 'cto',
-      name: 'Chief Technology Officer',
-      role: 'Research · Platform Engineering',
-      bio: 'Leads CyCraft’s research wing and LMS platform; previously shipped security tooling and threat-intelligence products at scale.',
-      initials: 'T',
+      id: 'why-choose-cycraft',
+      title: 'Why Institutions Choose CyCraft',
+      items: [
+        'Practical and application-focused learning',
+        'Customized institutional solutions',
+        'Industry expert mentorship',
+        'Scalable training models',
+        'Outcome-driven programs',
+        'Long-term partnership approach',
+        'Focus on employability and innovation',
+      ],
     },
-    {
-      id: 'training',
-      name: 'Director of Training',
-      role: 'Lab Design · Mentorship',
-      bio: 'Architects the hands-on labs, CTF challenges, and capstone projects that take students from theory to operational competence.',
-      initials: 'D',
-    },
-  ] satisfies readonly LeadershipProfile[],
+  ] satisfies readonly PartnershipColumn[],
 } as const;

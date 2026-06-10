@@ -26,16 +26,6 @@ import {
   type GalleryEvent,
 } from '@/content/gallery/events';
 
-const formatDate = (iso: string) => {
-  try {
-    return new Date(iso).toLocaleDateString('en-GB', {
-      month: 'short',
-      year: 'numeric',
-    });
-  } catch {
-    return iso;
-  }
-};
 
 function EventCard({
   event,
@@ -45,17 +35,16 @@ function EventCard({
   toneIndex: number;
 }) {
   const tone = galleryCardTones[toneIndex % galleryCardTones.length];
-  // Pull the first letter of each significant word for the placeholder
-  // glyph — gives each card a distinct "watermark" without an image.
-  const glyph = event.title
-    .split(/\s+/)
-    .filter((w) => /^[A-Za-z]/.test(w))
-    .slice(0, 3)
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase();
 
   return (
+    // Per Updates v1.3 §10 the card design is intentionally minimal:
+    // AI-generated image + theme title + descriptive caption. The
+    // category chip, decorative glyph, ring overlay, photo-count badge,
+    // and date footer of the original "album card" design were removed
+    // because the brief specifies a clean gallery of themed images, not
+    // an album index. Class names (.gallery-event-card) are retained so
+    // the section's pinned scrub + per-card stagger animation continue
+    // to find and reveal the cards unchanged.
     <article
       className="gallery-event-card"
       style={{
@@ -79,102 +68,43 @@ function EventCard({
         el.style.boxShadow = 'none';
       }}
     >
-      {/* Image area — gradient placeholder + category chip + photo count */}
+      {/* Image area — AI-generated image (Updates v1.3 §10) on the
+          tone-cycled gradient fallback. onError hides the broken image
+          and the gradient + subtle inner shadow remain so the card never
+          breaks. */}
       <div
         aria-hidden="true"
         style={{
           position: 'relative',
           aspectRatio: '4 / 3',
           background: tone.bg,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           overflow: 'hidden',
           borderBottom: `1px solid rgba(168,240,255,0.08)`,
         }}
       >
-        {/* Decorative glyph in the centre */}
-        <span
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(3rem, 6vw, 4.5rem)',
-            fontWeight: 800,
-            letterSpacing: '-0.04em',
-            color: tone.accent,
-            opacity: 0.18,
-            textShadow: `0 0 28px ${tone.accent}`,
-            userSelect: 'none',
-          }}
-        >
-          {glyph}
-        </span>
-
-        {/* Concentric ring overlay — adds depth without an image */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            width: '70%',
-            aspectRatio: '1 / 1',
-            border: `1px solid ${tone.accent}33`,
-            borderRadius: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            width: '110%',
-            aspectRatio: '1 / 1',
-            border: `1px solid ${tone.accent}1F`,
-            borderRadius: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-        />
-
-        {/* Category chip */}
-        <span
-          style={{
-            position: 'absolute',
-            top: '0.85rem',
-            left: '0.85rem',
-            padding: '0.3rem 0.7rem',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '10px',
-            letterSpacing: '0.18em',
-            color: tone.accent,
-            border: `1px solid ${tone.accent}55`,
-            background: 'rgba(13,16,20,0.7)',
-            textTransform: 'uppercase',
-          }}
-        >
-          {event.category}
-        </span>
-
-        {/* Photo count badge */}
-        <span
-          style={{
-            position: 'absolute',
-            bottom: '0.85rem',
-            right: '0.85rem',
-            padding: '0.3rem 0.7rem',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            fontWeight: 600,
-            letterSpacing: '0.08em',
-            color: 'var(--color-text-primary)',
-            background: 'rgba(13,16,20,0.7)',
-            border: '1px solid rgba(168,240,255,0.18)',
-          }}
-        >
-          {event.photoCount} {event.photoCount === 1 ? 'photo' : 'photos'}
-        </span>
+        {event.image && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={event.image}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = 'none';
+            }}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        )}
       </div>
 
-      {/* Body */}
+      {/* Body — theme title + descriptive caption */}
       <div
         style={{
           padding: '1.25rem 1.25rem 1.5rem',
@@ -206,23 +136,6 @@ function EventCard({
           }}
         >
           {event.venue}
-        </div>
-        <div
-          style={{
-            marginTop: 'auto',
-            paddingTop: '0.85rem',
-            borderTop: '1px solid rgba(255,255,255,0.06)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '10px',
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: 'var(--color-text-tertiary)',
-          }}
-        >
-          <span>{formatDate(event.date)}</span>
         </div>
       </div>
     </article>
@@ -393,7 +306,13 @@ export default function GalleryEvents() {
 
         <div className="section-container gallery-events-grid">
           {galleryEventsContent.events.map((event, i) => (
-            <EventCard key={event.id} event={event} toneIndex={i} />
+            // Locked to toneIndex={0} (beam cyan) for all 6 cards so the
+            // framing — tag chip border, hover border, gradient fallback —
+            // is consistent across the row per Updates v1.3 §10 Dev Note
+            // ("consistent in visual style ... represent CyCraft's
+            // professional brand"). The per-card tone cycle that was in
+            // the original design now contradicted the brief.
+            <EventCard key={event.id} event={event} toneIndex={0} />
           ))}
         </div>
       </div>

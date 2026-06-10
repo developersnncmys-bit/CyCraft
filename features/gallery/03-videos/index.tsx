@@ -197,14 +197,28 @@ export default function GalleryVideos() {
           className="section-container gallery-videos-grid"
           style={{ maxWidth: '960px', marginInline: 'auto' }}
         >
-          {galleryVideosContent.videos.map((video, i) => {
-            const tone = galleryCardTones[i % galleryCardTones.length];
+          {galleryVideosContent.videos.map((video) => {
+            // Locked to galleryCardTones[0] (beam cyan) for all 4 cards so
+            // the framing — tag chip border, hover border, gradient
+            // fallback — is consistent across the row per Updates v1.3 §11
+            // Dev Note ("Use consistent visual style across all 4 cards —
+            // same color tone, lighting, and brand feel"). The per-card
+            // tone cycle that was in the original design contradicted the
+            // brief.
+            const tone = galleryCardTones[0];
+            // Per Updates v1.3 §11 the spotlight card design is:
+            // AI-generated image + tag + title + content blurb. The play
+            // badge, concentric rings, duration chip, and "Watch on
+            // YouTube" CTA of the original video-tile design were removed
+            // because the brief specifies featured spotlights, not video
+            // tiles. The wrapper is now a non-interactive <article>
+            // (cards aren't clickable per the brief). Class names
+            // (.gallery-video-tile) are retained so the section's pinned
+            // scrub + per-tile stagger animation continue to find and
+            // reveal the cards unchanged.
             return (
-              <a
+              <article
                 key={video.id}
-                href={video.href}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="gallery-video-tile"
                 style={{
                   position: 'relative',
@@ -212,8 +226,6 @@ export default function GalleryVideos() {
                   flexDirection: 'column',
                   background: 'rgba(13,16,20,0.4)',
                   border: '1px solid rgba(168,240,255,0.1)',
-                  textDecoration: 'none',
-                  color: 'inherit',
                   overflow: 'hidden',
                   transition: 'border-color 0.3s, box-shadow 0.3s',
                   willChange: 'transform, opacity',
@@ -229,69 +241,41 @@ export default function GalleryVideos() {
                   el.style.boxShadow = 'none';
                 }}
               >
-                {/* Thumbnail */}
+                {/* Thumbnail — AI-generated image (Updates v1.3 §11) on
+                    the tone-cycled gradient fallback. onError hides the
+                    broken image and the gradient remains so the card
+                    never breaks. */}
                 <div
                   aria-hidden="true"
                   style={{
                     position: 'relative',
                     aspectRatio: '16 / 9',
                     background: tone.bg,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     overflow: 'hidden',
                   }}
                 >
-                  {/* Concentric rings */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      width: '50%',
-                      aspectRatio: '1 / 1',
-                      border: `1px solid ${tone.accent}33`,
-                      borderRadius: '50%',
-                      transform: 'translate(-50%, -50%)',
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      width: '80%',
-                      aspectRatio: '1 / 1',
-                      border: `1px solid ${tone.accent}1F`,
-                      borderRadius: '50%',
-                      transform: 'translate(-50%, -50%)',
-                    }}
-                  />
+                  {video.image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={video.image}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = 'none';
+                      }}
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  )}
 
-                  {/* Play badge */}
-                  <div
-                    className="gallery-video-play"
-                    style={{
-                      position: 'relative',
-                      zIndex: 2,
-                      width: '64px',
-                      height: '64px',
-                      borderRadius: '50%',
-                      background: 'rgba(13,16,20,0.85)',
-                      border: `1.5px solid ${tone.accent}`,
-                      boxShadow: `0 0 24px ${tone.accent}66`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: tone.accent,
-                      paddingLeft: '4px',
-                      willChange: 'transform',
-                    }}
-                  >
-                    <PlayIcon />
-                  </div>
-
-                  {/* Tag chip */}
+                  {/* Tag chip — spotlight category label */}
                   <span
                     style={{
                       position: 'absolute',
@@ -309,28 +293,9 @@ export default function GalleryVideos() {
                   >
                     {video.tag}
                   </span>
-
-                  {/* Duration chip */}
-                  <span
-                    style={{
-                      position: 'absolute',
-                      bottom: '0.85rem',
-                      right: '0.85rem',
-                      padding: '0.3rem 0.6rem',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      color: 'var(--color-text-primary)',
-                      background: 'rgba(5,6,8,0.85)',
-                      border: '1px solid rgba(168,240,255,0.18)',
-                      letterSpacing: '0.04em',
-                    }}
-                  >
-                    {video.duration}
-                  </span>
                 </div>
 
-                {/* Body */}
+                {/* Body — title + content blurb */}
                 <div
                   style={{
                     padding: '1.25rem 1.5rem 1.5rem',
@@ -363,25 +328,8 @@ export default function GalleryVideos() {
                   >
                     {video.summary}
                   </p>
-                  <div
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      marginTop: '0.4rem',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      letterSpacing: '0.18em',
-                      textTransform: 'uppercase',
-                      color: tone.accent,
-                    }}
-                  >
-                    Watch on YouTube
-                    <span aria-hidden="true">↗</span>
-                  </div>
                 </div>
-              </a>
+              </article>
             );
           })}
         </div>

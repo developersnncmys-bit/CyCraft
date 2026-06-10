@@ -63,6 +63,20 @@ function FeatureIcon({ name }: { name: MissionIcon }) {
           <path d="M8.5 14 7 22l5-3 5 3-1.5-8" />
         </svg>
       );
+    case 'cap':
+      return (
+        <svg {...common}>
+          <path d="M22 10 12 5 2 10l10 5 10-5Z" />
+          <path d="M6 12v5a8 8 0 0 0 12 0v-5" />
+          <path d="M22 10v6" />
+        </svg>
+      );
+    case 'wrench':
+      return (
+        <svg {...common}>
+          <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6.6 6.6 2.6 2.6 6.6-6.6a4 4 0 0 0 5.4-5.4l-2.4 2.4-2.5-2.5 2.4-2.4Z" />
+        </svg>
+      );
   }
 }
 

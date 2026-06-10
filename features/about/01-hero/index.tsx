@@ -18,7 +18,7 @@ import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '@/lib/gsap/register';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
-import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { WordSplit } from '@/features/home/_shared/wordSplit';
 import { aboutHeroContent } from '@/content/about/hero';
 
@@ -34,13 +34,12 @@ export default function AboutHero() {
       if (!root) return;
 
       const revealTargets = [
-        '.about-hero-badge',
         '.about-hero-line-1 [data-word]',
         '.about-hero-line-2 [data-word]',
         '.about-hero-divider',
         '.about-hero-tagline [data-word]',
         '.about-hero-cert [data-word]',
-        '.about-hero-terminal-line',
+        '.about-hero-cta',
       ];
 
       // ── Reduced motion: instant composed state ──────────────────────────
@@ -50,7 +49,7 @@ export default function AboutHero() {
       }
 
       // ── Initial hidden state (applied immediately so nothing flashes) ───
-      gsap.set(['.about-hero-badge', '.about-hero-terminal-line'], { opacity: 0, y: 18 });
+      gsap.set('.about-hero-cta', { opacity: 0, y: 18 });
       gsap.set('.about-hero-line-1 [data-word], .about-hero-line-2 [data-word]', {
         opacity: 0,
         yPercent: 60,
@@ -63,12 +62,11 @@ export default function AboutHero() {
       // ── Entry timeline (autoplays, word-by-word) ────────────────────────
       const playEntry = () => {
         const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-        tl.to('.about-hero-badge', { opacity: 1, y: 0, duration: 0.6 })
-          .to(
-            '.about-hero-line-1 [data-word]',
-            { opacity: 1, yPercent: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.05 },
-            '-=0.3',
-          )
+        tl.to(
+          '.about-hero-line-1 [data-word]',
+          { opacity: 1, yPercent: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.05 },
+          0,
+        )
           .to(
             '.about-hero-line-2 [data-word]',
             { opacity: 1, yPercent: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.05 },
@@ -86,8 +84,8 @@ export default function AboutHero() {
             '-=0.3',
           )
           .to(
-            '.about-hero-terminal-line',
-            { opacity: 1, y: 0, duration: 0.35, stagger: 0.12 },
+            '.about-hero-cta',
+            { opacity: 1, y: 0, duration: 0.5, stagger: 0.12, ease: 'back.out(1.4)' },
             '-=0.2',
           );
       };
@@ -260,10 +258,6 @@ export default function AboutHero() {
         }}
       >
         <div style={{ maxWidth: '960px', marginInline: 'auto' }}>
-          <div className="about-hero-badge" style={{ display: 'inline-block', marginBottom: '2rem' }}>
-            <Badge label={aboutHeroContent.badge} />
-          </div>
-
           <h1
             className="about-hero-headline"
             style={{
@@ -315,12 +309,12 @@ export default function AboutHero() {
               fontFamily: 'var(--font-body)',
               fontSize: 'var(--text-lg)',
               color: 'var(--color-text-secondary)',
-              maxWidth: '680px',
+              maxWidth: '760px',
               margin: '0 auto 2rem',
               lineHeight: 1.65,
             }}
           >
-            <WordSplit text={aboutHeroContent.tagline} />
+            <WordSplit text={aboutHeroContent.subheadline} />
           </p>
 
           <div
@@ -338,50 +332,34 @@ export default function AboutHero() {
               color: 'var(--color-beam)',
               textTransform: 'uppercase',
               marginBottom: '2.5rem',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              maxWidth: '100%',
             }}
           >
-            <svg
-              aria-hidden="true"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 2 4 5v7c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V5l-8-3Z" />
-              <path d="M9 12l2 2 4-4" />
-            </svg>
-            <WordSplit text={aboutHeroContent.certification} />
+            <WordSplit text={aboutHeroContent.tagLine} />
           </div>
 
           <div
-            aria-hidden="true"
             style={{
               display: 'flex',
-              flexDirection: 'column',
-              gap: '0.25rem',
-              width: 'fit-content',
-              maxWidth: '100%',
-              marginInline: 'auto',
-              border: '1px solid rgba(168,240,255,0.12)',
-              background: 'rgba(13,16,20,0.6)',
-              backdropFilter: 'blur(6px)',
-              padding: '0.75rem 1.25rem',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '11px',
-              color: 'var(--color-terminal)',
-              letterSpacing: '0.04em',
-              textAlign: 'left',
+              flexWrap: 'wrap',
+              gap: '1rem',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: '0.5rem',
             }}
           >
-            {aboutHeroContent.terminalLines.map((line) => (
-              <span key={line} className="about-hero-terminal-line">
-                {line}
-              </span>
-            ))}
+            <span className="about-hero-cta">
+              <Button as="a" href={aboutHeroContent.ctas.primary.href} variant="primary">
+                {aboutHeroContent.ctas.primary.label}
+              </Button>
+            </span>
+            <span className="about-hero-cta">
+              <Button as="a" href={aboutHeroContent.ctas.secondary.href} variant="outline">
+                {aboutHeroContent.ctas.secondary.label}
+              </Button>
+            </span>
           </div>
         </div>
       </div>

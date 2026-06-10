@@ -312,7 +312,10 @@ export default function AboutApproach() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: isLayoutDesktop ? 'repeat(3, 1fr)' : '1fr',
+              // 4 steps — desktop renders as a single 4-col row matching the
+              // sequential "Discover → Experience → Collaborate → Achieve"
+              // narrative; mobile keeps its 1-col vertical stack.
+              gridTemplateColumns: isLayoutDesktop ? 'repeat(4, 1fr)' : '1fr',
               gap: '1.5rem',
               position: 'relative',
               zIndex: 1,

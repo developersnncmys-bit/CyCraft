@@ -46,13 +46,23 @@ export const metadata: Metadata = {
     'cycraft',
     's-vyasa university',
   ],
+  // Icons — keep the existing favicon.ico (App Router auto-binds it) and
+  // additionally expose the brand shield logo for modern browsers + iOS
+  // home-screen installs.
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/logo.png', type: 'image/png' },
+    ],
+    apple: '/logo.png',
+  },
   openGraph: {
     title: 'Cyber Intelligence Engineering B.Tech | CyCraft',
     description: 'Scroll into the dark. Become the signal.',
-    images: ['/images/og-image.jpg'],
+    images: ['/logo.png'],
     type: 'website',
   },
-  twitter: { card: 'summary_large_image' },
+  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
 };
 
 // Without this, mobile browsers fall back to a ~980px virtual viewport and

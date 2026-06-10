@@ -1,12 +1,15 @@
+/**
+ * Content (v1.3) — Section 8 "Call to Action": Let's Build the Future
+ * Together. Spec is explicit: single CTA button (Contact Us Today → contact
+ * form). The previous two-button layout has been dropped; `secondary` is
+ * removed from the content shape so any JSX that still references it will
+ * fail loudly at type-check time rather than silently render a stale button.
+ */
 export const aboutFinalCtaContent = {
-  heading: 'Join the Next Generation of Defenders',
-  highlight: 'Next Generation of Defenders',
+  heading: "Let's Build the Future Together",
+  /** Highlight phrase is rendered in red — must be a substring of `heading`. */
+  highlight: 'Build the Future',
   description:
-    'Start your cybersecurity career with a program built by practitioners, taught in real labs, and backed by a 50+ partner hiring network.',
-  /** EXPLORE PROGRAMS → /courses (broader programme catalogue; matches the
-   *  home-page final CTA's "START LEARNING" routing).
-   *  CONTACT ADMISSIONS → /contact (was a raw mailto: that left the site;
-   *  the on-site contact page captures the inquiry into Admin per PRD §3.10). */
-  primary: { label: 'EXPLORE PROGRAMS', href: '/courses' },
-  secondary: { label: 'CONTACT ADMISSIONS', href: '/contact' },
+    "Partner with CyCraft to create impactful learning experiences and prepare students for tomorrow's opportunities.",
+  primary: { label: 'CONTACT US TODAY', href: '/contact' },
 } as const;

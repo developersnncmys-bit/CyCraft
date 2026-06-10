@@ -7,8 +7,7 @@
  *
  *   0.00–0.30  Heading words stagger up from blur (with highlight word igniting)
  *   0.30–0.45  Description fades up
- *   0.45–0.62  Primary CTA enters with red glow pulse
- *   0.55–0.72  Secondary CTA enters
+ *   0.45–0.62  CTA button enters with red glow pulse  (single-button spec v1.3)
  *   0.72–0.92  Red glow pool intensifies, top scan beam expands
  *   0.92–1.00  Camera pull-back to release into footer
  */
@@ -35,12 +34,7 @@ export default function AboutFinalCta() {
 
       if (reducedMotion) {
         gsap.set(
-          [
-            '.about-cta-word',
-            '.about-cta-desc',
-            '.about-cta-primary',
-            '.about-cta-secondary',
-          ],
+          ['.about-cta-word', '.about-cta-desc', '.about-cta-primary'],
           { opacity: 1, y: 0, filter: 'blur(0px)' },
         );
         return;
@@ -65,7 +59,7 @@ export default function AboutFinalCta() {
           },
         );
         gsap.fromTo(
-          '.about-cta-desc, .about-cta-primary, .about-cta-secondary',
+          '.about-cta-desc, .about-cta-primary',
           { opacity: 0, y: 18 },
           {
             opacity: 1,
@@ -85,10 +79,7 @@ export default function AboutFinalCta() {
 
       // Desktop pinned cinematic
       gsap.set('.about-cta-word', { opacity: 0, yPercent: 80, filter: 'blur(14px)' });
-      gsap.set(
-        ['.about-cta-desc', '.about-cta-primary', '.about-cta-secondary'],
-        { opacity: 0, y: 26 },
-      );
+      gsap.set(['.about-cta-desc', '.about-cta-primary'], { opacity: 0, y: 26 });
       gsap.set('.about-cta-glow', { opacity: 0.25, scale: 1 });
       gsap.set('.about-cta-scan', { scaleX: 0, transformOrigin: 'left center' });
       gsap.set('.about-cta-camera', { scale: 1, transformOrigin: 'center center' });
@@ -120,11 +111,8 @@ export default function AboutFinalCta() {
       // 0.30–0.45 desc fades up
       tl.to('.about-cta-desc', { opacity: 1, y: 0, duration: 0.15, ease: 'power2.out' }, 0.30);
 
-      // 0.45–0.62 primary CTA
-      tl.to('.about-cta-primary', { opacity: 1, y: 0, duration: 0.15, ease: 'power3.out' }, 0.45);
-
-      // 0.55–0.72 secondary CTA
-      tl.to('.about-cta-secondary', { opacity: 1, y: 0, duration: 0.15, ease: 'power3.out' }, 0.55);
+      // 0.45–0.62 CTA button enters
+      tl.to('.about-cta-primary', { opacity: 1, y: 0, duration: 0.18, ease: 'power3.out' }, 0.45);
 
       // 0.72–0.92 red glow pool intensifies
       tl.to(
@@ -378,39 +366,6 @@ export default function AboutFinalCta() {
                 <span aria-hidden="true">›</span>
               </a>
             )}
-
-            <a
-              href={aboutFinalCtaContent.secondary.href}
-              className="about-cta-secondary"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.6rem',
-                padding: '1rem 2.25rem',
-                background: 'transparent',
-                color: 'var(--color-text-primary)',
-                border: '1px solid rgba(255,255,255,0.4)',
-                fontFamily: 'var(--font-mono)',
-                fontSize: 'var(--text-base)',
-                fontWeight: 600,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                textDecoration: 'none',
-                transition: 'background 0.2s, border-color 0.2s',
-                willChange: 'transform, opacity',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.7)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)';
-              }}
-            >
-              {aboutFinalCtaContent.secondary.label}
-              <span aria-hidden="true">›</span>
-            </a>
           </div>
         </div>
       </div>

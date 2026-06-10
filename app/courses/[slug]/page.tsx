@@ -37,6 +37,12 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
+  // Return every catalog course (including external-URL ones). With
+  // `output: 'export'`, this function must produce at least one entry,
+  // and Next pre-renders each. External-URL courses render as 404 below
+  // since their content lives on the partner site; this is acceptable
+  // because the catalog cards link straight to the partner URL and the
+  // internal detail route is unreachable through normal navigation.
   return coursesCatalogContent.courses.map((c) => ({ slug: c.slug }));
 }
 
@@ -44,7 +50,11 @@ export default async function CourseDetailPage({ params }: PageProps) {
   const { slug } = await params;
 
   const course = coursesCatalogContent.courses.find((c) => c.slug === slug);
-  if (!course) notFound();
+  // External-URL courses (EC-Council partner pages) don't have internal
+  // detail content — if a user hits the detail route directly via deep
+  // link, render the standard 404. Catalog cards bypass this route by
+  // linking to `externalUrl` directly.
+  if (!course || course.externalUrl) notFound();
 
   const details = getCourseDetail(slug);
 

@@ -11,12 +11,21 @@ export interface GalleryEvent {
    *  Admin can swap rows 1:1 once the gallery CMS ships (PRD §3.9). */
   title: string;
   category: EventCategory;
-  /** Host venue or campus — rendered in the card subtitle. */
+  /** Host venue or campus — rendered in the card subtitle. Repurposed in
+   *  Updates v1.3 §10 to carry the descriptive caption that appears below
+   *  the image (also serves as the AI-image generation prompt for the
+   *  design team). */
   venue: string;
   /** ISO date — used to sort and to render a "MMM YYYY" stamp on each card. */
   date: string;
   /** Number of photos this album would hold; rendered as "N photos" badge. */
   photoCount: number;
+  /** Image URL displayed in the card's hero area. AI-generated per Updates
+   *  v1.3 §10 ("each image must be AI-generated, no stock photos"). When
+   *  the URL fails to load (onError), the card falls back to the existing
+   *  gradient + glyph + concentric ring composition underneath, so the
+   *  card never breaks. */
+  image?: string;
 }
 
 /**
@@ -53,83 +62,76 @@ export const galleryCardTones = [
   },
 ] as const;
 
+// Content (v1.3) — Section 10 "Gallery Section". Six themed image cards
+// per the brief. Schema (title / category / venue / date / photoCount) is
+// preserved so the existing pinned camera-pan + per-card stagger reveal
+// keep firing unchanged. `venue` carries the AI-image generation prompt /
+// short caption per the brief's "Caption / Description" column.
 export const galleryEventsContent = {
   badge: 'EVENT GALLERY',
   heading: 'Public Engagements',
   description:
-    'Every CyCraft event is co-hosted with a campus, corporate partner, or community chapter. Below is the running log of recent engagements.',
+    'Snapshots from CyCraft initiatives across institutional partnerships, workshops, hackathons, and industry engagements.',
   events: [
     {
-      id: 'bsides-blr-2024',
-      title: 'BSIDES Bangalore 2024 Workshop',
+      id: 'cybersecurity-workshop',
+      title: 'Cybersecurity Workshop',
       category: 'Workshop',
-      venue: 'BSIDES Bangalore',
-      date: '2024-11-09',
-      photoCount: 2,
+      venue:
+        'Students engaged in a hands-on cybersecurity workshop with laptops and screens showing network diagrams.',
+      date: '2025-01-18',
+      photoCount: 12,
+      image: '/gallery/cybersecurity%20workshop.png',
     },
     {
-      id: 'reva-training',
-      title: '1 out of 100 — Training at REVA University',
+      id: 'technology-bootcamp',
+      title: 'Technology Bootcamp',
       category: 'Workshop',
-      venue: 'REVA University, Bangalore',
-      date: '2024-09-18',
-      photoCount: 3,
+      venue:
+        'An intense coding and technology bootcamp session with participants working on terminals — energy-filled classroom.',
+      date: '2025-02-22',
+      photoCount: 18,
+      image: '/gallery/Technology%20bootcamp.png',
     },
     {
-      id: 'bmsit-talk',
-      title: 'BMSIT Talk on Cybersecurity Trends',
+      id: 'faculty-development',
+      title: 'Faculty Development',
       category: 'Talk',
-      venue: 'BMSIT, Bangalore',
-      date: '2024-08-22',
-      photoCount: 2,
+      venue:
+        'Educators and faculty members attending a professional development seminar led by an industry expert at a whiteboard.',
+      date: '2025-03-15',
+      photoCount: 9,
+      image: '/gallery/Faculty%20Development.png',
     },
     {
-      id: 'skit-workshop',
-      title: 'SKIT Students Workshop on Cybersecurity',
-      category: 'Workshop',
-      venue: 'SKIT, Jaipur',
-      date: '2024-06-14',
-      photoCount: 4,
-    },
-    {
-      id: 'bsides-meetup',
-      title: 'BSIDES Meetup with the Bsides Bangalore Founder',
+      id: 'student-hackathon',
+      title: 'Student Hackathon',
       category: 'Meetup',
-      venue: 'BSIDES Bangalore',
-      date: '2024-05-30',
-      photoCount: 3,
+      venue:
+        'College students collaborating at a hackathon — screens glowing, teams working intensely on innovation challenges.',
+      date: '2025-04-12',
+      photoCount: 24,
+      image: '/gallery/Students%20hackathon.png',
     },
     {
-      id: 'microland',
-      title: 'Cybersecurity Training for Microland Employees',
-      category: 'Corporate',
-      venue: 'Microland HQ, Bangalore',
-      date: '2024-04-12',
-      photoCount: 3,
-    },
-    {
-      id: 'amrita-cyber',
-      title: 'Amrita Vishwa Vidyapeetham Workshop on Cybersecurity',
+      id: 'career-readiness-session',
+      title: 'Career Readiness Session',
       category: 'Workshop',
-      venue: 'Amrita Vishwa Vidyapeetham',
-      date: '2024-02-20',
-      photoCount: 3,
+      venue:
+        'Students participating in mock interviews and resume-building workshops with mentors — professional, aspirational setting.',
+      date: '2025-05-09',
+      photoCount: 14,
+      image: '/gallery/career%20readiness%20session.png',
     },
     {
-      id: 'amrita-pentest',
-      title: 'Amrita Vishwa Vidyapeetham Workshop on Penetration Testing',
-      category: 'Workshop',
-      venue: 'Amrita Vishwa Vidyapeetham',
-      date: '2024-02-21',
-      photoCount: 7,
-    },
-    {
-      id: 'christ-inaugural',
-      title: 'Inaugural Ceremony — Cyber Security Club, Christ University',
-      category: 'Inaugural',
-      venue: 'Christ University, Bangalore',
-      date: '2025-07-28',
-      photoCount: 7,
+      id: 'industry-expert-talk',
+      title: 'Industry Expert Talk',
+      category: 'Talk',
+      venue:
+        'A cybersecurity industry professional delivering a guest lecture to an engaged college audience in a modern auditorium.',
+      date: '2025-06-20',
+      photoCount: 11,
+      image: '/gallery/industry%20expert%20talk.png',
     },
   ] satisfies readonly GalleryEvent[],
 } as const;

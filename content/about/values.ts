@@ -1,4 +1,14 @@
-export type ValueIcon = 'shield' | 'target' | 'badge' | 'users';
+export type ValueIcon =
+  | 'shield'
+  | 'target'
+  | 'badge'
+  | 'users'
+  | 'school'
+  | 'lock'
+  | 'wrench'
+  | 'cap'
+  | 'lightbulb'
+  | 'briefcase';
 
 export interface AboutValue {
   id: string;
@@ -7,38 +17,58 @@ export interface AboutValue {
   description: string;
 }
 
+/**
+ * Content (v1.3) — Section 3 "What We Do": Comprehensive Academic Partnership
+ * Solutions. Six service cards replace the previous four "Core Values". The
+ * `aboutValuesContent` shape stays identical (badge / heading / description /
+ * values[]) so the existing animation timeline and grid auto-flow for the
+ * cards still work — only copy + icon palette changes.
+ */
 export const aboutValuesContent = {
-  badge: 'CORE VALUES',
-  heading: 'Our Core Values',
-  description: 'The principles that guide everything we do.',
+  badge: 'WHAT WE DO',
+  heading: 'Comprehensive Academic Partnership Solutions',
+  description:
+    'Six end-to-end programs designed to equip institutions with everything they need to deliver future-ready learning experiences.',
   values: [
     {
-      id: 'practical',
-      icon: 'shield',
-      title: 'Practical Excellence',
-      description:
-        'We believe in learning by doing. Every course includes extensive hands-on labs and real-world projects.',
+      id: 'inst-training',
+      icon: 'school',
+      title: 'Institutional Training Programs',
+      description: 'Customized learning programs designed for colleges and universities.',
     },
     {
-      id: 'industry',
-      icon: 'target',
-      title: 'Industry Focused',
+      id: 'cyber-edu',
+      icon: 'lock',
+      title: 'Cybersecurity Education',
       description:
-        'Our curriculum is designed with input from cybersecurity professionals to meet current industry needs.',
+        'Training pathways covering cybersecurity fundamentals, offensive security, defensive security, cloud security, and digital forensics.',
     },
     {
-      id: 'certification',
-      icon: 'badge',
-      title: 'Certification Ready',
+      id: 'workshops',
+      icon: 'wrench',
+      title: 'Workshops & Bootcamps',
       description:
-        'Our programs prepare you for leading industry certifications from CompTIA, EC-Council, and more.',
+        'Interactive sessions led by industry professionals on emerging technologies and practical applications.',
     },
     {
-      id: 'career',
-      icon: 'users',
-      title: 'Career Support',
+      id: 'faculty-dev',
+      icon: 'cap',
+      title: 'Faculty Development Programs',
+      description: 'Upskilling initiatives designed to empower educators with modern technical expertise.',
+    },
+    {
+      id: 'research-support',
+      icon: 'lightbulb',
+      title: 'Innovation & Research Support',
       description:
-        'Comprehensive placement assistance including resume building, interview prep, and job placement.',
+        'Encouraging students to engage in research, innovation projects, competitions, and technical communities.',
+    },
+    {
+      id: 'career-dev',
+      icon: 'briefcase',
+      title: 'Career Development Programs',
+      description:
+        'Interview preparation, resume building, portfolio development, and industry readiness initiatives.',
     },
   ] satisfies readonly AboutValue[],
 } as const;

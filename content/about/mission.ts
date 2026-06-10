@@ -1,4 +1,4 @@
-export type MissionIcon = 'trending' | 'globe' | 'shield' | 'badge';
+export type MissionIcon = 'trending' | 'globe' | 'shield' | 'badge' | 'cap' | 'wrench';
 
 export interface MissionFeature {
   id: string;
@@ -6,21 +6,28 @@ export interface MissionFeature {
   label: string;
 }
 
+/**
+ * Content (v1.3) — Section 2 "Why CyCraft": Building Future-Ready Professionals.
+ * The existing structure (badge + heading + paragraphs + card with feature list)
+ * is preserved so the section's animation timeline keeps firing — only the
+ * copy changes. Six new features replace the previous four; icon palette
+ * extended with `cap` and `wrench` to cover the new categories.
+ */
 export const aboutMissionContent = {
-  badge: 'OUR MISSION',
-  heading: 'Our Mission',
+  badge: 'WHY CYCRAFT',
+  heading: 'Building Future-Ready Professionals',
   paragraphs: [
-    'At CyCraft, we are dedicated to bridging the cybersecurity skills gap by providing world-class training that combines theoretical knowledge with practical application.',
-    'Founded in 2014, we have trained thousands of students who now work at leading organizations worldwide. Our approach is simple: focus on practical skills, real-world scenarios, and career outcomes.',
-    'We partner with industry leaders to ensure our curriculum stays current with the latest threats, technologies, and best practices in cybersecurity.',
+    'Educational institutions face the challenge of preparing students for a rapidly evolving technology landscape. CyCraft helps bridge this gap through practical learning experiences, expert mentorship, and industry-relevant programs.',
   ],
   card: {
-    title: 'Why Choose Us',
+    title: 'What Sets Us Apart',
     features: [
-      { id: 'curriculum', icon: 'trending', label: 'Industry-leading curriculum updated quarterly' },
-      { id: 'network', icon: 'globe', label: 'Global network of partner companies' },
-      { id: 'instructors', icon: 'shield', label: 'Instructors with real-world experience' },
-      { id: 'placement', icon: 'badge', label: '95% student placement rate' },
+      { id: 'inst-focus', icon: 'badge', label: 'Institution-focused learning solutions' },
+      { id: 'curriculum', icon: 'trending', label: 'Industry-aligned curriculum' },
+      { id: 'hands-on', icon: 'wrench', label: 'Hands-on practical sessions' },
+      { id: 'workshops', icon: 'cap', label: 'Technology workshops and bootcamps' },
+      { id: 'career', icon: 'globe', label: 'Career readiness initiatives' },
+      { id: 'research', icon: 'shield', label: 'Innovation and research support' },
     ] satisfies readonly MissionFeature[],
   },
 } as const;

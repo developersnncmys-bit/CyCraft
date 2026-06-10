@@ -215,15 +215,25 @@ function CourseCard({ course }: { course: Course }) {
   const badgeColor = offensive ? '#fff' : 'var(--color-void)';
   const focusTag = course.categories[0] ?? 'PROGRAM';
 
+  // EC-Council partner courses link out to their official page in a new
+  // tab; internally-curated courses navigate to /courses/[slug]. Next's
+  // <Link> renders as a normal <a> when given an absolute URL, so the
+  // same element handles both. `noopener noreferrer` on external for
+  // standard cross-origin safety.
+  const isExternal = Boolean(course.externalUrl);
+  const href = course.externalUrl ?? `/courses/${course.slug}`;
+
   return (
-    // Next.js <Link> instead of <a> so navigating to the detail page is a
-    // soft client-side route change. Using a plain <a href> caused a full
-    // page reload, which re-evaluated the JS bundle and reset the
-    // Preloader's `hasPlayed` module flag — the boot sequence then played
-    // again on every card click.
+    // Next.js <Link> instead of <a> so navigating to an internal detail
+    // page is a soft client-side route change. Using a plain <a href>
+    // caused a full page reload, which re-evaluated the JS bundle and
+    // reset the Preloader's `hasPlayed` module flag — the boot sequence
+    // then played again on every card click.
     <Link
       className="courses-card"
-      href={`/courses/${course.slug}`}
+      href={href}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
       style={{
         position: 'relative',
         display: 'flex',

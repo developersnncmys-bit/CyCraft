@@ -246,13 +246,19 @@ export default function AboutLeadership() {
             position: 'relative',
             zIndex: 1,
             display: 'grid',
-            gridTemplateColumns: isLayoutDesktop ? 'repeat(3, 1fr)' : '1fr',
-            gap: '1.5rem',
+            // 2 columns on desktop (Partnership Activities | Why CyCraft);
+            // stack on mobile.
+            gridTemplateColumns: isLayoutDesktop ? 'repeat(2, 1fr)' : '1fr',
+            gap: '1.75rem',
           }}
         >
-          {aboutLeadershipContent.leaders.map((l) => (
+          {aboutLeadershipContent.columns.map((col, colIndex) => (
             <article
-              key={l.id}
+              key={col.id}
+              // `.about-leader-card` retained from the previous render shape
+              // so the section's pinned timeline (which staggers items keyed
+              // off this class) keeps firing without changes. Two cards now
+              // instead of three — the third stagger position is harmless.
               className="about-leader-card"
               style={{
                 position: 'relative',
@@ -277,8 +283,8 @@ export default function AboutLeadership() {
                   aria-hidden="true"
                   className="about-leader-avatar"
                   style={{
-                    width: '56px',
-                    height: '56px',
+                    width: '52px',
+                    height: '52px',
                     borderRadius: '50%',
                     background:
                       'radial-gradient(circle at 30% 30%, rgba(168,240,255,0.4) 0%, rgba(168,240,255,0.05) 60%, transparent 100%)',
@@ -287,7 +293,7 @@ export default function AboutLeadership() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontFamily: 'var(--font-display)',
-                    fontSize: '1.5rem',
+                    fontSize: '1.35rem',
                     fontWeight: 700,
                     color: 'var(--color-beam)',
                     textShadow: '0 0 12px var(--color-beam-glow)',
@@ -295,45 +301,61 @@ export default function AboutLeadership() {
                     willChange: 'transform, box-shadow',
                   }}
                 >
-                  {l.initials}
+                  {String(colIndex + 1).padStart(2, '0')}
                 </div>
-                <div>
-                  <h3
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '1.2rem',
-                      fontWeight: 700,
-                      color: 'var(--color-text-primary)',
-                      margin: '0 0 0.25rem',
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {l.name}
-                  </h3>
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '11px',
-                      letterSpacing: '0.14em',
-                      color: 'var(--color-beam)',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {l.role}
-                  </div>
-                </div>
+                <h3
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '1.2rem',
+                    fontWeight: 700,
+                    color: 'var(--color-text-primary)',
+                    margin: 0,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {col.title}
+                </h3>
               </div>
-              <p
+
+              <ul
                 style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 'var(--text-base)',
-                  color: 'var(--color-text-secondary)',
+                  listStyle: 'none',
+                  padding: 0,
                   margin: 0,
-                  lineHeight: 1.65,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.65rem',
                 }}
               >
-                {l.bio}
-              </p>
+                {col.items.map((item) => (
+                  <li
+                    key={item}
+                    style={{
+                      display: 'flex',
+                      gap: '0.65rem',
+                      alignItems: 'flex-start',
+                      fontFamily: 'var(--font-body)',
+                      fontSize: 'var(--text-base)',
+                      color: 'var(--color-text-secondary)',
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        flexShrink: 0,
+                        marginTop: '0.55em',
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        background: 'var(--color-beam)',
+                        boxShadow: '0 0 8px var(--color-beam-glow)',
+                      }}
+                    />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </article>
           ))}
         </div>

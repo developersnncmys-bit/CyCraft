@@ -4,6 +4,7 @@
  * glow → headline materialises → button forms. Pin is intentionally shorter
  * than other sections to avoid a blank scroll tail at end of document. */
 import { useRef, useState } from 'react';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '@/lib/gsap/register';
@@ -281,10 +282,16 @@ export default function CTAFooterSection() {
             className="section-container"
             style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'space-between', alignItems: 'center' }}
           >
-            <div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-sm)', color: 'var(--color-beam)', marginBottom: '0.25rem' }}>
-                CyCraft
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+              {/* Brand mark — replaces the prior 'CyCraft' mono-text label. */}
+              <Image
+                src="/logo.png"
+                alt="CyCraft"
+                width={1700}
+                height={1269}
+                sizes="120px"
+                style={{ height: '80px', width: 'auto', display: 'block', flexShrink: 0 }}
+              />
               <p style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-xs)', color: 'var(--color-text-disabled)', margin: 0, maxWidth: '280px', lineHeight: 1.5 }}>
                 {ctaFooterContent.footer.address}
               </p>

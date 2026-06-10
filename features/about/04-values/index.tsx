@@ -65,6 +65,52 @@ function ValueIconSvg({ name }: { name: ValueIcon }) {
           <path d="M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
       );
+    case 'school':
+      return (
+        <svg {...common}>
+          <path d="M3 9.5 12 5l9 4.5L12 14 3 9.5Z" />
+          <path d="M7 11.5v5c0 1 2.5 2.5 5 2.5s5-1.5 5-2.5v-5" />
+          <path d="M21 9.5V15" />
+        </svg>
+      );
+    case 'lock':
+      return (
+        <svg {...common}>
+          <rect x="4" y="11" width="16" height="10" rx="2" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+          <circle cx="12" cy="16" r="1.5" />
+        </svg>
+      );
+    case 'wrench':
+      return (
+        <svg {...common}>
+          <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6.6 6.6 2.6 2.6 6.6-6.6a4 4 0 0 0 5.4-5.4l-2.4 2.4-2.5-2.5 2.4-2.4Z" />
+        </svg>
+      );
+    case 'cap':
+      return (
+        <svg {...common}>
+          <path d="M22 10 12 5 2 10l10 5 10-5Z" />
+          <path d="M6 12v5a8 8 0 0 0 12 0v-5" />
+          <path d="M22 10v6" />
+        </svg>
+      );
+    case 'lightbulb':
+      return (
+        <svg {...common}>
+          <path d="M9 18h6" />
+          <path d="M10 21h4" />
+          <path d="M12 3a6 6 0 0 0-4 10.5c1 1 1.5 2 1.5 3.5h5c0-1.5.5-2.5 1.5-3.5A6 6 0 0 0 12 3Z" />
+        </svg>
+      );
+    case 'briefcase':
+      return (
+        <svg {...common}>
+          <rect x="3" y="7" width="18" height="13" rx="2" />
+          <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          <path d="M3 13h18" />
+        </svg>
+      );
   }
 }
 
@@ -271,83 +317,114 @@ export default function AboutValues() {
             position: 'relative',
             zIndex: 1,
             display: 'grid',
+            // 3-col on wide desktops (3×2 grid for 6 cards), 2-col on tablet,
+            // single column on mobile. Replaces the previous 4-col layout that
+            // left a 4+2 dangling row and produced very tall narrow cards.
             gridTemplateColumns: isGridWide
-              ? 'repeat(4, 1fr)'
+              ? 'repeat(3, 1fr)'
               : isGridDesktop
               ? 'repeat(2, 1fr)'
               : '1fr',
-            gap: '1.5rem',
+            gap: '1rem',
+            maxWidth: '1200px',
+            marginInline: 'auto',
           }}
         >
-          {aboutValuesContent.values.map((v) => (
-            <div
-              key={v.id}
-              className="about-value-card"
-              style={{
-                position: 'relative',
-                padding: '2rem 1.75rem',
-                border: '1px solid rgba(168,240,255,0.1)',
-                background: 'rgba(13,16,20,0.4)',
-                willChange: 'transform, opacity',
-                transition: 'border-color 0.3s, box-shadow 0.3s',
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget;
-                el.style.borderColor = 'rgba(168,240,255,0.35)';
-                el.style.boxShadow =
-                  '0 12px 32px rgba(0,0,0,0.5), 0 0 24px rgba(168,240,255,0.08)';
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget;
-                el.style.borderColor = 'rgba(168,240,255,0.1)';
-                el.style.boxShadow = 'none';
-              }}
-            >
+          {aboutValuesContent.values.map((v, i) => {
+            // Per-card colour palette — cycles through cyan / red-team /
+            // terminal-green / blue-team / violet / cyan. Avoids the
+            // previous all-red wash and reads more like a "service catalog".
+            const palette = [
+              { hue: 'rgba(168,240,255', token: 'var(--color-beam-glow)' },     // cyan
+              { hue: 'rgba(255,61,90',   token: 'var(--color-red-team-glow)' }, // red
+              { hue: 'rgba(0,255,148',   token: 'var(--color-terminal)' },      // green
+              { hue: 'rgba(61,168,255',  token: 'var(--color-blue-team)' },     // blue
+              { hue: 'rgba(140,80,255',  token: 'rgba(140,80,255,1)' },         // violet
+              { hue: 'rgba(168,240,255', token: 'var(--color-beam-glow)' },     // cyan
+            ];
+            const p = palette[i % palette.length];
+            return (
               <div
-                aria-hidden="true"
-                className="about-value-icon"
+                key={v.id}
+                className="about-value-card"
                 style={{
-                  width: '54px',
-                  height: '54px',
-                  borderRadius: '10px',
-                  background: 'rgba(255,61,90,0.08)',
-                  border: '1px solid rgba(255,61,90,0.25)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--color-red-team-glow)',
-                  marginBottom: '1.5rem',
-                  willChange: 'transform',
+                  position: 'relative',
+                  // Horizontal layout: icon column (auto width) + content column.
+                  display: 'grid',
+                  gridTemplateColumns: 'auto 1fr',
+                  alignItems: 'start',
+                  gap: '1.1rem',
+                  padding: '1.4rem 1.5rem',
+                  border: '1px solid rgba(168,240,255,0.1)',
+                  background: 'rgba(13,16,20,0.55)',
+                  willChange: 'transform, opacity',
+                  transition: 'border-color 0.3s, box-shadow 0.3s, transform 0.3s',
+                  // Subtle accent strip on the left edge using the card's hue.
+                  borderLeft: `2px solid ${p.hue},0.4)`,
+                }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget;
+                  el.style.borderColor = `${p.hue},0.35)`;
+                  el.style.borderLeftColor = `${p.hue},0.85)`;
+                  el.style.boxShadow = `0 10px 28px rgba(0,0,0,0.5), 0 0 24px ${p.hue},0.12)`;
+                  el.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget;
+                  el.style.borderColor = 'rgba(168,240,255,0.1)';
+                  el.style.borderLeftColor = `${p.hue},0.4)`;
+                  el.style.boxShadow = 'none';
+                  el.style.transform = 'translateY(0)';
                 }}
               >
-                <ValueIconSvg name={v.icon} />
+                <div
+                  aria-hidden="true"
+                  className="about-value-icon"
+                  style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '8px',
+                    background: `${p.hue},0.08)`,
+                    border: `1px solid ${p.hue},0.3)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: p.token,
+                    flexShrink: 0,
+                    willChange: 'transform',
+                  }}
+                >
+                  <ValueIconSvg name={v.icon} />
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '1.05rem',
+                      fontWeight: 700,
+                      letterSpacing: '-0.01em',
+                      color: 'var(--color-text-primary)',
+                      margin: '0 0 0.45rem',
+                      lineHeight: 1.25,
+                    }}
+                  >
+                    {v.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '0.875rem',
+                      color: 'var(--color-text-secondary)',
+                      margin: 0,
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    {v.description}
+                  </p>
+                </div>
               </div>
-              <h3
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.35rem',
-                  fontWeight: 700,
-                  letterSpacing: '-0.01em',
-                  color: 'var(--color-text-primary)',
-                  margin: '0 0 0.85rem',
-                  lineHeight: 1.2,
-                }}
-              >
-                {v.title}
-              </h3>
-              <p
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 'var(--text-base)',
-                  color: 'var(--color-text-secondary)',
-                  margin: 0,
-                  lineHeight: 1.6,
-                }}
-              >
-                {v.description}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Vignette */}

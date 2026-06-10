@@ -260,7 +260,10 @@ export default function AboutStats() {
           className="section-container"
           style={{
             display: 'grid',
-            gridTemplateColumns: isMobileGrid ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+            // 6 stats — 2-col on phones, 3-col on desktop so the grid is a
+            // clean 2×3 / 3×2 instead of the previous 4-col which would have
+            // left a half-row dangling.
+            gridTemplateColumns: isMobileGrid ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
             gap: '1px',
             background: 'rgba(168,240,255,0.08)',
             border: '1px solid rgba(168,240,255,0.1)',

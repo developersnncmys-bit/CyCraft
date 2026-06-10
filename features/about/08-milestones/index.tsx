@@ -236,26 +236,25 @@ export default function AboutMilestones() {
             position: 'relative',
             zIndex: 1,
             display: 'grid',
-            gridTemplateColumns: isGridWide
-              ? 'repeat(3, 1fr)'
-              : isGridDesktop
-              ? 'repeat(2, 1fr)'
-              : '1fr',
-            gap: '1.25rem',
+            // Two vision statements side-by-side on tablet+, stacked on mobile.
+            gridTemplateColumns: isGridDesktop ? 'repeat(2, 1fr)' : '1fr',
+            gap: '1.5rem',
+            maxWidth: '1100px',
+            marginInline: 'auto',
           }}
         >
-          {aboutMilestonesContent.milestones.map((m) => (
+          {aboutMilestonesContent.statements.map((s, i) => (
             <div
-              key={m.id}
+              key={s.id}
               className="about-mile-card"
               style={{
                 position: 'relative',
-                padding: '1.75rem 1.5rem',
+                padding: '2rem 1.75rem',
                 border: '1px solid rgba(168,240,255,0.1)',
                 background: 'rgba(13,16,20,0.45)',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '0.6rem',
+                gap: '1rem',
                 willChange: 'transform, opacity',
                 transition: 'border-color 0.3s, box-shadow 0.3s',
               }}
@@ -281,23 +280,22 @@ export default function AboutMilestones() {
                   willChange: 'transform, opacity',
                 }}
               >
-                {'// '}
-                {m.label}
+                {`// ${String(i + 1).padStart(2, '0')}`}
               </div>
-              <div
+              <p
                 className="about-mile-value"
                 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.15rem',
-                  fontWeight: 600,
-                  color: 'var(--color-text-primary)',
-                  letterSpacing: '-0.01em',
-                  lineHeight: 1.3,
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 'var(--text-base)',
+                  fontWeight: 400,
+                  color: 'var(--color-text-secondary)',
+                  lineHeight: 1.7,
+                  margin: 0,
                   willChange: 'transform, opacity',
                 }}
               >
-                {m.value}
-              </div>
+                {s.body}
+              </p>
             </div>
           ))}
         </div>

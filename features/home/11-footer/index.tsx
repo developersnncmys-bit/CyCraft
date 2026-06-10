@@ -1,5 +1,6 @@
 'use client';
 import { useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '@/lib/gsap/register';
@@ -53,14 +54,16 @@ export default function HomeFooter() {
         toggleActions: 'play none none none',
       };
 
-      // Brand mark — slow reveal
+      // Brand mark — slow reveal. The brand is now an image (replaces the
+      // previous mono-text), so the letter-spacing tween is dropped — y +
+      // opacity + slight scale is the right shape for a logo.
       gsap.fromTo(
         '.home-footer-brand',
-        { opacity: 0, y: 16, letterSpacing: '0.3em' },
+        { opacity: 0, y: 16, scale: 0.96 },
         {
           opacity: 1,
           y: 0,
-          letterSpacing: '0.06em',
+          scale: 1,
           duration: 0.9,
           ease: 'power3.out',
           scrollTrigger: trigger,
@@ -158,15 +161,19 @@ export default function HomeFooter() {
             <div
               className="home-footer-brand"
               style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '1.5rem',
-                color: 'var(--color-beam)',
-                fontWeight: 700,
                 marginBottom: '1rem',
-                letterSpacing: '0.06em',
+                display: 'inline-block',
               }}
             >
-              {homeFooterContent.brand}
+              {/* Brand mark — image logo replaces the prior mono-text brand. */}
+              <Image
+                src="/logo.png"
+                alt={homeFooterContent.brand}
+                width={1700}
+                height={1269}
+                sizes="160px"
+                style={{ height: '96px', width: 'auto', display: 'block' }}
+              />
             </div>
             <p
               className="home-footer-tagline"
@@ -200,14 +207,26 @@ export default function HomeFooter() {
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                 {col.links.map((l) => {
+                  const textStyle = {
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 'var(--text-sm)',
+                    color: 'var(--color-text-tertiary)',
+                    textDecoration: 'none' as const,
+                    transition: 'color 0.2s',
+                  };
+                  // `disabled: true` (set in content/home/footer.ts) renders
+                  // the label as a plain span instead of a link — used by the
+                  // Programs column so the labels read as descriptive copy
+                  // rather than nav targets.
+                  if ('disabled' in l && l.disabled) {
+                    return (
+                      <li key={l.label}>
+                        <span style={textStyle}>{l.label}</span>
+                      </li>
+                    );
+                  }
                   const linkProps = {
-                    style: {
-                      fontFamily: 'var(--font-body)',
-                      fontSize: 'var(--text-sm)',
-                      color: 'var(--color-text-tertiary)',
-                      textDecoration: 'none' as const,
-                      transition: 'color 0.2s',
-                    },
+                    style: textStyle,
                     onMouseEnter: (e: React.MouseEvent<HTMLAnchorElement>) => {
                       e.currentTarget.style.color = 'var(--color-beam)';
                     },

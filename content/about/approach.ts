@@ -5,32 +5,43 @@ export interface ApproachPillar {
   description: string;
 }
 
+/**
+ * Content (v1.3) — Section 5 "Our Learning Approach": Learn. Practice. Apply.
+ * Excel. Four sequential steps replace the previous three pillars. The
+ * `aboutApproachContent` shape (badge / heading / description / pillars[])
+ * stays identical so the section's animation timeline keeps firing — the
+ * existing pillar-card render is array-driven and accommodates a 4th step
+ * naturally.
+ */
 export const aboutApproachContent = {
-  badge: 'OUR APPROACH',
-  heading: 'Our Approach',
+  badge: 'OUR LEARNING APPROACH',
+  heading: 'Learn. Practice. Apply. Excel.',
   description:
-    'We believe that effective cybersecurity education requires more than just lectures. Our three-pillar approach ensures students are truly prepared for their careers.',
+    'A four-stage journey that turns curiosity into capability and capability into career readiness.',
   pillars: [
     {
-      id: 'theory',
+      id: 'discover',
       number: '1',
-      title: 'Theory',
-      description:
-        'Comprehensive coverage of cybersecurity fundamentals, frameworks, and concepts taught by industry experts.',
+      title: 'Discover',
+      description: 'Build strong foundational knowledge and technical understanding.',
     },
     {
-      id: 'practice',
+      id: 'experience',
       number: '2',
-      title: 'Practice',
-      description:
-        'Hands-on labs, real-world scenarios, and capstone projects that turn knowledge into operational skill.',
+      title: 'Experience',
+      description: 'Participate in practical labs, simulations, projects, and challenges.',
     },
     {
-      id: 'career',
+      id: 'collaborate',
       number: '3',
-      title: 'Career',
-      description:
-        'Internships, interview preparation, and direct placement support with our network of industry partners.',
+      title: 'Collaborate',
+      description: 'Work with mentors, peers, and industry experts on meaningful initiatives.',
+    },
+    {
+      id: 'achieve',
+      number: '4',
+      title: 'Achieve',
+      description: 'Develop skills, confidence, and professional readiness for future careers.',
     },
   ] satisfies readonly ApproachPillar[],
 } as const;
