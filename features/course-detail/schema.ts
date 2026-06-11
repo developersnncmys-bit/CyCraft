@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isValidPhone, PHONE_ERROR_MESSAGE } from '@/lib/utils/phone';
 
 /**
  * Per-course-detail-page enquiry form.
@@ -13,7 +14,12 @@ export const enquirySchema = z.object({
   courseTitle: z.string().min(1).max(200),
   fullName: z.string().min(2, 'Name must be at least 2 characters').max(80),
   email: z.string().email('Invalid email address'),
-  phone: z.string().regex(/^[+0-9\s\-()]{7,20}$/, 'Invalid phone number'),
+  phone: z
+    .string()
+    .trim()
+    .min(7, 'Phone number too short')
+    .max(20, 'Phone number too long')
+    .refine(isValidPhone, PHONE_ERROR_MESSAGE),
   message: z.string().max(2000).optional(),
   website: z.string().max(0).optional(), // honeypot
 });

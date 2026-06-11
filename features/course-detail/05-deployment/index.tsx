@@ -17,7 +17,10 @@ import { useRef, useState, type FormEvent } from 'react';
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '@/lib/gsap/register';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
+import { isValidPhone, PHONE_ERROR_MESSAGE } from '@/lib/utils/phone';
 import type { Course } from '@/content/courses/catalog';
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type FormState =
   | { kind: 'idle' }
@@ -47,6 +50,14 @@ export default function CourseDeployment({ course }: CourseDeploymentProps) {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !phone.trim()) {
       setState({ kind: 'error', message: 'Name, email, and phone are required.' });
+      return;
+    }
+    if (!EMAIL_RE.test(email.trim())) {
+      setState({ kind: 'error', message: 'Enter a valid email address.' });
+      return;
+    }
+    if (!isValidPhone(phone)) {
+      setState({ kind: 'error', message: PHONE_ERROR_MESSAGE });
       return;
     }
     setState({ kind: 'busy' });

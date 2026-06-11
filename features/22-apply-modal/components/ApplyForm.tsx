@@ -138,7 +138,8 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
               {...register('phone')}
               type="tel"
               autoComplete="tel"
-              placeholder="+1 (555) 000-0000"
+              inputMode="tel"
+              placeholder="+91 98765 43210"
               className="apply-input"
               style={inputStyle}
             />

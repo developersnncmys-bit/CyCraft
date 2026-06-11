@@ -175,6 +175,7 @@ export function ContactForm() {
               {...register('phone')}
               type="tel"
               autoComplete="tel"
+              inputMode="tel"
               placeholder={contactFormContent.fields.phone.placeholder}
               className="apply-input"
               style={inputStyle}
