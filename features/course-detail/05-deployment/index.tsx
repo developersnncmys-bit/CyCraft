@@ -50,13 +50,32 @@ export default function CourseDeployment({ course }: CourseDeploymentProps) {
       return;
     }
     setState({ kind: 'busy' });
-    await new Promise((r) => setTimeout(r, 700));
-    setState({ kind: 'success' });
-    setName('');
-    setEmail('');
-    setPhone('');
-    setMessage('');
-    ScrollTrigger.refresh();
+    try {
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseSlug: course.slug,
+          courseTitle: course.title,
+          fullName: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          message: message.trim() || undefined,
+        }),
+      });
+      if (!res.ok) throw new Error('request failed');
+      setState({ kind: 'success' });
+      setName('');
+      setEmail('');
+      setPhone('');
+      setMessage('');
+      ScrollTrigger.refresh();
+    } catch {
+      setState({
+        kind: 'error',
+        message: 'Connection failed. Please try again or email us directly.',
+      });
+    }
   };
 
   useGSAP(
@@ -399,7 +418,11 @@ function FormField({
     border: '1px solid rgba(168,240,255,0.18)',
     color: 'var(--color-text-primary)',
     fontFamily: 'var(--font-body)',
-    fontSize: 'var(--text-sm)',
+    // 16px floor — iOS Safari auto-zooms the page on focus when the
+    // input font is under 16px, which then leaves the user pinch-zoomed
+    // and disoriented. Keep the visual size as --text-sm via line-height
+    // tweaks if needed, but never let computed font-size dip below 16px.
+    fontSize: '16px',
     outline: 'none',
     transition: 'border-color 0.2s, box-shadow 0.2s',
     resize: multiline ? ('vertical' as const) : ('none' as const),

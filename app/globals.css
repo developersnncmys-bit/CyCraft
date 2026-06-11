@@ -82,6 +82,12 @@
 
 html {
   scroll-behavior: auto; /* Lenis handles smooth scroll */
+  /* Match body's overflow-x:hidden — without it, any briefly-too-wide
+     element creates a horizontal scrollbar at the document level. The
+     emulated mobile viewport then auto-scrolls to a non-zero x position
+     and every fixed-width section appears shifted right, with the left
+     portion of each line clipped off the visible viewport. */
+  overflow-x: hidden;
   /* Solid fallback for no-JS / pre-mount. CinemaBackground overlays at z-index:-1. */
   background: var(--color-void);
   color: var(--color-text-primary);

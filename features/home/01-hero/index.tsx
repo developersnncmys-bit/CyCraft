@@ -244,7 +244,7 @@ export default function HomeHero() {
         }}
       >
         <div style={{ maxWidth: '960px', marginInline: 'auto' }}>
-          <div className="hero-badge" style={{ display: 'inline-block', marginBottom: '2rem' }}>
+          <div className="hero-badge" style={{ display: 'inline-block', maxWidth: '100%', marginBottom: '2rem' }}>
             <Badge label={homeHeroContent.badge} />
           </div>
 

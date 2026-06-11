@@ -35,7 +35,7 @@ export const homeFooterContent = {
     },
   ],
   contact: {
-    email: 'support@cycraft.in',
+    email: 'info@cycraft.in',
     phone: '+91 7259787316',
     address: 'Sattva Global City, Mysore Road, Bengaluru, Karnataka 560059',
   },

@@ -4,8 +4,8 @@ export const contactInfoContent = {
     {
       key: 'email',
       label: 'Email',
-      value: 'support@cycraft.in',
-      href: 'mailto:support@cycraft.in',
+      value: 'info@cycraft.in',
+      href: 'mailto:info@cycraft.in',
     },
     {
       key: 'phone',
@@ -28,6 +28,6 @@ export const contactInfoContent = {
   schedule: {
     heading: 'Schedule a Visit',
     body: 'Want to connect with us? Schedule a call today!',
-    cta: { label: 'Book a Call', href: 'mailto:support@cycraft.in?subject=Schedule%20a%20call' },
+    cta: { label: 'Book a Call', href: 'mailto:info@cycraft.in?subject=Schedule%20a%20call' },
   },
 } as const;

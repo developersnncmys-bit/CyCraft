@@ -85,6 +85,18 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
   return (
     <>
       <style>{inputFocusCSS}</style>
+      <style>{`
+        /* Narrow phones — collapse the two-column rows to a single column.
+           At 390px in the 92vw modal each cell was ~150px wide; even the
+           mono label "EXPERIENCE LEVEL" at 0.18em tracking is ~190px and
+           overflows the cell, dragging form layout past the viewport. */
+        @media (max-width: 600px) {
+          .apply-form-row {
+            grid-template-columns: 1fr !important;
+            gap: 0.85rem !important;
+          }
+        }
+      `}</style>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -95,7 +107,7 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
         <input {...register('website')} type="text" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
 
         {/* Row 1 — Name + Email */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div className="apply-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <FormField label="Full Name" error={errors.fullName} required>
             <input
               {...register('fullName')}
@@ -120,7 +132,7 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
         </div>
 
         {/* Row 2 — Phone + Experience Level */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div className="apply-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <FormField label="Phone Number" error={errors.phone} required>
             <input
               {...register('phone')}

@@ -95,8 +95,8 @@ export function Navbar() {
       <div className="section-container flex items-center justify-between h-16">
         {/* Logo — shield-and-lock mark from /public/logo.png. priority=true so
             Next.js fetches it during initial paint instead of lazy-loading
-            (above-the-fold). Intrinsic 1700×1269 (~1.34:1 aspect); rendered
-            at 44px tall in the 64px-tall navbar. */}
+            (above-the-fold). Intrinsic 1700×1300 (~1.31:1 aspect); rendered
+            at 54px tall in the 64px-tall navbar. */}
         <Link
           href="/"
           className="inline-flex items-center"
@@ -109,8 +109,8 @@ export function Navbar() {
             width={1700}
             height={1300}
             priority
-            sizes="100px"
-            style={{ height: '54px', width: 'auto', display: 'block' }}
+            sizes="120px"
+            style={{ height: '60px', width: 'auto', display: 'block' }}
           />
         </Link>
 

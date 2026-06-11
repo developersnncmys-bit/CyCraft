@@ -56,7 +56,11 @@ export function FormField({ label, error, children, required, hint }: FormFieldP
 /* Shared input/select/textarea style — import and use directly */
 export const inputStyle: React.CSSProperties = {
   fontFamily: 'var(--font-body)',
-  fontSize: 'var(--text-sm)',
+  // 16px floor — iOS Safari auto-zooms the page when a focused input
+  // has font-size < 16px, leaving the user pinch-zoomed. Sized via
+  // pixels rather than --text-sm (14px) so the rule survives token
+  // changes. Visual density unchanged on desktop.
+  fontSize: '16px',
   color: 'var(--color-text-primary)',
   background: 'rgba(255,255,255,0.03)',
   border: '1px solid rgba(168,240,255,0.12)',

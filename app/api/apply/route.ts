@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { applySchema } from '@/features/22-apply-modal/schema';
+import { getMailer, getMailFrom, getMailTo } from '@/lib/mail/transport';
+import { applyTemplate } from '@/lib/mail/templates';
+
+// Force the dynamic runtime — nodemailer is a Node.js module and won't
+// run on the Edge runtime.
+export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,19 +19,40 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Reject honeypot — bot filled the hidden field
+    // Honeypot — bot filled the hidden field. Silent OK.
     if (parsed.data.website) {
-      return NextResponse.json({ ok: true }); // silent reject
+      return NextResponse.json({ ok: true });
     }
 
+    const { fullName, email, phone, experienceLevel, educationalBackground } = parsed.data;
+
+    const { subject, html, text } = applyTemplate({
+      fullName,
+      email,
+      phone,
+      experienceLevel,
+      educationalBackground,
+    });
+
+    const mailer = getMailer();
+    await mailer.sendMail({
+      from: getMailFrom(),
+      to: getMailTo(),
+      replyTo: email,
+      subject,
+      html,
+      text,
+    });
+
+    // Optional webhook fan-out for downstream automation (Zapier, CRM, etc.)
     const webhookUrl = process.env.APPLY_FORM_WEBHOOK_URL;
     if (webhookUrl) {
-      const upstream = await fetch(webhookUrl, {
+      // Fire-and-forget — don't block the response on a slow webhook.
+      fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(parsed.data),
-      });
-      if (!upstream.ok) throw new Error('Upstream webhook failed');
+      }).catch((err) => console.error('[apply] webhook failed', err));
     }
 
     return NextResponse.json({ ok: true });

@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { contactSchema } from '@/features/contact/schema';
+import { enquirySchema } from '@/features/course-detail/schema';
 import { getMailer, getMailFrom, getMailTo } from '@/lib/mail/transport';
-import { contactTemplate } from '@/lib/mail/templates';
+import { enquiryTemplate } from '@/lib/mail/templates';
 
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const parsed = contactSchema.safeParse(body);
+    const parsed = enquirySchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -22,9 +22,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    const { fullName, email, phone, subject, message } = parsed.data;
+    const { courseSlug, courseTitle, fullName, email, phone, message } = parsed.data;
 
-    const tpl = contactTemplate({ fullName, email, phone, subject, message });
+    const tpl = enquiryTemplate({
+      courseSlug,
+      courseTitle,
+      fullName,
+      email,
+      phone,
+      message,
+    });
 
     const mailer = getMailer();
     await mailer.sendMail({
@@ -37,18 +44,18 @@ export async function POST(req: NextRequest) {
     });
 
     // Optional downstream webhook
-    const webhookUrl = process.env.CONTACT_FORM_WEBHOOK_URL;
+    const webhookUrl = process.env.ENQUIRY_FORM_WEBHOOK_URL;
     if (webhookUrl) {
       fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(parsed.data),
-      }).catch((err) => console.error('[contact] webhook failed', err));
+      }).catch((err) => console.error('[enquiry] webhook failed', err));
     }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error('[contact]', err);
+    console.error('[enquiry]', err);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

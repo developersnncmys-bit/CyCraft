@@ -85,9 +85,12 @@ export default function CourseCurriculum({ course, syllabus }: CourseCurriculumP
     [course.durationWeeks, moduleCount],
   );
 
-  // Dramatic stats — derived from existing course data so no per-course
-  // authoring is needed. Engaged-hours assumes ~15h/week cohort cadence;
-  // lab-exercises assumes ~3 per module.
+  // Dramatic stats — sourced from EC-Council brochures where possible.
+  //   Duration       = institute pacing (catalog.durationWeeks)
+  //   Modules        = syllabus length (brochure module count)
+  //   Video Hours    = brochure "X+ hours of self-paced video training"
+  //   Lab Exercises  = brochure hands-on lab activity count
+  // All four values come directly from `course` now — no formulas.
   const stats = useMemo(
     () => [
       {
@@ -103,19 +106,19 @@ export default function CourseCurriculum({ course, syllabus }: CourseCurriculumP
         color: 'var(--color-terminal)',
       },
       {
-        value: course.durationWeeks * 15,
-        suffix: 'h',
-        label: 'Engaged Hours',
+        value: course.videoHours,
+        suffix: 'h+',
+        label: 'Video Hours',
         color: 'var(--color-beam)',
       },
       {
-        value: Math.max(moduleCount * 3, 12),
-        suffix: '+',
+        value: course.labCount,
+        suffix: '',
         label: 'Lab Exercises',
         color: 'var(--color-red-team-glow)',
       },
     ],
-    [course.durationWeeks, moduleCount],
+    [course.durationWeeks, course.videoHours, course.labCount, moduleCount],
   );
 
   useGSAP(
@@ -476,6 +479,15 @@ export default function CourseCurriculum({ course, syllabus }: CourseCurriculumP
           .cd-cur-stat {
             padding: clamp(0.85rem, 2vw, 1.25rem) !important;
           }
+          /* "LAB EXERCISES" / "ENGAGED HOURS" are two-word labels — at
+             0.22em tracking on a 360px viewport they wrap mid-letter
+             clusters. Loosen tracking + give the label its own min-height
+             so single- and two-word labels align visually across the row. */
+          .cd-cur-stat-label {
+            letter-spacing: 0.14em !important;
+            line-height: 1.25 !important;
+            min-height: 2.5em;
+          }
         }
       `}</style>
 
@@ -645,6 +657,7 @@ export default function CourseCurriculum({ course, syllabus }: CourseCurriculumP
                     {stat.suffix && <span aria-hidden="true">{stat.suffix}</span>}
                   </span>
                   <span
+                    className="cd-cur-stat-label"
                     style={{
                       fontFamily: 'var(--font-mono)',
                       fontSize: '11px',

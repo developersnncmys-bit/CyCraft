@@ -9,7 +9,7 @@
  * of the site, NOT a full-bleed image.
  *
  * Reveal autoplays on load (preloader-aware), no pin. */
-import { useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '@/lib/gsap/register';
@@ -133,14 +133,41 @@ interface CourseHeroProps {
   longDescription?: string;
 }
 
+const DESC_LINE_CLAMP = 8;
+
 export default function CourseHero({ course, longDescription }: CourseHeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const descRef = useRef<HTMLParagraphElement>(null);
   const reducedMotion = useReducedMotion();
   const accent = accentForLevel(course.level);
   const offensive = isOffensive(course.level);
   const desc = longDescription ?? course.description;
   const progId = programCode(course.slug);
   const focusTag = course.categories[0] ?? 'PROGRAM';
+  const [expanded, setExpanded] = useState(false);
+  const [overflowing, setOverflowing] = useState(false);
+
+  // Measure whether the description actually overflows the clamp. If it
+  // fits within DESC_LINE_CLAMP lines we skip the toggle entirely. Re-runs
+  // on slug change (different desc) and on viewport resize (wraps differ).
+  useLayoutEffect(() => {
+    const el = descRef.current;
+    if (!el) return;
+    const measure = () => {
+      // scrollHeight reflects full content; clientHeight reflects the
+      // clamped box. Add a small tolerance for sub-pixel rounding.
+      setOverflowing(el.scrollHeight - el.clientHeight > 2);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [desc]);
+
+  // Reset to collapsed when navigating between courses.
+  useEffect(() => {
+    setExpanded(false);
+  }, [course.slug]);
 
   useGSAP(
     () => {
@@ -267,15 +294,29 @@ export default function CourseHero({ course, longDescription }: CourseHeroProps)
             grid-template-columns: 1fr;
             gap: clamp(1.25rem, 3vw, 1.75rem);
           }
-          .cd-hero-frame-wrap { order: -1; }
+          /* Title-first on mobile/tablet single-column layouts — natural
+             DOM order applies, so the dossier (back link, program id,
+             title, description, meta) renders above the image. The image
+             is the supporting visual, not the lead. */
         }
         @media (max-width: 600px) {
-          /* Narrow phones — give text more vertical breathing, shrink image */
-          .cd-hero-frame { aspect-ratio: 16 / 10 !important; }
+          /* Narrow phones — make the image a tidy banner below the
+             dossier instead of a full-bleed block. */
+          .cd-hero-frame {
+            aspect-ratio: 16 / 10 !important;
+          }
           .cd-hero-progstripe { row-gap: 0.35rem !important; }
           .cd-hero-frame-class {
             font-size: 9px !important;
             letter-spacing: 0.16em !important;
+          }
+          /* Tap targets — bump touch elements to ~44px via min-height
+             only (the existing inline-flex + align-items: center handles
+             vertical centring, so no padding bloat). */
+          .cd-hero-back,
+          .cd-hero-expand,
+          .cd-hero-meta > span {
+            min-height: 44px;
           }
         }
       `}</style>
@@ -446,20 +487,80 @@ export default function CourseHero({ course, longDescription }: CourseHeroProps)
               <WordSplit text={course.title} />
             </h1>
 
-            {/* Long description */}
-            <p
-              className="cd-hero-desc"
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 'var(--text-base)',
-                color: 'var(--color-text-secondary)',
-                maxWidth: '540px',
-                margin: '0 0 1.25rem',
-                lineHeight: 1.55,
-              }}
-            >
-              <WordSplit text={desc} />
-            </p>
+            {/* Long description — clamped to DESC_LINE_CLAMP lines until
+                the user expands the briefing. WordSplit renders each word
+                as an inline-block span, so we use a max-height clamp
+                (line-clamp via -webkit-box treats inline-block children
+                as block items and doesn't engage). The em-based height
+                tracks the paragraph's own font-size + line-height. */}
+            <div style={{ maxWidth: '540px', margin: '0 0 1.25rem' }}>
+              <p
+                ref={descRef}
+                className="cd-hero-desc"
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 'var(--text-base)',
+                  color: 'var(--color-text-secondary)',
+                  margin: 0,
+                  lineHeight: 1.55,
+                  position: 'relative',
+                  ...(expanded
+                    ? {}
+                    : {
+                        maxHeight: `${DESC_LINE_CLAMP * 1.55}em`,
+                        overflow: 'hidden',
+                        // Soft fade on the last line to signal more
+                        // content below. mask-image is a hint only —
+                        // the explicit toggle is the real affordance.
+                        WebkitMaskImage:
+                          'linear-gradient(to bottom, black 78%, transparent 100%)',
+                        maskImage:
+                          'linear-gradient(to bottom, black 78%, transparent 100%)',
+                      }),
+                }}
+              >
+                <WordSplit text={desc} />
+              </p>
+              {overflowing && (
+                <button
+                  type="button"
+                  className="cd-hero-expand"
+                  onClick={() => setExpanded((v) => !v)}
+                  aria-expanded={expanded}
+                  style={{
+                    marginTop: '0.7rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.4rem 0.75rem',
+                    background: 'rgba(13,16,20,0.55)',
+                    border: '1px solid rgba(168,240,255,0.28)',
+                    backdropFilter: 'blur(6px)',
+                    WebkitBackdropFilter: 'blur(6px)',
+                    color: 'var(--color-beam)',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '11px',
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    transition: 'background 160ms ease, border-color 160ms ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(168,240,255,0.10)';
+                    e.currentTarget.style.borderColor = 'rgba(168,240,255,0.55)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(13,16,20,0.55)';
+                    e.currentTarget.style.borderColor = 'rgba(168,240,255,0.28)';
+                  }}
+                >
+                  <span aria-hidden="true" style={{ opacity: 0.7 }}>
+                    {expanded ? '[−]' : '[+]'}
+                  </span>
+                  {expanded ? 'Collapse briefing' : 'Expand briefing'}
+                </button>
+              )}
+            </div>
 
             {/* Meta strip — mono pills */}
             <div

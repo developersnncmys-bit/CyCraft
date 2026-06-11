@@ -146,6 +146,20 @@ export default function HomeAboutPreview() {
         overflow: 'hidden',
       }}
     >
+      <style>{`
+        /* Mobile — drop the 100vh min-heights so the section sizes to
+           its content instead of leaving ~250px of dead space above and
+           below the centred copy. The 100vh + flex centring is intended
+           for the desktop pinned scrub timeline; on mobile we don't pin
+           so it just bloats the page. Scoped to #about-preview only. */
+        @media (max-width: 767px) {
+          #about-preview { min-height: 0 !important; }
+          #about-preview .about-preview-camera {
+            min-height: 0 !important;
+            align-items: stretch !important;
+          }
+        }
+      `}</style>
       <div
         className="about-preview-camera"
         style={{

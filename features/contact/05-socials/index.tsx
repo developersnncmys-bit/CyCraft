@@ -208,18 +208,18 @@ export default function ContactSocials() {
         overflow: 'hidden',
       }}
     >
-      {/* 5-card responsive grid — preserved from prior orphan-fix */}
+      {/* 3-card responsive grid (Discord + Telegram dropped). Cards centre
+          within the section container so they don't cluster to the left edge.
+          Capped each card width so we don't get oversized billboards on
+          ultra-wide viewports. */}
       <style>{`
         .contact-soc-grid {
           display: grid;
           gap: clamp(1rem, 2vw, 1.5rem);
-          grid-template-columns: repeat(5, minmax(0, 1fr));
-        }
-        @media (max-width: 1100px) and (min-width: 721px) {
-          .contact-soc-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-          .contact-soc-grid > a { grid-column: span 2; }
-          .contact-soc-grid > a:nth-child(4) { grid-column: 2 / span 2; }
-          .contact-soc-grid > a:nth-child(5) { grid-column: 4 / span 2; }
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          max-width: 960px;
+          margin-inline: auto;
+          justify-content: center;
         }
         @media (max-width: 720px) and (min-width: 421px) {
           .contact-soc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

@@ -18,6 +18,15 @@ export interface Course {
   priceInr: number;
   level: CourseLevel;
   categories: CourseCategory[];
+  /** Self-paced video runtime in hours, as published in the EC-Council
+   *  brochure ("X+ hours of self-paced video training"). Drives the
+   *  "Video Hours" stat in the course-detail curriculum section. */
+  videoHours: number;
+  /** Hands-on lab count as published in the brochure. For Cloud Security
+   *  this counts the AWS/Azure/M365 lab tasks total (24) rather than a
+   *  per-module figure (the brochure quotes both, tasks is the specific
+   *  number). Drives the "Lab Exercises" stat. */
+  labCount: number;
   /** Pexels CDN image URL displayed on the card's mascot panel. If the
    *  image fails to load (404), the card falls back to the existing
    *  gradient + 3-letter glyph placeholder. */
@@ -55,9 +64,10 @@ export const coursesCatalogContent = {
   levelFilters: ['All', 'Beginner', 'Intermediate'] as const,
   categoryFilters: ['All', 'Offensive', 'Defensive', 'Cloud', 'Malware'] as const,
   // EC-Council Essentials Series — 8 industry-aligned introductory tracks.
-  // Each card opens the official EC-Council course page in a new tab
-  // (see `externalUrl`). No internal /courses/[slug] detail page is
-  // generated for these — the partner page IS the detail page.
+  // Each card navigates to the internal /courses/[slug] detail page,
+  // populated from content/courses/details/<slug>.ts with curriculum,
+  // prerequisites, and outcomes sourced from the official EC-Council
+  // course pages.
   courses: [
     {
       slug: 'ethical-hacking-essentials',
@@ -68,9 +78,10 @@ export const coursesCatalogContent = {
       priceInr: 15000,
       level: 'Beginner',
       categories: ['Offensive'],
+      videoHours: 15,
+      labCount: 11,
       image:
         'https://images.pexels.com/photos/5380589/pexels-photo-5380589.jpeg?auto=compress&cs=tinysrgb&w=800',
-      externalUrl: 'https://www.eccouncil.org/train-certify/ethical-hacking-essentials-ehe/',
     },
     {
       slug: 'network-defense-essentials',
@@ -81,9 +92,10 @@ export const coursesCatalogContent = {
       priceInr: 15000,
       level: 'Beginner',
       categories: ['Defensive'],
+      videoHours: 14,
+      labCount: 11,
       image:
         'https://images.pexels.com/photos/159304/network-cable-ethernet-computer-159304.jpeg?auto=compress&cs=tinysrgb&w=800',
-      externalUrl: 'https://www.eccouncil.org/train-certify/network-defense-essentials-nde/',
     },
     {
       slug: 'digital-forensics-essentials',
@@ -94,9 +106,10 @@ export const coursesCatalogContent = {
       priceInr: 15000,
       level: 'Beginner',
       categories: ['Defensive', 'Malware'],
+      videoHours: 11,
+      labCount: 11,
       image:
         'https://images.pexels.com/photos/270373/pexels-photo-270373.jpeg?auto=compress&cs=tinysrgb&w=800',
-      externalUrl: 'https://www.eccouncil.org/train-certify/digital-forensics-essentials-dfe/',
     },
     {
       slug: 'cloud-security-essentials',
@@ -107,9 +120,10 @@ export const coursesCatalogContent = {
       priceInr: 15000,
       level: 'Intermediate',
       categories: ['Defensive', 'Cloud'],
+      videoHours: 10,
+      labCount: 24,
       image:
         'https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=800',
-      externalUrl: 'https://www.eccouncil.org/train-certify/cloud-security-essentials-cse/',
     },
     {
       slug: 'devsecops-essentials',
@@ -120,9 +134,10 @@ export const coursesCatalogContent = {
       priceInr: 15000,
       level: 'Intermediate',
       categories: ['Defensive', 'Development'],
+      videoHours: 7,
+      labCount: 7,
       image:
         'https://images.pexels.com/photos/4709285/pexels-photo-4709285.jpeg?auto=compress&cs=tinysrgb&w=800',
-      externalUrl: 'https://www.eccouncil.org/train-certify/devsecops-essentials-dse/',
     },
     {
       slug: 'iot-security-essentials',
@@ -133,9 +148,10 @@ export const coursesCatalogContent = {
       priceInr: 15000,
       level: 'Intermediate',
       categories: ['Defensive', 'Systems'],
+      videoHours: 8,
+      labCount: 5,
       image:
         'https://images.pexels.com/photos/2881229/pexels-photo-2881229.jpeg?auto=compress&cs=tinysrgb&w=800',
-      externalUrl: 'https://www.eccouncil.org/train-certify/iot-security-essentials-ise/',
     },
     {
       slug: 'soc-essentials',
@@ -146,9 +162,10 @@ export const coursesCatalogContent = {
       priceInr: 15000,
       level: 'Beginner',
       categories: ['Defensive'],
+      videoHours: 10,
+      labCount: 6,
       image:
         'https://images.pexels.com/photos/2882552/pexels-photo-2882552.jpeg?auto=compress&cs=tinysrgb&w=800',
-      externalUrl: 'https://www.eccouncil.org/train-certify/soc-essentials-course-sce/',
     },
     {
       slug: 'threat-intelligence-essentials',
@@ -159,9 +176,10 @@ export const coursesCatalogContent = {
       priceInr: 15000,
       level: 'Intermediate',
       categories: ['Defensive'],
+      videoHours: 18,
+      labCount: 5,
       image:
         'https://images.pexels.com/photos/1933900/pexels-photo-1933900.jpeg?auto=compress&cs=tinysrgb&w=800',
-      externalUrl: 'https://www.eccouncil.org/train-certify/threat-intelligence-essentials-tie/',
     },
   ] as ReadonlyArray<Course>,
 } as const;

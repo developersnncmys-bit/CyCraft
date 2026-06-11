@@ -7,32 +7,20 @@ export const contactSocialsContent = {
     {
       key: 'linkedin',
       label: 'LinkedIn',
-      handle: '@cycraft',
-      href: 'https://linkedin.com/company/cycraft',
+      handle: 'cycraft-academy',
+      href: 'https://www.linkedin.com/company/cycraft-academy/',
     },
     {
       key: 'instagram',
       label: 'Instagram',
-      handle: '@cycraft',
-      href: 'https://instagram.com/cycraft',
+      handle: '@cycraft_academy',
+      href: 'https://www.instagram.com/cycraft_academy?igsh=MXc1eWxkZzBxdG0zdg==',
     },
     {
       key: 'youtube',
       label: 'YouTube',
-      handle: '@cycraft',
-      href: 'https://youtube.com/@cycraft',
-    },
-    {
-      key: 'discord',
-      label: 'Discord',
-      handle: 'CyCraft Community',
-      href: 'https://discord.gg/cycraft',
-    },
-    {
-      key: 'telegram',
-      label: 'Telegram',
-      handle: '@cycraft',
-      href: 'https://t.me/cycraft',
+      handle: '@cycraft-academy',
+      href: 'https://youtube.com/@cycraft-academy?si=fdxSN1E1aoSdi8Yo',
     },
   ] as const,
 } as const;

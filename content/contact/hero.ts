@@ -10,6 +10,6 @@ export const contactHeroContent = {
   terminalLines: [
     '> channel.open("admissions")',
     '> status: ready to receive transmission',
-    '> contact: support@cycraft.in',
+    '> contact: info@cycraft.in',
   ],
 } as const;
