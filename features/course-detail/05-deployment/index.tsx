@@ -18,6 +18,7 @@ import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '@/lib/gsap/register';
 import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { isValidPhone, PHONE_ERROR_MESSAGE } from '@/lib/utils/phone';
+import { formApiUrl } from '@/lib/utils/formApi';
 import type { Course } from '@/content/courses/catalog';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -62,7 +63,7 @@ export default function CourseDeployment({ course }: CourseDeploymentProps) {
     }
     setState({ kind: 'busy' });
     try {
-      const res = await fetch('/api/enquiry', {
+      const res = await fetch(formApiUrl('enquiry'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -2,10 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { applySchema } from '@/features/22-apply-modal/schema';
 import { getMailer, getMailFrom, getMailTo } from '@/lib/mail/transport';
 import { applyTemplate } from '@/lib/mail/templates';
+import { handleOptions, withCors } from '@/lib/cors';
 
 // Force the dynamic runtime — nodemailer is a Node.js module and won't
 // run on the Edge runtime.
 export const runtime = 'nodejs';
+
+export function OPTIONS(req: NextRequest) {
+  return handleOptions(req);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,15 +18,18 @@ export async function POST(req: NextRequest) {
     const parsed = applySchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: 'Validation failed', issues: parsed.error.issues },
-        { status: 400 },
+      return withCors(
+        req,
+        NextResponse.json(
+          { error: 'Validation failed', issues: parsed.error.issues },
+          { status: 400 },
+        ),
       );
     }
 
     // Honeypot — bot filled the hidden field. Silent OK.
     if (parsed.data.website) {
-      return NextResponse.json({ ok: true });
+      return withCors(req, NextResponse.json({ ok: true }));
     }
 
     const { fullName, email, phone, experienceLevel, educationalBackground } = parsed.data;
@@ -55,9 +63,9 @@ export async function POST(req: NextRequest) {
       }).catch((err) => console.error('[apply] webhook failed', err));
     }
 
-    return NextResponse.json({ ok: true });
+    return withCors(req, NextResponse.json({ ok: true }));
   } catch (err) {
     console.error('[apply]', err);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    return withCors(req, NextResponse.json({ error: 'Server error' }, { status: 500 }));
   }
 }

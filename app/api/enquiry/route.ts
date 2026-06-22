@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { enquirySchema } from '@/features/course-detail/schema';
 import { getMailer, getMailFrom, getMailTo } from '@/lib/mail/transport';
 import { enquiryTemplate } from '@/lib/mail/templates';
+import { handleOptions, withCors } from '@/lib/cors';
 
 export const runtime = 'nodejs';
+
+export function OPTIONS(req: NextRequest) {
+  return handleOptions(req);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,15 +16,18 @@ export async function POST(req: NextRequest) {
     const parsed = enquirySchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: 'Validation failed', issues: parsed.error.issues },
-        { status: 400 },
+      return withCors(
+        req,
+        NextResponse.json(
+          { error: 'Validation failed', issues: parsed.error.issues },
+          { status: 400 },
+        ),
       );
     }
 
     // Honeypot — silent OK.
     if (parsed.data.website) {
-      return NextResponse.json({ ok: true });
+      return withCors(req, NextResponse.json({ ok: true }));
     }
 
     const { courseSlug, courseTitle, fullName, email, phone, message } = parsed.data;
@@ -53,9 +61,9 @@ export async function POST(req: NextRequest) {
       }).catch((err) => console.error('[enquiry] webhook failed', err));
     }
 
-    return NextResponse.json({ ok: true });
+    return withCors(req, NextResponse.json({ ok: true }));
   } catch (err) {
     console.error('[enquiry]', err);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    return withCors(req, NextResponse.json({ error: 'Server error' }, { status: 500 }));
   }
 }

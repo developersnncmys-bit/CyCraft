@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { contactSchema } from '@/features/contact/schema';
 import { getMailer, getMailFrom, getMailTo } from '@/lib/mail/transport';
 import { contactTemplate } from '@/lib/mail/templates';
+import { handleOptions, withCors } from '@/lib/cors';
 
 export const runtime = 'nodejs';
+
+export function OPTIONS(req: NextRequest) {
+  return handleOptions(req);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,15 +16,18 @@ export async function POST(req: NextRequest) {
     const parsed = contactSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: 'Validation failed', issues: parsed.error.issues },
-        { status: 400 },
+      return withCors(
+        req,
+        NextResponse.json(
+          { error: 'Validation failed', issues: parsed.error.issues },
+          { status: 400 },
+        ),
       );
     }
 
     // Honeypot — silent OK.
     if (parsed.data.website) {
-      return NextResponse.json({ ok: true });
+      return withCors(req, NextResponse.json({ ok: true }));
     }
 
     const { fullName, email, phone, subject, message } = parsed.data;
@@ -46,9 +54,9 @@ export async function POST(req: NextRequest) {
       }).catch((err) => console.error('[contact] webhook failed', err));
     }
 
-    return NextResponse.json({ ok: true });
+    return withCors(req, NextResponse.json({ ok: true }));
   } catch (err) {
     console.error('[contact]', err);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    return withCors(req, NextResponse.json({ error: 'Server error' }, { status: 500 }));
   }
 }

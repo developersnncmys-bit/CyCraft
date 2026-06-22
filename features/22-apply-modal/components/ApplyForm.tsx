@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { applySchema, type ApplyFormData } from '../schema';
 import { FormField, inputStyle, inputFocusCSS } from './FormField';
+import { formApiUrl } from '@/lib/utils/formApi';
 
 interface ApplyFormProps { onClose: () => void }
 
@@ -20,7 +21,7 @@ export function ApplyForm({ onClose }: ApplyFormProps) {
   const onSubmit = async (data: ApplyFormData) => {
     setStatus('loading');
     try {
-      const res = await fetch('/api/apply', {
+      const res = await fetch(formApiUrl('apply'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

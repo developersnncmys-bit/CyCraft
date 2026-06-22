@@ -9,6 +9,7 @@ import {
   inputFocusCSS,
 } from '@/features/22-apply-modal/components/FormField';
 import { contactFormContent } from '@/content/contact/form';
+import { formApiUrl } from '@/lib/utils/formApi';
 
 export function ContactForm() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -28,7 +29,7 @@ export function ContactForm() {
   const onSubmit = async (data: ContactFormData) => {
     setStatus('loading');
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(formApiUrl('contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
