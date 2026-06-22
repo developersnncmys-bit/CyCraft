@@ -16,6 +16,7 @@ import CurriculumRoadmapSection from '@/features/11-curriculum-roadmap';
 import LearningEvolutionSection from '@/features/12-learning-evolution';
 import BattlegroundsSection from '@/features/13-battlegrounds';
 import ComparisonSection from '@/features/14-comparison';
+import LearningPartnersSection from '@/features/14a-learning-partners';
 import HiringTournamentsSection from '@/features/15-hiring-tournaments';
 import PlacementsSection from '@/features/16-placements';
 import CampusSection from '@/features/17-campus';
@@ -66,6 +67,7 @@ export default function BTechPage() {
 
       {/* Act V — Proof */}
       <ComparisonSection />
+      <LearningPartnersSection />
       <HiringTournamentsSection />
       <PlacementsSection />
       <CampusSection />
